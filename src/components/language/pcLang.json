@@ -1,0 +1,4 @@
+{
+  "en": { "matches": ["ENG_US"], "isRTL": false },
+  "ar": { "matches": ["ع_مصري"], "isRTL": true }
+}

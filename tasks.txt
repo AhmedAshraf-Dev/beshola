@@ -1,0 +1,47 @@
+1-add auth when error code 401 remove the token
+2-solve the issue of menu tabs always change
+
+----------needed Schema and APIs-------
+1-API of delete order 
+2-payment methods API select component and post of add visa
+3-API of adds in Home page 
+4-API of purchases && support
+5-API of suggest in each place note we use recommended
+6-refund and rate
+--------feature dose not finish--------
+1-favorite items
+2-notifications
+
+
+
+
+
+
+
+
+
+
+----------later
+1-display the componet fit with schemas
+2-run schemas
+--remove dependence of schemas make each schema independence and make duplicated if you need 
+--init schemas providers takes from LS => check=>set in the LS && context
+grt from app schema schema iD 
+and requst all items
+3-swap card in rtl dircation
+4-fix clear cart info 
+--must check out button still disable until the ws of cart info has change 
+--must clear cart info when clear cart 
+check the points and credit updated
+
+
+
+
+
+
+------------report
+1-the ws when insert item from menu items to cart you send the whole obj that makes all cart rerender //image recall issus
+2-the size of image is large we can set maximum size to make the assets more easily 
+3-Favorite Items ws send the item with isFav:false //must set true
+4-like and dislike actions not run return 500 error
+ 

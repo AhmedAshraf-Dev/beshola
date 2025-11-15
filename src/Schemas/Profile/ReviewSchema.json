@@ -1,0 +1,42 @@
+{
+  "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
+  "schemaType": "ReviewSchema",
+  "idField": "accountID",
+  "dashboardFormSchemaInfoDTOView": {
+    "dashboardFormSchemaID": "66a8b526-4e63-49b9-ad10-b5112f6646f4",
+    "schemaHeader": "review",
+    "addingHeader": "Add review",
+    "editingHeader": "Edit review"
+  },
+  "dashboardFormSchemaParameters": [
+    {
+      "dashboardFormSchemaParameterID": "9e49c792-9b64-4d15-8c47-90a21c560e94",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
+      "isEnable": true,
+      "parameterType": "text",
+      "parameterField": "accountID",
+      "parameterTitel": "account ID",
+      "parameterLookupTitel": null,
+      "isIDField": true,
+      "indexNumber": 1
+    },
+    {
+      "dashboardFormSchemaParameterID": "db1dc51c-76f1-4e82-b40f-3d5d49439287",
+      "dashboardFormSchemaID": "66a8b526-4e63-49b9-ad10-b5112f6646f4",
+      "isEnable": false,
+      "parameterType": "textarea",
+      "parameterField": "review",
+      "parameterTitel": "review",
+      "parameterLookupTitel": "review",
+      "isIDField": false,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 4
+    }
+  ],
+  "projectProxyRoute": "BrandingMartAccounting",
+  "isMainSchema": true,
+  "dataSourceName": "AccountInfo",
+  "indexNumber": 0
+}

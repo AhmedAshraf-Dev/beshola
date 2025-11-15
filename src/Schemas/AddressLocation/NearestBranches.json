@@ -1,0 +1,158 @@
+{
+  "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
+  "schemaType": "AddressLocation",
+  "idField": "nodeID",
+  "dashboardFormSchemaParameters": [
+    {
+      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
+      "isEnable": true,
+      "parameterType": "text",
+      "parameterField": "nodeMaxDistanceID",
+      "parameterTitel": "nodeMaxDistanceID",
+      "isIDField": true,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 0
+    },
+    {
+      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f898",
+      "isEnable": false,
+      "parameterType": "displayLookup",
+      "parameterField": "addressLocation",
+      "parameterTitel": "addressLocation",
+      "isIDField": false,
+      "lookupID": "270f513b-1788-4c01-879e-4526c990f898",
+      "lookupReturnField": "nodeID",
+      "lookupDisplayField": "node_Name",
+      "indexNumber": 0
+    },
+
+    {
+      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f898",
+      "isEnable": true,
+      "parameterType": "addressLocation",
+      "parameterField": "addressLocation",
+      "parameterTitel": "addressLocation",
+      "isIDField": false,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 0
+    },
+    {
+      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f898",
+      "isEnable": true,
+      "parameterType": "text",
+      "parameterField": "nodeDescription",
+      "parameterTitel": "node Description",
+      "isIDField": false,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 0
+    },
+    {
+      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f898",
+      "isEnable": true,
+      "parameterType": "float",
+      "parameterField": "nodeID",
+      "parameterTitel": "nodeID",
+      "isIDField": false,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 0
+    },
+    {
+      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f898",
+      "isEnable": true,
+      "parameterType": "numeric",
+      "parameterField": "specialFeePerDistance",
+      "parameterTitel": "specialFeePerDistance",
+      "isIDField": false,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 0
+    },
+    {
+      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f898",
+      "isEnable": true,
+      "parameterType": "numeric",
+      "parameterField": "feePerDistance",
+      "parameterTitel": "feePerDistance",
+      "isIDField": false,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 0
+    },
+    {
+      "dashboardFormSchemaParameterID": "31f0de20-39e9-4eec-a199-d21b9f5d7611",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
+      "isEnable": true,
+      "parameterType": "nodeLatitudePoint",
+      "parameterField": "latitudePoint",
+      "parameterTitel": "NodeLatitudePoint",
+      "indexNumber": 6
+    },
+    {
+      "dashboardFormSchemaParameterID": "31f0de20-39e9-4eec-a199-d21b9f5d7611",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
+      "isEnable": true,
+      "parameterType": "nodeLongitudePoint",
+      "parameterField": "longitudePoint",
+      "parameterTitel": "NodeLongitudePoint",
+      "indexNumber": 6
+    },
+    {
+      "dashboardFormSchemaParameterID": "31f0de20-39e9-4eec-a199-d21b9f5d7611",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
+      "isEnable": true,
+      "parameterType": "active",
+      "parameterField": "active",
+      "parameterTitel": "active",
+      "indexNumber": 6
+    },
+    {
+      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f898",
+      "isEnable": true,
+      "parameterType": "text",
+      "parameterField": "maxDistance",
+      "parameterTitel": "maxDistance",
+      "isIDField": false,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 0
+    },
+    {
+      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f898",
+      "isEnable": true,
+      "parameterType": "text",
+      "parameterField": "baseDistance",
+      "parameterTitel": "baseDistance",
+      "isIDField": false,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 0
+    }
+  ],
+
+  "isMainSchema": true,
+  "dataSourceName": "node",
+  "projectProxyRoute": "BrandingMartNode",
+  "propertyName": null,
+  "indexNumber": 0
+}

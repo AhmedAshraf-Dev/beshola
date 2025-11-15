@@ -1,0 +1,357 @@
+import React, {
+  createContext,
+  useState,
+  ReactNode,
+  useEffect,
+  useReducer,
+  useRef,
+  useContext,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import NodeMenuItemsSchema from "../src/Schemas/MenuSchema/NodeMenuItemsSchema.json";
+import { prepareLoad } from "../src/utils/operation/loadHelpers";
+import AddressLocationAction from "../src/Schemas/AddressLocation/AddressLocationAction.json";
+import WorkingHoursSchemaActions from "../src/Schemas/AddressLocation/WorkingHoursSchemaActions.json";
+import AddressLocationSchema from "../src/Schemas/AddressLocation/AddressLocation.json";
+import NearestBranchesSchema from "../src/Schemas/AddressLocation/NearestBranches.json";
+import NearestBranchesActions from "../src/Schemas/AddressLocation/NearestBranchesActions.json";
+import {
+  initialState,
+  VIRTUAL_PAGE_SIZE,
+} from "../src/components/Pagination/initialState";
+import { buildApiUrl } from "../components/hooks/APIsFunctions/BuildApiUrl";
+import { createRowCache } from "../src/components/Pagination/createRowCache";
+import reducer from "../src/components/Pagination/reducer";
+import {
+  updateOrderStatus,
+  updateSelectedLocation,
+  updateSelectedNode,
+  updateWorkingHours,
+} from "../src/reducers/LocationReducer";
+import { WSMessageHandler } from "../src/utils/WS/handleWSMessage";
+import { ConnectToWS } from "../src/utils/WS/ConnectToWS";
+import { initializeLocalization } from "../src/reducers/localizationReducer";
+import { useNetwork } from "./NetworkContext";
+import { useShopNode } from "./ShopNodeProvider";
+import { Chase } from "react-native-animated-spinkit";
+import LoadingScreen from "../src/kitchensink-components/loading/LoadingScreen";
+import useLocalizationPolling from "../src/components/language/useLocalizationPolling";
+import { onApply } from "../src/components/form-container/OnApply";
+import {
+  convertUTCToLocalTime,
+  getMinutesFromTime,
+} from "../src/utils/operation/handleLocalTime";
+import BotChatIndicator from "../src/utils/component/BotChatIndicator";
+import { View } from "react-native";
+import { useVideoPlayer, VideoView } from "expo-video";
+import { useAuth } from "./auth";
+import AddMediaCard from "../src/components/cards/AddMediaCard";
+import { useSchemas } from "./SchemaProvider";
+import { LocalizationContext } from "./LocalizationContext";
+
+// Define the shape of the WebSocket context
+interface WSContextType {
+  notifications: any;
+  setNotifications: React.Dispatch<React.SetStateAction<any>>;
+}
+// Create the WebSocket context
+export const WSContext = createContext<WSContextType>({
+  notifications: [],
+  setNotifications: () => {}, // Default no-op function
+});
+
+// WebSocket Context Provider
+
+export const PreparingApp: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const dispatch = useDispatch();
+  const {
+    status: { isConnected: isOnline },
+  } = useNetwork();
+  const { selectedNode, setSelectedNode } = useShopNode();
+  const [isPrepared, setIsPrepared] = useState({
+    setNode: false,
+    setWorkingHours: false,
+  });
+  const { userGust } = useAuth();
+  // WebSocket state
+  const [WS_Connected, setWS_Connected] = useState(false);
+  const [welcomeTime, setWelcomeTime] = useState(Date.now());
+  const [_WSsetMessage, setWSsetMessage] = useState<any>(null);
+  const { isEndFinishing, setIsEndFinishing } = useContext(LocalizationContext);
+  // Address Location state with reducer
+  const [addressLocationState, addressLocationReducerDispatch] = useReducer(
+    reducer,
+    initialState(10, AddressLocationSchema.idField)
+  );
+
+  // Redux selectors
+  const rows = useSelector((state: any) => state.menuItem.rows);
+  const totalCount = useSelector((state: any) => state.menuItem.totalCount);
+  const fieldsType = useSelector((state: any) => state.menuItem.fieldsType);
+  const reduxSelectedLocation = useSelector(
+    (state: any) => state.location?.selectedLocation
+  );
+  const selectedTab = useSelector((state: any) => state.location?.selectedTab);
+
+  // Address location API
+  const addressLocationDataSourceAPI = (
+    query: any,
+    skip: number,
+    take: number
+  ) => {
+    return buildApiUrl(query, {
+      pageIndex: skip + 1,
+      pageSize: take,
+    });
+  };
+
+  const addressLocationCache = createRowCache(VIRTUAL_PAGE_SIZE);
+  const addressLocationGetAction = AddressLocationAction?.find(
+    (action) => action.dashboardFormActionMethodType === "Get"
+  );
+
+  // Local state for selected location
+  const [selectedLocation, setSelectedLocation] = useState(
+    reduxSelectedLocation || null
+  );
+
+  // Load Address Location on getAction ready
+  useEffect(() => {
+    if (!addressLocationGetAction || userGust) return;
+    if (Object.keys(reduxSelectedLocation).length > 0 || selectedTab !== 1)
+      return;
+    prepareLoad({
+      state: addressLocationState,
+      dataSourceAPI: addressLocationDataSourceAPI,
+      getAction: addressLocationGetAction,
+      cache: addressLocationCache,
+      reducerDispatch: addressLocationReducerDispatch,
+    });
+
+    if (addressLocationState.rows.length > 0) {
+      dispatch(updateSelectedLocation(addressLocationState.rows[0]));
+      setSelectedLocation(addressLocationState.rows[0]);
+    }
+  }, [
+    addressLocationGetAction,
+    addressLocationState.rows.length,
+    dispatch,
+    isOnline,
+    userGust,
+  ]);
+
+  // Nearest Branches state with reducer
+  const [nodeState, nodeReducerDispatch] = useReducer(
+    reducer,
+    initialState(10, NearestBranchesSchema.idField)
+  );
+  const [nodeMenuItemState, nodeMenuItemReducerDispatch] = useReducer(
+    reducer,
+    initialState(10, NodeMenuItemsSchema.idField)
+  );
+  const nodeDataSourceAPI = (query: any, skip: number, take: number) => {
+    return buildApiUrl(query, {
+      pageIndex: skip + 1,
+      pageSize: take,
+      ...(selectedLocation || {}),
+    });
+  };
+
+  const nodeCache = createRowCache(VIRTUAL_PAGE_SIZE);
+  const nodeGetAction = NearestBranchesActions?.find(
+    (action) => action.dashboardFormActionMethodType === "Get"
+  );
+  // Load Nearest Branches when location is selected and nodeGetAction is ready
+  useEffect(() => {
+    if (
+      !selectedLocation ||
+      !nodeGetAction ||
+      Object.keys(selectedNode).length > 0
+    ) {
+      setIsPrepared((prev) => ({ ...prev, setNode: true }));
+
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        // wait for prepareLoad to finish
+        await prepareLoad({
+          state: nodeState,
+          dataSourceAPI: nodeDataSourceAPI,
+          getAction: nodeGetAction,
+          cache: nodeCache,
+          reducerDispatch: nodeReducerDispatch,
+        });
+        // now safely check rows
+      } catch (err) {
+        console.error("Error in prepareLoad:", err);
+      }
+    };
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedLocation, nodeGetAction, isOnline]);
+
+  useEffect(() => {
+    if (nodeState.rows.length > 0 && Object.keys(selectedNode).length <= 0) {
+      const firstNode = nodeState.rows[0];
+      dispatch(updateSelectedNode(firstNode));
+      setSelectedNode(firstNode);
+      setIsPrepared((prev) => ({ ...prev, setNode: true }));
+    }
+  }, [nodeState, selectedLocation]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const getAction =
+        WorkingHoursSchemaActions &&
+        WorkingHoursSchemaActions.find(
+          (action) =>
+            action.dashboardFormActionMethodType.toLowerCase() === "get"
+        );
+      try {
+        const dataSourceAPIToGetWorkingHours = (query) => {
+          return buildApiUrl(query, {});
+        };
+        const getOpenCustomerRequestByContact = await onApply(
+          {},
+          null,
+          true,
+          getAction,
+          "",
+          false,
+          dataSourceAPIToGetWorkingHours(getAction)
+        );
+        console.log("====================================");
+        console.log(
+          getOpenCustomerRequestByContact,
+          "getOpenCustomerRequestByContact"
+        );
+        console.log("====================================");
+
+        const workingHours = getOpenCustomerRequestByContact.data[0];
+
+        if (workingHours) {
+          // ✅ Save working hours in redux
+          dispatch(updateWorkingHours(workingHours));
+
+          // ✅ Determine order availability
+          const todayIndex = new Date().getDay();
+          const currentTime = new Date();
+
+          const todayWorkHour = workingHours.companyBranchWorkHours.find(
+            (w) => w.dayIndex === todayIndex
+          );
+
+          let orderStatus = "closed"; // "open", "nearClosed", "closed"
+
+          if (todayWorkHour) {
+            const localStartTime = convertUTCToLocalTime(
+              todayWorkHour.startTime
+            );
+            const localEndTime = convertUTCToLocalTime(todayWorkHour.endTime);
+
+            const nowMinutes =
+              currentTime.getHours() * 60 + currentTime.getMinutes();
+            const startMinutes = getMinutesFromTime(localStartTime);
+            const endMinutes = getMinutesFromTime(localEndTime);
+
+            if (nowMinutes >= startMinutes && nowMinutes <= endMinutes) {
+              // inside working hours
+              const minutesToClose = endMinutes - nowMinutes;
+              if (minutesToClose <= 30) {
+                orderStatus = "nearClosed"; // ✅ within 30 minutes of closing
+              } else {
+                orderStatus = "open";
+              }
+            }
+          }
+
+          // ✅ Save status in redux (new action)
+          dispatch(updateOrderStatus(orderStatus));
+          setIsPrepared((prev) => ({ ...prev, setWorkingHours: true }));
+        }
+      } catch (err) {
+        console.error("Error in prepareLoad:", err);
+      }
+    };
+
+    fetchData();
+  }, []); //!set nodeID and schemaActions
+
+  // 🔌 WebSocket handler effect on selectedNode change
+  useEffect(() => {
+    if (!selectedNode || WS_Connected) return;
+    let cleanup;
+    ConnectToWS(setWSsetMessage, setWS_Connected)
+      .then(() => console.log("🔌 WebSocket setup done"))
+      .catch((e) => {
+        console.error("❌ Cart WebSocket error", e);
+      });
+
+    return () => {
+      if (cleanup) cleanup(); // Clean up when component unmounts or deps change
+    };
+  }, [selectedNode, WS_Connected, isOnline]);
+  const callbackReducerUpdate = async (ws_updatedRows) => {
+    await nodeMenuItemReducerDispatch({
+      type: "WS_OPE_ROW",
+      payload: {
+        rows: ws_updatedRows.rows,
+        totalCount: ws_updatedRows.totalCount,
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (nodeMenuItemState.rows.length > 0) {
+      const _handleWSMessage = new WSMessageHandler({
+        _WSsetMessage,
+        fieldsType,
+        rows,
+        totalCount,
+        callbackReducerUpdate,
+      });
+      _handleWSMessage.process();
+    }
+  }, [_WSsetMessage]);
+  useEffect(() => {
+    if (isPrepared.setNode && isPrepared.setWorkingHours)
+      setIsEndFinishing(true);
+  }, [isPrepared]);
+
+  // if (
+  //   !hasSixSecondsPassed &&
+  //   (!isPrepared.setNode || !isPrepared.setWorkingHours)
+  // ) {
+  //   return (
+  //     <LoadingScreen
+  //       LoadingComponent={
+  //         <View className="size-full bg-accent">
+  //           <AddMediaCard
+  //             source={require("../assets/display/splash.mp4")}
+  //             mediaType="video"
+  //             customStyle={{ width: "100%", height: "100%" }}
+  //           />
+  //         </View>
+  //       }
+  //     />
+  //   );
+  // }
+  ////////////////////////////////
+  return (
+    <WSContext.Provider
+      value={{ notifications: [], setNotifications: () => {} }}
+    >
+      {/* {isEndFinishing && ( */}
+      {/* // <LoadingScreen /> */}
+      <>
+        <BotChatIndicator />
+        {children}
+      </>
+      {/* )} */}
+    </WSContext.Provider>
+  );
+};

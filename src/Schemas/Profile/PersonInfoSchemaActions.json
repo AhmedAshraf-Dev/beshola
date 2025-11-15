@@ -1,0 +1,29 @@
+[
+  {
+    "projectProxyRoute": "BrandingMartSecurity",
+    "dashboardFormSchemaActionID": "46ac8869-4745-41c8-8839-d02dfe9999f0",
+    "dashboardFormActionMethodType": "Get",
+    "routeAdderss": "Person/GetPersonInfo",
+    "body": "",
+    "returnPropertyName": "",
+    "dashboardFormSchemaActionQueryParams": []
+  },
+  {
+    "projectProxyRoute": "BrandingMartSecurity",
+    "dashboardFormSchemaActionID": "46ac8869-4745-41c8-8839-d02dfe9999f0",
+    "dashboardFormActionMethodType": "Post",
+    "routeAdderss": "User/UpdateOwnPassword",
+    "body": "",
+    "returnPropertyName": "",
+    "dashboardFormSchemaActionQueryParams": []
+  },
+  {
+    "projectProxyRoute": "BrandingMartSecurity",
+    "dashboardFormSchemaActionID": "46ac8869-4745-41c8-8839-d02dfe9999f0",
+    "dashboardFormActionMethodType": "Put",
+    "routeAdderss": "Person/UpdateOwnInfo",
+    "body": "",
+    "returnPropertyName": "",
+    "dashboardFormSchemaActionQueryParams": []
+  }
+]
