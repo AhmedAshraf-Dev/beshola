@@ -35,8 +35,8 @@ export default function DateParameter({
   const minDate = isBirthday
     ? new Date(today.getFullYear() - 60, today.getMonth(), today.getDate())
     : isPushTime
-      ? new Date()
-      : undefined;
+    ? new Date()
+    : undefined;
 
   const maxDate = isBirthday
     ? new Date(today.getFullYear() - 14, today.getMonth(), today.getDate())
@@ -52,9 +52,13 @@ export default function DateParameter({
     const displayHours = isPM ? hours - 12 || 12 : hours || 12;
 
     const day = date.getDate();
-    const monthName = dateTime.dateTime.dxDateBox.months[date.getMonth()];
+    const monthName = dateTime?.dateTime?.dxDateBox?.months[date.getMonth()];
     const year = date.getFullYear();
-    const time = `${displayHours}:${minutes} ${isPM ? dateTime.dateTime.dxDateBox.pm : dateTime.dateTime.dxDateBox.am}`;
+    const time = `${displayHours}:${minutes} ${
+      isPM
+        ? dateTime?.dateTime?.dxDateBox?.pm
+        : dateTime?.dateTime?.dxDateBox?.am
+    }`;
 
     if (isPushTime) return time;
     if (isDateTime) return `${monthName} ${day}, ${year} - ${time}`;

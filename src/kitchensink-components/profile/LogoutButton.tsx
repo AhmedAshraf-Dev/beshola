@@ -13,8 +13,8 @@ export const LogoutButton = ({ setOpenLogoutAlertDialog }) => {
       className={`flex mx-auto items-center justify-center mt-8 w-72 px-4 py-2 rounded-lg duration-300 transition-all bg-accent text-body`}
     >
       <View className={`flex flex-row items-center gap-1`}>
-        <Entypo name="log-out" size={24} className={"text-body"} />
-        <Text className={`text-body font-medium`}>
+        <Entypo name="log-out" size={24} className={"!text-body"} />
+        <Text className={`!text-body font-medium`}>
           {localization.Hum_screens.profile.logOut.logOut}
         </Text>
       </View>

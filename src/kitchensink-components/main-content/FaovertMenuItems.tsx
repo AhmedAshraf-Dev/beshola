@@ -108,7 +108,7 @@ const FaovertMenuItems = () => {
   useEffect(() => {
     if (WS_Connected) return;
     let cleanup;
-    ConnectToWS(setWSMessageFav, setWS_Connected)
+    ConnectToWS(setWSMessageFav, setWS_Connected, favFieldsType.dataSourceName)
       .then(() => console.log("🔌 WebSocket setup done"))
       .catch((e) => {});
     return () => {

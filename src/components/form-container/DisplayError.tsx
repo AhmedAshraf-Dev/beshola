@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, View } from "react-native";
 import { useSelector } from "react-redux";
+import { theme } from "../../Theme";
 
 function DisplayError({ dataError, parameterField, setTitle, title }) {
   const localization = useSelector((state) => state.localization.localization);
@@ -21,7 +22,9 @@ function DisplayError({ dataError, parameterField, setTitle, title }) {
       setTitle(`${errorMessages}`);
       return (
         <View>
-          <Text className="!text-red-500 mt-1 text-sm">{errorMessages}</Text>
+          <Text className="mt-1 text-sm" style={{ color: theme.error }}>
+            {errorMessages}
+          </Text>
         </View>
       );
     }

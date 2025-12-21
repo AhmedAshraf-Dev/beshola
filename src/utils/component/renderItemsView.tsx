@@ -11,7 +11,9 @@ import { requestLocationPermission } from "./requestLocationPermission";
 import RequestsScreen from "../../kitchensink-components/orders/RequestsScreen";
 const RenderItemsView = ({ routePath }: any) => {
   const { menuItemsState } = useSchemas();
-
+  console.log("====================================");
+  console.log(routePath, "routePath");
+  console.log("====================================");
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
   const total = useSelector((state) => state.cart.totalAmount);

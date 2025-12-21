@@ -9,7 +9,7 @@ import { Flow } from "react-native-animated-spinkit";
 import { ScrollView } from "react-native-gesture-handler";
 import { buildApiUrl } from "../../../components/hooks/APIsFunctions/BuildApiUrl";
 import LoadData from "../../../components/hooks/APIsFunctions/LoadData";
-import { useMenu } from "../../../context/MenuProvider";
+import { useSearch } from "../../../context/SearchProvider";
 import { useSchemas } from "../../../context/SchemaProvider";
 import LoadingScreen from "../../kitchensink-components/loading/LoadingScreen";
 import { isRTL } from "../../utils/operation/isRTL";
@@ -20,7 +20,7 @@ import { ScreenWidth } from "../shared";
 export const SearchTabs = ({}: any) => {
   // Shop/GetMenuCategories?PageSize=11&PageNumber=1
   const { menuCategoriesState } = useSchemas();
-  const { menuItemRow, setMenuItemRow } = useMenu();
+  const { menuItemRow, setMenuItemRow } = useSearch();
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState("");
   const activeMenuType = useSelector((state) => state.menuItem.currentItemType);

@@ -4,7 +4,9 @@ import LZString from "lz-string";
 // Helpers for web cookies
 function setCookie(key, value, days = 30) {
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${key}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+  document.cookie = `${key}=${encodeURIComponent(
+    value
+  )}; expires=${expires}; path=/`;
 }
 
 function getCookie(key) {
@@ -34,10 +36,12 @@ export const retrieveSecureValue = async (key) => {
     return getCookie(key);
   } else {
     const stored = await SecureStore.getItemAsync(key);
+
+    if (!stored) return null;
+
     const decompressed = LZString.decompressFromUTF16(stored);
-    const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5Mjk1ZTgxMi02ZDE1LTRlNTMtOTkyMC1jNTQzOTRiYzU2YWQiLCJqdGkiOiJjYjkzY2U0MC1hMTA2LTQ0OTItOWFkYi0zMzIxZDZhZWM4NDMiLCJpc3MiOiJJSFMiLCJpYXQiOiI0LzcvMjAyNSAzOjQ4OjM1IFBNIiwiZXhwIjoxNzUxOTAzMzE1LCJVc2VybmFtZSI6InRlc3RBaG1lZDEyIiwiUm9sZSI6IjAiLCJVc2VySUQiOiI5Mjk1ZTgxMi02ZDE1LTRlNTMtOTkyMC1jNTQzOTRiYzU2YWQiLCJQZXJzb25JRCI6IjMwM2MxZmQ2LTgwMzYtNGFlMS1iMmEwLWZhMDhkNzZmNGNlNyIsIlVzZXJUb2tlbklEIjoiOTEwZmVhMTYtNTJlYS00YzdkLWI4NDktNmZjNjYzYWMzMWFjIiwiQ2xpZW50SUQiOiJkMzgwNDM1NS1hMDljLTQ2ZWMtOTEwYy1kYzAyNGE0YmFlMWIiLCJVc2Vyc0dyb3VwSUQiOiIzZmE4NWY2NC01NzE3LTQ1NjItYjNmYy0yYzk2M2Y2NmFmYTYiLCJVc2Vyc0dyb3VwRGFzaGJvYXJkRm9ybVNjaGVtYUFjdGlvbnMiOiJbXSIsIlVzZXJzR3JvdXBEYXNoYm9hcmRNZW51SXRlbXMiOiJbXSIsImF1ZCI6IkFsbCJ9.FtNxnquKIVZqH2N_ed9680ByW0HxnACSlRGrFK3pcHg";
-    return token;
+
+    return decompressed;
   }
 };
 

@@ -57,7 +57,7 @@ export function useDisplayToast() {
           <View>{icons[action]}</View>
 
           {/* Text */}
-          <View style={{ flex: 1 }}>
+          <View>
             <ToastTitle style={{ fontWeight: "600" }}>{title}</ToastTitle>
             {description ? (
               <ToastDescription

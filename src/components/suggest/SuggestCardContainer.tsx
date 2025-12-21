@@ -116,7 +116,11 @@ export default function SuggestCardContainer({
   useEffect(() => {
     if (WS_Connected) return;
     let cleanup;
-    ConnectToWS(setWSMessageSuggest, setWS_Connected)
+    ConnectToWS(
+      setWSMessageSuggest,
+      setWS_Connected,
+      suggestFieldsType.dataSourceName
+    )
       .then(() => console.log("🔌 WebSocket setup done"))
       .catch((e) => {});
     return () => {

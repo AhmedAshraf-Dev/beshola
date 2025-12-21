@@ -48,7 +48,13 @@ export default function SelectComponent({
 }) {
   const localization = useSelector((state) => state.localization.localization);
   const { os } = useDeviceInfo();
-
+  const platformStyleClassName = () => {
+    if (os === "web" || !subtitle) {
+      return "!py-2";
+    } else {
+      return "!justify-center !h-28 !py-7";
+    }
+  };
   return (
     <Select
       value={selectedValue}
@@ -58,7 +64,7 @@ export default function SelectComponent({
       <SelectTrigger
         variant="unstyled"
         size="sm"
-        className={`${os === "web" ? "!py-2" : ""} flex-1 flex-row items-center h-11 justify-between px-3 bg-transparent border border-border rounded-md`}
+        className={`${platformStyleClassName()} flex-1 flex-row items-center h-11 min-w-40 justify-between px-3 bg-transparent border border-border rounded-md`}
       >
         <View className="flex-col flex-1">
           {subtitle && (

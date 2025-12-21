@@ -13,6 +13,17 @@
 2-notifications
 
 
+----------needed Schema and APIs-------
+1-APIs of adds on home page 
+2-API of items and categories on search page 
+3-API of filtering on search page 
+4-API of items on requests page
+5-API of company items on details page
+6-API of user chats with the team 
+7-WS of -botChat - items -notifications -favorite items
+
+
+
 
 
 

@@ -75,7 +75,13 @@ const PaymentOptions = ({
   useEffect(() => {
     if (WS_Connected || !wsAction) return;
     let cleanup;
-    ConnectToWS(setWSsetMessage, setWS_Connected, {}, wsAction)
+    ConnectToWS(
+      setWSsetMessage,
+      setWS_Connected,
+      paymentOptionsFieldsType.dataSourceName,
+      {},
+      wsAction
+    )
       .then(() => console.log("🔌 Cart WebSocket connected"))
       .catch((e) => console.error("❌ Cart WebSocket error", e));
     return () => {

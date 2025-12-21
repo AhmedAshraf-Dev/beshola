@@ -18,10 +18,10 @@ const RangeSlider = ({
 }) => {
   const position = useSharedValue(
     ((value.min - min) / (max - min)) * sliderWidth
-  ); // Initialize with value.min
+  );
   const position2 = useSharedValue(
     ((value.max - min) / (max - min)) * sliderWidth
-  ); // Initialize with value.max
+  );
   const opacity = useSharedValue(0);
   const opacity2 = useSharedValue(0);
   const zIndex = useSharedValue(0);

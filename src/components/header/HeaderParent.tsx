@@ -68,7 +68,8 @@ export default function HeaderParent() {
                 className="p-2 rounded-lg bg-accent items-center justify-center me-2 relative"
               >
                 <AntDesign name="wechat" size={22} color={theme.body} />
-                {cartRows.length > 0 && <RedCounter count={cartRows.length} />}
+                {/* {cartRows.length > 0 && <RedCounter count={cartRows.length} />} */}
+                <RedCounter count={4} />
               </TouchableOpacity>
               {/* <Notification /> */}
               <UserPanel menuMode={""} />

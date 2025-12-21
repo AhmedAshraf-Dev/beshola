@@ -44,7 +44,7 @@ export default {
     },
     web: {
       bundler: "metro",
-      favicon: "./assets/display/logo.jpeg",
+      favicon: "./assets/favicon.png",
     },
     plugins: ["expo-font"],
     extra: {

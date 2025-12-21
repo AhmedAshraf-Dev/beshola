@@ -25,7 +25,7 @@ const SearchView = ({}: any) => {
 
   const Content = (
     <>
-      <HStack space="2xl" className="items-center md:my-2 !bg-surface">
+      <HStack space="2xl" className="items-center md:my-2 !bg-body py-3 z-50">
         <View style={{ flex: 1 }}>
           <Searchbar />
         </View>

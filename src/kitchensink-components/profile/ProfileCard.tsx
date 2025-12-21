@@ -42,7 +42,11 @@ export const ProfileCard = ({ profileInfo }) => {
   useEffect(() => {
     if (WS_Connected) return;
     let cleanup;
-    ConnectToWS(setWSMessageAccounting, setWS_Connected)
+    ConnectToWS(
+      setWSMessageAccounting,
+      setWS_Connected,
+      fieldsType.dataSourceName
+    )
       .then(() => console.log("🔌 WebSocket setup done"))
       .catch((e) => console.error("❌ WebSocket setup error", e));
     return () => {
@@ -110,7 +114,7 @@ export const ProfileCard = ({ profileInfo }) => {
           />
         </Avatar>
         <VStack>
-          <Text className="text-text text-lg">
+          <Text className="!text-text text-lg">
             {profileInfo?.[firstNameField]}
           </Text>
           {data && !isLoading && (

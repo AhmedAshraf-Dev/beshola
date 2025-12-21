@@ -9,9 +9,9 @@ import { store } from "./src/store/reduxStore";
 //export const domainURL = "https://maingatewayapi.ihs-solutions.com:8000";
 //export const domainURL = "41.196.0.25";
 export const domainURL = "ihs-solutions.com";
-export const baseURL = "https://" + domainURL + ":8882";
+export const baseURL = "http://" + domainURL;
 export const defaultCentralizationProxyRoute =
-  "https://" + domainURL + ":8000/Centralization/api";
+  "http://" + domainURL + "/Centralization/api";
 export const defaultProjectProxyRoute = `${baseURL}/BrandingMart/api/`;
 export const defaultProjectProxyRouteWithoutAPI = `${baseURL}/BrandingMart/`;
 export const publicImageURL = "https://" + domainURL + ":5055/";
@@ -65,6 +65,7 @@ export async function SetHeaders() {
     [displayLookupParam.lookupReturnField]:
       selectedNode?.[displayLookupParam.lookupReturnField] || "",
     token: await GetToken(),
+    // clientID: "",
     ...(languageRowObj && Object.keys(languageRowObj).length > 0
       ? Object.fromEntries(
           Object.entries(languageRowObj).map(([k, v]) => [

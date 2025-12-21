@@ -3,20 +3,18 @@ export class WSclass {
     this.url = url;
     this.socket = null;
     this.shouldReconnect = true;
-    this.reconnectInterval = 2000; // 2 seconds
+    this.reconnectInterval = 2000;
     this.reconnectTimeout = null;
     this.messageCallbacks = [];
     this.connectionCallbacks = [];
   }
 
   connect(onConnect) {
-    // Avoid duplicate open connections
     if (this.socket && this.socket.readyState === WebSocket.OPEN) {
       if (onConnect) onConnect();
       return;
     }
 
-    // Clear any previous reconnect timeout
     if (this.reconnectTimeout) {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = null;
@@ -25,19 +23,15 @@ export class WSclass {
     this.socket = new WebSocket(this.url);
 
     this.socket.onopen = () => {
-      console.log("✅ WebSocket connected:", this.url);
       this.connectionCallbacks.forEach((cb) => cb(true));
       if (onConnect) onConnect();
     };
 
     this.socket.onclose = () => {
-      console.warn("⚠️ WebSocket closed:", this.url);
       this.connectionCallbacks.forEach((cb) => cb(false));
 
       if (this.shouldReconnect) {
-        console.log(
-          `🔁 Attempting to reconnect in ${this.reconnectInterval / 1000}s...`
-        );
+        console.log(`🔁 Reconnecting in ${this.reconnectInterval / 1000}s...`);
         this.reconnectTimeout = setTimeout(() => {
           this.connect(onConnect);
         }, this.reconnectInterval);
@@ -45,12 +39,14 @@ export class WSclass {
     };
 
     this.socket.onmessage = (event) => {
+      const count = this.messageCallbacks.length;
+      console.log(`📩 Received message. Calling ${count} handlers.`);
       this.messageCallbacks.forEach((cb) => cb(event.data));
     };
 
     this.socket.onerror = (error) => {
       console.error("WebSocket error:", error);
-      this.socket.close(); // triggers onclose → reconnect
+      this.socket?.close();
     };
   }
 
@@ -60,6 +56,7 @@ export class WSclass {
       !this.messageCallbacks.includes(callback)
     ) {
       this.messageCallbacks.push(callback);
+      console.log("🆕 Added new handler. Total:", this.messageCallbacks.length);
     }
     return () => this.removeMessageHandler(callback);
   }
@@ -87,20 +84,21 @@ export class WSclass {
   }
 
   disconnect() {
-    // this.shouldReconnect = false;
     if (this.reconnectTimeout) {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = null;
     }
+
     if (this.socket) {
       this.socket.close();
       this.socket = null;
     }
+
     this.messageCallbacks = [];
     this.connectionCallbacks = [];
   }
 
   get readyState() {
-    return this.socket?.readyState;
+    return this.socket?.readyState ?? WebSocket.CLOSED;
   }
 }

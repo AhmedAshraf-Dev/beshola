@@ -19,9 +19,9 @@ export class WSMessageHandler {
 
   process() {
     if (!this._WSsetMessage) return;
-    const parsed = JSON.parse(this._WSsetMessage);
+    // const parsed = JSON.parse(this._WSsetMessage);
 
-    if (!parsed[this.fieldsType.dataSourceName]) return;
+    // if (!parsed?.[this.fieldsType?.dataSourceName]) return;
 
     try {
       //console.log("WSMessageHandler",newRows,this.fieldsType.idField,this.fieldsType.dataSourceName);
@@ -37,11 +37,8 @@ export class WSMessageHandler {
       //console.log("ws_updatedRows",ws_updatedRows);
       //console.log("✅ ws_updatedRows", ws_updatedRows);
 
-      // if (ws_updatedRows?.rows?.length > 0) {
-      //   console.log("after ws_updatedRows");
-      //   this.callbackReducerUpdate(ws_updatedRows);
-      // }
       this.callbackReducerUpdate(ws_updatedRows);
+      console.log("ws_updatedRows", ws_updatedRows);
     } catch (e) {
       console.error("❌ WS message processing failed", e);
     }

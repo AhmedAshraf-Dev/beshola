@@ -59,7 +59,11 @@ export default function InvoiceSummary({
   useEffect(() => {
     if (cartInfo_WS_Connected) return;
     let cleanup;
-    ConnectToWS(setWSMessageCartInfo, setCartInfoWS_Connected)
+    ConnectToWS(
+      setWSMessageCartInfo,
+      setCartInfoWS_Connected,
+      schemaFieldsTypes.dataSourceName
+    )
       .then(() => console.log("🔌 Cart WebSocket connected"))
       .catch((e) => console.error("❌ Cart WebSocket error", e));
     return () => {

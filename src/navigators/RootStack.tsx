@@ -14,6 +14,7 @@ import WebNavigator from "./AppNavigator";
 // import Toast from "react-native-toast-message";
 import * as Linking from "expo-linking";
 import AppNavigator from "./AppNavigator";
+import { CompareProvider } from "../../context/CompareProvider";
 // types
 export type RootStackParamList = {
   Home: undefined;
@@ -43,9 +44,10 @@ const linking = {
       Verify: "Verify",
       Requests: "requests",
       ForgetPassword: "forget-password",
+      CompareScreen: "compare",
       NotificationScreen: "notifications",
       CheckoutScreen: "checkout",
-      DetailsProductScreen: "product/:id", // if using dynamic products
+      DetailsProductScreen: "property/:id", // if using dynamic products
     },
   },
 };
@@ -54,7 +56,7 @@ const Stack = createStackNavigator<RootStackParamList>();
 const RootStack: FC = (props: any) => {
   return (
     <NavigationContainer linking={linking}>
-      {RequiredScreens()}
+      <CompareProvider>{RequiredScreens()}</CompareProvider>
     </NavigationContainer>
   );
 };

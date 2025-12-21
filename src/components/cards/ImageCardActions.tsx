@@ -19,7 +19,7 @@ function ImageCardActions({
   const localization = useSelector((state) => state.localization.localization);
 
   return (
-    <View className="size-full items-center">
+    <View className="w-full items-center">
       {item[fieldsType.imageView] && (
         <Box
           key={`${fieldsType.imageView}-${item[fieldsType.imageView]}`}

@@ -1,14 +1,25 @@
-import React, { useMemo, useRef, useState } from "react";
-import { View, FlatList, useWindowDimensions } from "react-native";
-import MenuCardView from "./CompanyCardView";
-import { getItemPackage } from "./getItemPackage";
-import SuggestCardContainer from "../suggest/SuggestCardContainer";
+import React, { useMemo, useRef } from "react";
+import { FlatList, useWindowDimensions, View } from "react-native";
 import { useSchemas } from "../../../context/SchemaProvider";
-import { useMenu } from "../../../context/MenuProvider";
-import PropertyCard from "../cards/PropertyCard";
-import CompanyCardView from "./CompanyCardView";
+import { getItemPackage } from "./getItemPackage";
+import CompanyCard from "../cards/CompanyCard";
 
-const chunkArray = (arr, size) => {
+interface CompanyCardsFlatListProps {
+  rows?: any[];
+  fieldsType: any;
+  cartState: any;
+  menuItemsState: any;
+  selectedItems?: any[];
+  setSelectedItems?: (items: any[]) => void;
+  CardComponent?: React.ComponentType<{
+    itemPackage: any;
+    selectedItems?: any[];
+    setSelectedItems?: (items: any[]) => void;
+    schemaActions: any;
+  }>;
+}
+
+const chunkArray = (arr: any[], size: number) => {
   const out = [];
   for (let i = 0; i < arr.length; i += size) {
     out.push(arr.slice(i, i + size));
@@ -16,30 +27,27 @@ const chunkArray = (arr, size) => {
   return out;
 };
 
-const CompanyCardsFlatList = ({
+const CompanyCardsFlatList: React.FC<CompanyCardsFlatListProps> = ({
   rows = [],
   fieldsType,
   cartState,
   menuItemsState,
-  selectedItems,
+  selectedItems = [],
   setSelectedItems,
+  CardComponent = CompanyCard, // default fallback
 }) => {
   const { width } = useWindowDimensions();
   const { recommendedState } = useSchemas();
-  // const { setVisibleItems } = useMenu();
 
-  // Breakpoints -> number of columns
   const numColumns = useMemo(() => {
     if (width >= 1280) return 3;
     if (width >= 768) return 2;
     return 1;
   }, [width]);
 
-  // Layout constants
   const GAP = 16;
   const PADDING_HORIZONTAL = 16;
 
-  // cell width/height (for grid items)
   const { cellWidth, cellHeight, suggestionWidth } = useMemo(() => {
     const totalGap = GAP * (numColumns - 1);
     const totalPadding = PADDING_HORIZONTAL * 4 + 3;
@@ -47,76 +55,34 @@ const CompanyCardsFlatList = ({
     const cw = availableWidth / numColumns;
     return {
       cellWidth: cw,
-      cellHeight: cw * 1.05, // tweak aspect ratio as you like
-      suggestionWidth: availableWidth, // full-width content area (without outer padding)
+      cellHeight: cw * 1.05,
+      suggestionWidth: availableWidth,
     };
   }, [width, numColumns]);
 
-  // Build "rows" data (each element is either a row or a suggestion full-row)
   const displayRows = useMemo(() => {
     if (!rows || rows.length === 0) return [];
-
-    const chunked = chunkArray(rows, numColumns); // [[...], [...], ...]
-    const out = [];
-
+    const chunked = chunkArray(rows, numColumns);
+    const out: any[] = [];
     chunked.forEach((rowItems, rowIndex) => {
       out.push({ type: "row", items: rowItems, rowIndex });
-
-      // after every 2 rows insert a suggestion (so after 2 full rows)
       if ((rowIndex + 1) % 2 === 0) {
         out.push({ type: "suggestion", rowIndex });
       }
     });
-
     return out;
   }, [rows, numColumns]);
 
-  const renderRow = ({ item }) => {
-    // if (item.type === "suggestion") {
-    //   // full-width suggestion: keep same horizontal padding as rows
-    //   return (
-    //     <View
-    //       style={{
-    //         width: "100%",
-    //         marginBottom: GAP,
-    //         marginTop: GAP / 2,
-    //       }}
-    //     >
-    //       <View
-    //         style={{
-    //           width: suggestionWidth,
-    //         }}
-    //       >
-    //         <SuggestCardContainer
-    //           schemaActions={recommendedState.actions}
-    //           shownNodeMenuItemIDs={[]}
-    //           suggestContainerType={0}
-    //         />
-    //       </View>
-    //     </View>
-    //   );
-    // }
-
-    // Normal row: render items horizontally
+  const renderRow = ({ item }: { item: any }) => {
     if (item.type === "row") {
       return (
-        <View
-          style={{
-            flexDirection: "row",
-            marginBottom: GAP,
-            gap: GAP,
-          }}
-        >
-          {item.items.map((rowItem, idx) => (
+        <View style={{ flexDirection: "row", marginBottom: GAP, gap: GAP }}>
+          {item.items.map((rowItem: any, idx: number) => (
             <View
               key={`${rowItem[fieldsType.idField] ?? idx}-${idx}`}
-              style={{
-                width: numColumns == 1 ? "100%" : cellWidth,
-                // height: cellHeight,
-                // marginRight: idx < item.items.length - 1 ? GAP : 0,
-              }}
+              style={{ width: numColumns === 1 ? "100%" : cellWidth }}
             >
-              <CompanyCardView
+              <CardComponent
                 itemPackage={getItemPackage(
                   rowItem,
                   cartState.rows,
@@ -127,11 +93,9 @@ const CompanyCardsFlatList = ({
                 setSelectedItems={setSelectedItems}
                 selectedItems={selectedItems}
               />
-              {/* <PropertyCard /> */}
             </View>
           ))}
 
-          {/* If last row has fewer items, render invisible placeholders to keep layout consistent */}
           {item.items.length < numColumns &&
             Array.from({ length: numColumns - item.items.length }).map(
               (_, k) => (
@@ -139,7 +103,6 @@ const CompanyCardsFlatList = ({
                   key={`placeholder-${k}`}
                   style={{
                     width: cellWidth,
-                    // height: cellHeight,
                     marginLeft: GAP,
                     opacity: 0,
                   }}
@@ -149,25 +112,25 @@ const CompanyCardsFlatList = ({
         </View>
       );
     }
+    return null;
   };
 
-  const onViewableItemsChanged = useRef(({ viewableItems }) => {
+  const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     const ids: string[] = [];
-
-    viewableItems.forEach((vi) => {
+    viewableItems.forEach((vi: any) => {
       if (vi.item.type === "row") {
-        // Only push IDs from rows that are actually in the viewport
         ids.push(
-          ...vi.item.items.map((rowItem) => rowItem[fieldsType.idField])
+          ...vi.item.items.map((rowItem: any) => rowItem[fieldsType.idField])
         );
       }
     });
-    // setVisibleItems(ids);
   }).current;
+
   const viewabilityConfig = useRef({
-    itemVisiblePercentThreshold: 50, // only count item if at least 50% visible
-    minimumViewTime: 100, // optional: ms in view before counting
+    itemVisiblePercentThreshold: 50,
+    minimumViewTime: 100,
   }).current;
+
   return (
     <FlatList
       data={displayRows}
@@ -179,16 +142,13 @@ const CompanyCardsFlatList = ({
       }
       numColumns={1}
       onViewableItemsChanged={onViewableItemsChanged}
-      viewabilityConfig={viewabilityConfig} // ✅ attach here
-      // windowSize={5}
-      // initialNumToRender={6}
-      // maxToRenderPerBatch={6}
+      viewabilityConfig={viewabilityConfig}
       key={numColumns}
-      removeClippedSubviews={true} // Unmount components when outside of window
-      initialNumToRender={2} // Reduce initial render amount
-      maxToRenderPerBatch={1} // Reduce number in each render batch
-      updateCellsBatchingPeriod={100} // Increase time between renders
-      windowSize={7} // Reduce the window size
+      removeClippedSubviews
+      initialNumToRender={2}
+      maxToRenderPerBatch={1}
+      updateCellsBatchingPeriod={100}
+      windowSize={7}
     />
   );
 };

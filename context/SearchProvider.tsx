@@ -34,10 +34,10 @@ import { SetResponsiveContainer } from "../src/utils/component/SetResponsiveCont
 import HeaderParent from "../src/components/header/HeaderParent";
 import { useShopNode } from "./ShopNodeProvider";
 // Create context
-export const MenuContext = createContext(null);
+export const SearchContext = createContext(null);
 
 // Context provider component
-export const MenuProvider = ({ children }) => {
+export const SearchProvider = ({ children }) => {
   const [menuItemRow, setMenuItemRow] = useState({});
   const [reRequest, setReRequest] = useState(false);
   const languageRow = useSelector((state) => state.localization.languageRow);
@@ -118,7 +118,11 @@ export const MenuProvider = ({ children }) => {
     if (WS_Connected) return;
 
     let cleanup;
-    ConnectToWS(setWSMessageMenuItem, setWS_Connected)
+    ConnectToWS(
+      setWSMessageMenuItem,
+      setWS_Connected,
+      fieldsType.dataSourceName
+    )
       .then(() => console.log("🔌 WebSocket setup done"))
       .catch((e) => {});
     return () => {
@@ -218,7 +222,7 @@ export const MenuProvider = ({ children }) => {
   //   }, 0);
   // }, [loadData]);
   return (
-    <MenuContext.Provider
+    <SearchContext.Provider
       value={{
         menuItemRow,
         setMenuItemRow,
@@ -228,9 +232,9 @@ export const MenuProvider = ({ children }) => {
       }}
     >
       {children}
-    </MenuContext.Provider>
+    </SearchContext.Provider>
   );
 };
 
 // Custom hook to consume the context
-export const useMenu = () => useContext(MenuContext);
+export const useSearch = () => useContext(SearchContext);

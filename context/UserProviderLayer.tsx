@@ -71,7 +71,11 @@ const UserProviderLayer = (
   useEffect(() => {
     if (cart_WS_Connected) return;
     let cleanup;
-    ConnectToWS(setCartWSsetMessage, setCartWS_Connected)
+    ConnectToWS(
+      setCartWSsetMessage,
+      setCartWS_Connected,
+      cartFieldsType.dataSourceName
+    )
       .then(() => console.log("🔌 Cart WebSocket connected"))
       .catch((e) => {
         console.error("❌ Cart WebSocket error", e);

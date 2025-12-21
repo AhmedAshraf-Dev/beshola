@@ -1,34 +1,38 @@
-import { useNavigation } from "@react-navigation/native";
+import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Pressable, View } from "react-native";
+import { Pressable, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
 import { Card } from "../../../components/ui";
-import { CompanyCardWeb } from "../cards";
-import { TouchableOpacity } from "react-native";
-import { Text } from "react-native";
-import { Feather } from "@expo/vector-icons";
 import { theme } from "../../Theme";
 import PricePlansSection from "../cards/PricePlansSection";
+import CompanyCard from "../cards/CompanyCard";
+import { useNavigation } from "@react-navigation/native";
+import PropertyCardButtonsActions from "../cards/PropertyCardButtonsActions";
 
 //todo update att when any param changes
 //todo then take att and make utility that helps to get the correct item form items by attribute so the utility with make sure that the two objs is the same
 //todo then update the item my item that get from the attributes
-
 const CompanyCardView = ({
   itemPackage,
   selectedItems,
   setSelectedItems,
   schemaActions,
+}: {
+  itemPackage: any;
+  selectedItems?: any[];
+  setSelectedItems?: (items: any[]) => void;
+  schemaActions: any;
 }) => {
   //!uncomment the attribute
   const [item, setItem] = useState(itemPackage);
   // const [att, setAtt] = useState(item.attribute);
   const navigation = useNavigation();
   const fieldsType = useSelector((state) => state.menuItem.fieldsType);
-  const selected = selectedItems.find(
-    (selected) => selected[fieldsType.idField] === item[fieldsType.idField]
-  );
+  const selected = false;
+  // const selected = selectedItems.find(
+  //   (selected) => selected[fieldsType.idField] === item[fieldsType.idField]
+  // );
   // Form control
   const {
     control,
@@ -76,69 +80,21 @@ const CompanyCardView = ({
     if (selectedItems.length > 0) {
       handleLongPress();
     } else {
-      // navigation.navigate("DetailsProductScreen", {
-      //   item: item,
-      //   fieldsType: fieldsType,
-      //   schemaActions: schemaActions,
-      // });
+      navigation.navigate("DetailsProductScreen", {
+        id: item[fieldsType.idField],
+        // fieldsType: fieldsType,
+        // schemaActions: schemaActions,
+      });
     }
   };
   return (
-    // <Pressable
-    //   onPress={handlePress}
-    //   onLongPress={handleLongPress}
-    //   className="h-full"
-    // >
-    <View className="mb-3">
-      <View
-        className="flex-row rounded-t-xl space-x-2 z-20 border-2 w-full p-1 bg-body border-dark_card"
-        style={{ direction: "inherit", justifyContent: "flex-end" }}
-      >
-        <TouchableOpacity
-          className="px-3 text-dark_card flex-row justify-center items-center rounded-full shadow"
-          onPress={() => console.log("Compare pressed")}
-        >
-          <Text className="text-[10px] font-semibold text-dark_card">
-            +Compare
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          className=" p-2 rounded-full shadow"
-          onPress={() => console.log("Share pressed")}
-        >
-          <Feather name="share-2" size={16} color={theme.dark_card} />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          className="p-2 rounded-full shadow"
-          onPress={() => console.log("Favorite pressed")}
-        >
-          <Feather name="heart" size={16} color={theme.dark_card} />
-        </TouchableOpacity>
-      </View>
-      <Card
-        className={`items-center overflow-hidden border relative h-full ${
-          selected ? "border-2 border-green-500 bg-green-100" : "bg-dark_card"
-        }`}
-      >
-        {/* ✅ Top Right Buttons Row */}
-
-        {/* ✅ Main Company Card Content */}
-        <View className="!size-full">
-          <CompanyCardWeb
-            item={itemPackage}
-            fieldsType={fieldsType}
-            schemaActions={schemaActions}
-          />
-        </View>
-      </Card>
-      {/* Price Plans */}
-
-      <PricePlansSection pricePlans={item.pricePlans} />
-    </View>
-
-    // </Pressable>
+    <Pressable
+      onPress={handlePress}
+      onLongPress={handleLongPress}
+      className="h-fit"
+    >
+      <CompanyCard itemPackage={itemPackage} schemaActions={schemaActions} />
+    </Pressable>
   );
 };
 

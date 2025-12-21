@@ -31,7 +31,7 @@ const useWebSocketHandler = ({
       setWS_Connected(false);
     }
 
-    ConnectToWS(setWSsetMessage, setWS_Connected)
+    ConnectToWS(setWSsetMessage, setWS_Connected, fieldsType.dataSourceName)
       .then((ws) => {
         wsRef.current = ws;
       })

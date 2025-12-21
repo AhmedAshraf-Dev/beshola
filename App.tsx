@@ -13,7 +13,7 @@ import { GluestackUIProvider } from "./components/ui";
 import { AuthProvider } from "./context/auth";
 import { CartProvider } from "./context/CartProvider";
 import { LocalizationProvider } from "./context/LocalizationContext";
-import { MenuProvider } from "./context/MenuProvider";
+import { SearchProvider } from "./context/SearchProvider";
 import { NetworkProvider } from "./context/NetworkContext";
 import { PreparingApp } from "./context/PreparingApp";
 import { SchemaProvider } from "./context/SchemaProvider";
@@ -24,6 +24,7 @@ import RootStack from "./src/navigators/RootStack";
 import { persistor, store } from "./src/store/reduxStore";
 import { theme } from "./src/Theme";
 import "./patch-registerWebModule";
+import { CompareProvider } from "./context/CompareProvider";
 
 const queryClient = new QueryClient();
 
@@ -91,9 +92,9 @@ export default function App() {
                               style={{ flex: 1, overflow: "scroll" }}
                             >
                               <CartProvider>
-                                <MenuProvider>
+                                <SearchProvider>
                                   <RootStack />
-                                </MenuProvider>
+                                </SearchProvider>
                               </CartProvider>
                             </SafeAreaView>
                           </PreparingApp>

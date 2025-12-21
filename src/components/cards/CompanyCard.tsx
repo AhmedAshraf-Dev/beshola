@@ -1,241 +1,215 @@
+import React, { useState } from "react";
 import {
-  AntDesign,
   Feather,
+  AntDesign,
   FontAwesome6,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import { default as React } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { scale } from "react-native-size-matters";
+import {
+  Platform,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { Box, VStack } from "../../../components/ui";
-import { useAuth } from "../../../context/auth";
-import { AddToCartPrimaryButton } from "../../kitchensink-components/cart/AddToCartButton";
+import { Card, Box, VStack } from "../../../components/ui";
 import { theme } from "../../Theme";
-import CardPriceDiscount from "../../utils/component/CardPriceDiscount";
-import GetIconMenuItem from "../../utils/component/GetIconMenuItem";
+import PricePlansSection from "./PricePlansSection";
+import ImageCardActions from "./ImageCardActions";
 import { getResponsiveImageSize } from "../../utils/component/getResponsiveImageSize";
 import StarsIcons from "../../utils/component/StarsIcons";
-import { formatCount } from "../../utils/operation/formatCount";
-import { getPaddedText } from "../../utils/operation/getPaddedText";
 import { isRTL } from "../../utils/operation/isRTL";
-import CardInteraction from "./CardInteraction";
-import ImageCardActions from "./ImageCardActions";
-import PricePlansSection from "./PricePlansSection";
+import PropertyCardButtonsActions from "./PropertyCardButtonsActions";
+import ExpandableText from "../../utils/component/ExpandableText";
+import { ScreenWidth } from "../shared";
 
-export const CompanyCardWeb = ({ item, fieldsType, schemaActions }) => {
+interface CompanyCardProps {
+  itemPackage: any;
+  selectedItems?: any[];
+  setSelectedItems?: (items: any[]) => void;
+  schemaActions: any;
+}
+
+const CompanyCard: React.FC<CompanyCardProps> = ({
+  itemPackage,
+  selectedItems = [],
+  setSelectedItems,
+  schemaActions,
+}) => {
+  const [item] = useState(itemPackage);
+  const fieldsType = useSelector((state: any) => state.menuItem.fieldsType);
+  const selected = false;
+
+  const { control, handleSubmit, formState, setValue, watch } = useForm();
+
   const imageSize = getResponsiveImageSize(0.3, { min: 80, max: 100 });
-  const localization = useSelector((state) => state.localization.localization);
-  const { userGust } = useAuth();
+  const localization = useSelector(
+    (state: any) => state.localization.localization
+  );
+
+  const handlePress = () => {
+    if (selectedItems.length > 0) {
+      // handle selection logic
+    } else {
+      // navigate to details if needed
+    }
+  };
+  const attributesText = item[fieldsType.attributes]
+    ?.map((att) => att.value)
+    .join(" • "); // join with bullet or comma
+  const isWeb = Platform.OS === "web";
 
   return (
-    <View className="size-full grid md:!flex relative">
-      {/* Image + Top Right Buttons */}
-      <View className="relative grid grid-cols-2 overflow-hidden w-full">
-        {/* Left: Image Section */}
-        <View
-          className="w-full flex flex-col relative 
-          "
-        >
-          <MemoizedImageCard
-            item={item}
-            fieldsType={fieldsType}
-            imageSize={imageSize}
-            schemaActions={schemaActions}
-          />
+    <View className="mb-3">
+      {/* Top Buttons */}
+      <PropertyCardButtonsActions
+        item={item}
+        fieldsType={fieldsType}
+        widthBorder={true}
+      />
 
-          {/* Rating and Orders (if needed later) */}
-          <View className="flex-row items-center justify-center mt-2 w-full flex-wrap"></View>
-        </View>
-
-        {/* Right: Content Section */}
-        <View className="w-full flex flex-col justify-between ps-2">
-          <VStack>
-            <View
-              className={isRTL() ? "items-start" : "items-start" + " min-h-28"}
-            >
-              <View>
-                {/* Company Name + Verified + Stars */}
-                {fieldsType.companyName && item[fieldsType.companyName] && (
-                  <Text
-                    numberOfLines={2}
-                    key={`${item[fieldsType.idField]}-${
-                      fieldsType.companyName
-                    }-${item[fieldsType.companyName]}`}
-                    className="text-lg font-bold mb-1"
-                    style={{ color: theme.secondary, direction: "inherit" }}
-                  >
-                    {" "}
-                    {item.verified && (
-                      <View className="flex-row items-center">
-                        {" "}
-                        <MaterialCommunityIcons
-                          name="check-decagram"
-                          size={18}
-                          color={theme.accentHover}
-                        />{" "}
-                      </View>
-                    )}{" "}
-                    {item.companyName}{" "}
-                  </Text>
-                )}
-                {fieldsType.rate && item[fieldsType.rate] && (
-                  <View
-                    className="flex-row items-center justify-center w-full mb-1"
-                    key={`${item[fieldsType.idField]}-${fieldsType.rate}-${
-                      item[fieldsType.rate]
-                    }`}
-                  >
-                    <StarsIcons
-                      key={`${item[fieldsType.idField]}-${fieldsType.rate}-${
-                        item[fieldsType.rate]
-                      }`}
-                      customKey={`${item[fieldsType.idField]}-${
-                        fieldsType.rate
-                      }-${item[fieldsType.rate]}`}
-                      value={parseFloat(item[fieldsType.rate])}
-                      size={14}
-                    />
-                  </View>
-                )}
-                {/* Property Info */}
-                {fieldsType.propertyType && item[fieldsType.propertyType] && (
-                  <View
-                    className="flex-row items-center justify-center w-full mb-1"
-                    key={`${item[fieldsType.idField]}-${
-                      fieldsType.propertyType
-                    }-${item[fieldsType.propertyType]}`}
-                  >
-                    <Text className="text-body text-sm mb-1 ps-4">
-                      {item.propertyType} • {item.bedrooms} Beds
-                    </Text>
-                  </View>
-                )}
-                {fieldsType.bathrooms && item[fieldsType.bathrooms] && (
-                  <View
-                    className="flex-row items-center justify-center w-full mb-1"
-                    key={`${item[fieldsType.idField]}-${fieldsType.bathrooms}-${
-                      item[fieldsType.bathrooms]
-                    }`}
-                  >
-                    <Text className="text-body text-sm mb-1 ps-4">
-                      {item.bathrooms} Baths • {item.area} m²
-                    </Text>
-                  </View>
-                )}
-              </View>
-            </View>
-          </VStack>
-        </View>
-      </View>
-
-      {/* Bottom Row: Location, Views, Contact */}
-      <View
-        className="flex-row justify-between items-center mt-1 gap-1"
-        style={{ gap: 3 }}
+      {/* Main Card */}
+      {/*
+       */}
+      <Card
+        className={`items-center rounded-xl overflow-hidden border relative ${
+          selected ? "border-2 border-green-500 bg-green-100" : "bg-dark_card"
+        } !rounded-none`}
       >
-        {/* in search location-views-chat */}
-        {fieldsType.location && item[fieldsType.location] && (
-          <TouchableOpacity
-            className="bg-accentHover px-3 py-1 rounded-full shadow flex-row items-center"
-            onPress={() => console.log("Redirect to map:", item.location)}
-          >
-            <MaterialCommunityIcons
-              name="map-marker-outline"
-              size={18}
-              color={theme.body}
-            />
-            <Text className="text-body text-sm font-semibold ml-1">
-              {item.location}
-            </Text>
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity
-          className="bg-accent p-2 rounded-xl flex-1 flex-row justify-center items-center"
-          onPress={() => console.log("Contact icon pressed")}
-        >
-          {/* <MaterialCommunityIcons
-            name="phone-outline"
-            size={20}
-            color="white"
-          /> */}
-          <FontAwesome6 name="sack-dollar" size={24} color={theme.body} />
-          <Text className="text-md text-body ml-1">Booked</Text>
-        </TouchableOpacity>
-        {/* <View className="flex-row items-center">
-          <MaterialCommunityIcons
-            name="eye-outline"
-            size={18}
-            color={theme.accent}
-          />
-          <Text className="text-body text-xs ml-1">
-            {item.viewers} viewing now
-          </Text>
-        </View> */}
-
-        <TouchableOpacity
-          className="bg-body p-2 rounded-xl"
-          onPress={() => console.log("Contact icon pressed")}
-        >
-          {/* <MaterialCommunityIcons
-            name="phone-outline"
-            size={20}
-            color="white"
-          /> */}
-          <AntDesign name="wechat" size={24} color={theme.accent} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Reward Points */}
-      {/* <View className="flex flex-row justify-between items-center px-2">
-        {fieldsType.rewardPoints && item[fieldsType.rewardPoints] && (
+        <View className="w-full flex flex-col">
+          {/* Image + Info Section */}
           <View
-            className="relative w-6 h-6 justify-center items-center"
-            key={`${item[fieldsType.idField]}-${fieldsType.rewardPoints}-${
-              item[fieldsType.rewardPoints]
-            }`}
+            style={!isWeb ? { flexDirection: "row", width: "100%" } : undefined}
+            className={isWeb ? "grid grid-cols-2 w-full" : undefined}
           >
-            <MaterialCommunityIcons
-              name="gift-outline"
-              size={24}
-              color={theme.accent}
-            />
-            <View className="absolute -top-1 -end-2 bg-green-600 rounded-full px-1">
-              <Text className="text-xs text-white font-bold">
-                {item[fieldsType.rewardPoints] ?? 0}
-              </Text>
+            {/* Image */}
+            <View
+              style={!isWeb ? { width: "50%" } : undefined}
+              className="w-full flex flex-col relative"
+            >
+              <MemoizedImageCard
+                item={item}
+                fieldsType={fieldsType}
+                imageSize={imageSize}
+                schemaActions={schemaActions}
+              />
+            </View>
+
+            {/* Content */}
+            <View
+              style={
+                !isWeb
+                  ? { width: "50%", justifyContent: "space-between" }
+                  : undefined
+              }
+              className="w-full flex flex-col justify-between ps-2"
+            >
+              <VStack>
+                <View
+                  className={
+                    isRTL() ? "items-start" : "items-start" + " min-h-28"
+                  }
+                >
+                  {/* Company Name + Verified + Stars */}
+                  {fieldsType.companyName && item[fieldsType.companyName] && (
+                    <Text
+                      numberOfLines={2}
+                      key={`${item[fieldsType.idField]}-${
+                        fieldsType.companyName
+                      }-${item[fieldsType.companyName]}`}
+                      className="text-lg font-bold mb-1"
+                      style={{ color: theme.secondary, direction: "inherit" }}
+                    >
+                      {item.verified && (
+                        <View className="flex-row items-center">
+                          <MaterialCommunityIcons
+                            name="check-decagram"
+                            size={18}
+                            color={theme.accentHover}
+                          />
+                        </View>
+                      )}{" "}
+                      {item.companyName}
+                    </Text>
+                  )}
+
+                  {/* Stars */}
+                  {fieldsType.rate && item[fieldsType.rate] && (
+                    <View className="flex-row items-center justify-center w-full mb-1">
+                      <StarsIcons
+                        value={parseFloat(item[fieldsType.rate])}
+                        size={14}
+                      />
+                    </View>
+                  )}
+
+                  {/* Property Info */}
+                  {fieldsType.attributes && item[fieldsType.attributes] && (
+                    <ExpandableText
+                      text={attributesText}
+                      className="text-body text-sm mb-1 ps-4"
+                    />
+                  )}
+                </View>
+              </VStack>
             </View>
           </View>
-        )}
-      </View> */}
 
-      {/* Out of Stock Banner */}
-      {fieldsType.isAvailable && !item[fieldsType.isAvailable] && (
-        <View
-          key={`${item[fieldsType.idField]}-${fieldsType.isAvailable}-${
-            item[fieldsType.isAvailable]
-          }`}
-          style={{
-            backgroundColor: theme.error,
-            paddingHorizontal: 30,
-            paddingVertical: 4,
-            zIndex: 200,
-            overflow: "hidden",
-          }}
-          className={`${
-            isRTL() ? "-left-[50px] -rotate-45" : "-right-[50px] rotate-45"
-          } absolute`}
-        >
-          <Text style={{ color: theme.body, fontWeight: "bold", fontSize: 12 }}>
-            {localization.Hum_screens.menu.outOfStock}
-          </Text>
+          {/* Bottom Actions */}
+          <View className="flex-row justify-between items-center mt-2 px-2">
+            {" "}
+            {fieldsType.location && item[fieldsType.location] && (
+              <TouchableOpacity
+                className="bg-accentHover px-3 py-1 rounded-full shadow flex-row items-center"
+                onPress={() => console.log("Redirect to map:", item.location)}
+              >
+                {" "}
+                <MaterialCommunityIcons
+                  name="map-marker-outline"
+                  size={18}
+                  color={theme.body}
+                />{" "}
+                <Text className="text-body text-sm font-semibold ml-1">
+                  {" "}
+                  {item.location}{" "}
+                </Text>{" "}
+              </TouchableOpacity>
+            )}{" "}
+            <View className="flex-row items-center">
+              {" "}
+              <MaterialCommunityIcons
+                name="eye-outline"
+                size={18}
+                color={theme.accent}
+              />
+              <Text className="text-body text-xs ml-1">
+                {item.viewers} viewing now
+              </Text>
+            </View>
+            <TouchableOpacity
+              className="bg-body p-2 rounded-xl"
+              onPress={() => console.log("Contact icon pressed")}
+            >
+              <AntDesign name="wechat" size={24} color={theme.accent} />{" "}
+            </TouchableOpacity>
+          </View>
         </View>
-      )}
+      </Card>
+
+      {/* Price Plans */}
+      <PricePlansSection pricePlans={item.pricePlans} />
     </View>
   );
 };
-const MemoizedImageCard = React.memo(
-  function MemoizedImageCard({ item, fieldsType, imageSize, schemaActions }) {
+
+export const MemoizedImageCard = React.memo(
+  ({ item, fieldsType, imageSize, schemaActions }: any) => {
+    const { width } = useWindowDimensions();
+    const isWeb = Platform.OS === "web";
+
+    const imageHeight = width < 640 ? 160 : width < 1024 ? 208 : 224;
     return (
       <Box className="w-full flex justify-center items-center overflow-hidden rounded-0">
         <ImageCardActions
@@ -243,19 +217,17 @@ const MemoizedImageCard = React.memo(
           item={item}
           showFaovertIcon={fieldsType.isFav}
           style={{ width: imageSize, height: imageSize }}
-          className="!w-[100%] !h-40 md:!size-40"
+          className={isWeb ? "!w-[100%] !h-40 sm:!h-52 lg:!h-56" : "!size-40"}
         >
           <></>
         </ImageCardActions>
       </Box>
     );
   },
-  (prevProps, nextProps) => {
-    // only re-render if item or fieldsType change
-    return (
-      prevProps.item === nextProps.item &&
-      prevProps.fieldsType === nextProps.fieldsType &&
-      prevProps.imageSize === nextProps.imageSize
-    );
-  }
+  (prevProps, nextProps) =>
+    prevProps.item === nextProps.item &&
+    prevProps.fieldsType === nextProps.fieldsType &&
+    prevProps.imageSize === nextProps.imageSize
 );
+
+export default CompanyCard;

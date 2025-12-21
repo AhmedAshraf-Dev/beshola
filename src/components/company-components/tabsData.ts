@@ -329,3 +329,144 @@ export const menuItemType = [
     name: "menuItemsGroup",
   },
 ];
+export const initCompanyRows = [
+  {
+    nodeMenuItemID: "prop-001",
+    sku: "NC-APT-165",
+    price: 2800000,
+    discount: 200000,
+    priceAfterDiscount: 2600000,
+
+    attributes: [
+      { id: 0, value: "Apartment" },
+      { id: 1, value: "3 Bedrooms" },
+      { id: 2, value: "2 Bathrooms" },
+      { id: 3, value: "165 m²" },
+    ],
+
+    isFav: false,
+    isActive: true,
+    isAvailable: true,
+
+    rate: 4.6,
+    rating: 4.6,
+    verified: true,
+
+    companyItemImage:
+      "https://www.nawy.com/blog/wp-content/uploads/2022/12/%D8%B9%D9%82%D8%A7%D8%B1%D8%A7%D8%AA-%D9%84%D9%84%D8%A8%D9%8A%D8%B9-%D9%81%D9%8A-%D8%A7%D9%84%D8%B4%D9%8A%D8%AE-%D8%B2%D8%A7%D9%8A%D8%AF.png",
+
+    menuItemName: "Apartment in New Cairo",
+    companyName: "Palm Hills Developments",
+
+    propertyType: "Apartment",
+    bedrooms: 3,
+    bathrooms: 2,
+    area: 165,
+
+    location: "New Cairo, Egypt",
+    viewers: 124,
+
+    pricePlans: [
+      {
+        name: "Standard Plan",
+        price: "EGP 2,600,000",
+        area: 165,
+        paymentPlan: "10% downpayment - 7 years installments",
+        deliveryDate: "2027",
+      },
+    ],
+  },
+
+  {
+    nodeMenuItemID: "prop-002",
+    sku: "SZ-VIL-240",
+    price: 5200000,
+    discount: 300000,
+    priceAfterDiscount: 4900000,
+
+    attributes: [
+      { id: 0, value: "Villa" },
+      { id: 1, value: "4 Bedrooms" },
+      { id: 2, value: "4 Bathrooms" },
+      { id: 3, value: "240 m²" },
+    ],
+
+    isFav: true,
+    isActive: true,
+    isAvailable: true,
+
+    rate: 4.9,
+    rating: 4.9,
+    verified: true,
+
+    companyItemImage: "https://www.ecoprops.co.za/images/slide-1.jpg",
+
+    menuItemName: "Standalone Villa in Sheikh Zayed",
+    companyName: "Sodic",
+
+    propertyType: "Villa",
+    bedrooms: 4,
+    bathrooms: 4,
+    area: 240,
+
+    location: "Sheikh Zayed, Egypt",
+    viewers: 312,
+
+    pricePlans: [
+      {
+        name: "Premium Plan",
+        price: "EGP 4,900,000",
+        area: 240,
+        paymentPlan: "15% downpayment - 8 years installments",
+        deliveryDate: "2028",
+      },
+    ],
+  },
+
+  {
+    nodeMenuItemID: "prop-003",
+    sku: "OCT-DUP-190",
+    price: 3600000,
+    discount: 150000,
+    priceAfterDiscount: 3450000,
+
+    attributes: [
+      { id: 0, value: "Duplex" },
+      { id: 1, value: "3 Bedrooms" },
+      { id: 2, value: "3 Bathrooms" },
+      { id: 3, value: "190 m²" },
+    ],
+
+    isFav: false,
+    isActive: true,
+    isAvailable: false,
+
+    rate: 4.2,
+    rating: 4.2,
+    verified: false,
+
+    companyItemImage:
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
+
+    menuItemName: "Duplex in 6th of October",
+    companyName: "Mountain View",
+
+    propertyType: "Duplex",
+    bedrooms: 3,
+    bathrooms: 3,
+    area: 190,
+
+    location: "6th of October, Egypt",
+    viewers: 89,
+
+    pricePlans: [
+      {
+        name: "Flexible Plan",
+        price: "EGP 3,450,000",
+        area: 190,
+        paymentPlan: "5% downpayment - 9 years installments",
+        deliveryDate: "2026",
+      },
+    ],
+  },
+];

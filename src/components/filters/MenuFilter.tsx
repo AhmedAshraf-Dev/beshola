@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateFilters } from "../../reducers/FilterReducer";
 import { tabsData } from "../company-components/tabsData";
 
-export default function MenuFilter() {
+export default function MenuFilter({ onFilterDone }) {
   const [updateKey, setUpdateKey] = useState(1);
   const {
     control,
@@ -62,6 +62,7 @@ export default function MenuFilter() {
   };
   // Handle form submission
   const onSubmit = (data) => {
+    onFilterDone({ ...filterRow, ...data });
     dispatch(updateFilters({ ...filterRow, ...data })); // Update Redux state with submitted data
   };
   // Update filtered data when filters change
@@ -79,17 +80,17 @@ export default function MenuFilter() {
   return (
     <View className="flex-1 bg-body">
       {/* Header */}
-      <GoBackHeader
+      {/* <GoBackHeader
         title={localization.Hum_screens.menu.filter.header.title}
         subTitle={localization.Hum_screens.menu.filter.header.title.subTitle}
-      />
+      /> */}
 
       {/* Clear All Button */}
       <TouchableOpacity
         className="flex flex-row items-end justify-end my-1"
         onPress={handleClearAll}
       >
-        <Text className="text-2xl font-bold text-accent">
+        <Text className="text-md font-bold text-accent">
           {localization.Hum_screens.menu.filter.clearButton}
         </Text>
       </TouchableOpacity>

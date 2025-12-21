@@ -3,7 +3,7 @@ import { View, StyleSheet, Platform } from "react-native";
 import { Image } from "expo-image";
 import { useSelector } from "react-redux";
 import { GetMediaUrl } from "../operation/GetMediaUrl";
-import { useMenu } from "../../../context/MenuProvider";
+import { useMenu } from "../../../context/SearchProvider";
 
 export default function ImageRoute({ item }) {
   const fieldsType = useSelector((state) => state.menuItem.fieldsType);
@@ -38,11 +38,7 @@ export default function ImageRoute({ item }) {
     <View style={styles.container}>
       <Image
         key={key}
-        source={
-          hasError
-            ? require("../../../assets/display/icon.webp")
-            : `https://www.nawy.com/blog/wp-content/uploads/2022/12/%D8%B9%D9%82%D8%A7%D8%B1%D8%A7%D8%AA-%D9%84%D9%84%D8%A8%D9%8A%D8%B9-%D9%81%D9%8A-%D8%A7%D9%84%D8%B4%D9%8A%D8%AE-%D8%B2%D8%A7%D9%8A%D8%AF.png`
-        }
+        source={hasError ? require("../../../assets/display/icon.webp") : route}
         style={styles.image}
         contentFit="cover"
         cachePolicy="memory-disk"

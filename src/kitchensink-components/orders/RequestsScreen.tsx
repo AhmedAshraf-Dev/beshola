@@ -26,7 +26,9 @@ import RenderLoadingItems from "../../utils/component/RenderLoadingItems";
 import CompanyCardsView from "../../components/company-components/CompanyCardsView";
 import CompanyCardsFlatList from "../../components/company-components/CompanyCardsVirtualized";
 import { useCart } from "../../../context/CartProvider";
-import { useMenu } from "../../../context/MenuProvider";
+import { useSearch } from "../../../context/SearchProvider";
+import RequestCard from "../../components/cards/RequestCard";
+import { initCompanyRows } from "../../components/company-components/tabsData";
 export default function RequestsScreen({}) {
   const {
     status: { isConnected: isOnline },
@@ -89,7 +91,11 @@ export default function RequestsScreen({}) {
   useEffect(() => {
     if (WS_Connected) return;
     let cleanup;
-    ConnectToWS(setWSMessageOrders, setWS_Connected)
+    ConnectToWS(
+      setWSMessageOrders,
+      setWS_Connected,
+      cartFieldsType.dataSourceName
+    )
       .then(() => console.log("🔌 WebSocket setup done"))
       .catch((e) => {
         console.error("❌ Cart WebSocket error", e);
@@ -144,7 +150,7 @@ export default function RequestsScreen({}) {
   const { cartState, cartFieldsType } = useCart();
   const { menuItemsState } = useSchemas();
 
-  const { menustate } = useMenu();
+  const { menustate } = useSearch();
   const [selectedItems, setSelectedItems] = useState([]);
   return (
     <ScrollView
@@ -163,159 +169,15 @@ export default function RequestsScreen({}) {
           </Text>
         </View>
       )}
-      <VStack className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        <CompanyCardsFlatList
-          fieldsType={fieldsType}
-          cartState={cartState}
-          menuItemsState={menuItemsState}
-          selectedItems={selectedItems}
-          setSelectedItems={setSelectedItems}
-          rows={[
-            {
-              nodeMenuItemID: "f6d053b4-b873-4cea-b28f-21f369e78a1c",
-              sku: "1233",
-              price: 30.0,
-              rewardPoints: 0.0,
-              discount: 0.0,
-              taxTypeID: "00000000-0000-0000-0000-000000000000",
-              taxAmount: 0,
-              size: 0,
-              preparingTimeAmountPerMinute: 0,
-              isFav: false,
-              isActive: true,
-              isAvailable: true,
-              nodeID: "2421d86a-0043-441b-988a-e7cfad6273a7",
-              node_Name: "MainNode",
-              nodeAddress: "Minia/Default Street/Default Zone/1/1/A ",
-              priceAfterDiscount: 30.0,
-              menuItemID: "5ca158be-2685-4757-8866-0563808e21e1",
-              rate: 5.0,
-              numberOfOrders: 0,
-              numberOfReviews: 0,
-              numberOfLikes: 1,
-              numberOfDislikes: 0,
-              companyItemImage:
-                "MenuItemImages\\MenuItemImages.jpg?v1/1/0001 12:00:00 AM?v1/1/0001 12:00:00 AM",
-              menuCategoryName: "Foods",
-              indexOflike: 1,
-              pricePlans: [
-                {
-                  name: "3BR Standard",
-                  price: "EGP 2,000,000",
-                  area: 150,
-                  paymentPlan: "10% downpayment - 6 years installments",
-                  deliveryDate: "2026",
-                },
-                {
-                  name: "3BR Premium",
-                  price: "EGP 2,300,000",
-                  area: 165,
-                  paymentPlan: "15% downpayment - 7 years installments",
-                  deliveryDate: "2027",
-                },
-                {
-                  name: "4BR Duplex",
-                  price: "EGP 3,000,000",
-                  area: 210,
-                  paymentPlan: "20% downpayment - 8 years installments",
-                  deliveryDate: "2028",
-                },
-              ],
-              menuCategoryID: "b7d65f7f-f87a-4fa6-beaa-d799ba77b9ce",
-              menuItemName: "test123",
-              menuItemDescription: "hghjasfjkhas",
-              canReturn: true,
-              keywords: "ttt,trtrt,test123",
-              weightKg: 0,
-              lengthCm: 0,
-              widthCm: 0,
-              heightCm: 0,
-              packageDegree: 0,
-              volume: 0,
-              rating: 4.5,
-              verified: true,
-              companyName: "Beshola",
-              propertyType: "Apartment",
-              bedrooms: 3,
-              bathrooms: 2,
-              area: 165,
-              location: "New Cairo, Egypt",
-              viewers: 24,
-            },
-            {
-              nodeMenuItemID: "f6d053b4-b873-4cea-b28f-21f369e78a1c",
-              sku: "1233",
-              price: 30.0,
-              rewardPoints: 0.0,
-              discount: 0.0,
-              taxTypeID: "00000000-0000-0000-0000-000000000000",
-              taxAmount: 0,
-              size: 0,
-              preparingTimeAmountPerMinute: 0,
-              isFav: false,
-              isActive: true,
-              isAvailable: true,
-              nodeID: "2421d86a-0043-441b-988a-e7cfad6273a7",
-              node_Name: "MainNode",
-              nodeAddress: "Minia/Default Street/Default Zone/1/1/A ",
-              priceAfterDiscount: 30.0,
-              menuItemID: "5ca158be-2685-4757-8866-0563808e21e1",
-              rate: 5.0,
-              numberOfOrders: 0,
-              numberOfReviews: 0,
-              numberOfLikes: 1,
-              numberOfDislikes: 0,
-              companyItemImage:
-                "MenuItemImages\\MenuItemImages.jpg?v1/1/0001 12:00:00 AM?v1/1/0001 12:00:00 AM",
-              menuCategoryName: "Foods",
-              indexOflike: 1,
-              pricePlans: [
-                {
-                  name: "3BR Standard",
-                  price: "EGP 2,000,000",
-                  area: 150,
-                  paymentPlan: "10% downpayment - 6 years installments",
-                  deliveryDate: "2026",
-                },
-                {
-                  name: "3BR Premium",
-                  price: "EGP 2,300,000",
-                  area: 165,
-                  paymentPlan: "15% downpayment - 7 years installments",
-                  deliveryDate: "2027",
-                },
-                {
-                  name: "4BR Duplex",
-                  price: "EGP 3,000,000",
-                  area: 210,
-                  paymentPlan: "20% downpayment - 8 years installments",
-                  deliveryDate: "2028",
-                },
-              ],
-              menuCategoryID: "b7d65f7f-f87a-4fa6-beaa-d799ba77b9ce",
-              menuItemName: "test123",
-              menuItemDescription: "hghjasfjkhas",
-              canReturn: true,
-              keywords: "ttt,trtrt,test123",
-              weightKg: 0,
-              lengthCm: 0,
-              widthCm: 0,
-              heightCm: 0,
-              packageDegree: 0,
-              volume: 0,
-              rating: 3,
-              verified: true,
-              companyName: "Porto",
-              propertyType: "Villa",
-              bedrooms: 6,
-              bathrooms: 3,
-              area: 250,
-              location: "Elso3na,Egypt",
-              viewers: 74,
-            },
-          ]}
-        />
-      </VStack>
+      <CompanyCardsFlatList
+        fieldsType={fieldsType}
+        cartState={cartState}
+        menuItemsState={menuItemsState}
+        selectedItems={selectedItems}
+        setSelectedItems={setSelectedItems}
+        rows={initCompanyRows}
+        CardComponent={RequestCard}
+      />
       <RenderLoadingItems
         SkeletonComponent={OrderCardSkeleton}
         loading={loading}

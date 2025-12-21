@@ -2,7 +2,7 @@ import { keysToLowerFirstChar } from "../operation/keysToLowerFirstChar";
 import { TotalCount } from "./UpdateTotalCountWS";
 
 export function WSOperation(
-  messageString,
+  message,
   setReRequest,
   callback,
   idField,
@@ -10,7 +10,7 @@ export function WSOperation(
   rows,
   totalCount = 0
 ) {
-  const message = JSON.parse(messageString);
+ // const message = JSON.parse(messageString);
   const payload = keysToLowerFirstChar(message[dataSourceName]);
 
   const handlers = {

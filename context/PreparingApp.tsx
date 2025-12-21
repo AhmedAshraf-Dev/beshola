@@ -48,6 +48,7 @@ import { useAuth } from "./auth";
 import AddMediaCard from "../src/components/cards/AddMediaCard";
 import { useSchemas } from "./SchemaProvider";
 import { LocalizationContext } from "./LocalizationContext";
+import BotChat from "../src/components/bot-chat/BotChat";
 
 // Define the shape of the WebSocket context
 interface WSContextType {
@@ -285,7 +286,7 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     if (!selectedNode || WS_Connected) return;
     let cleanup;
-    ConnectToWS(setWSsetMessage, setWS_Connected)
+    ConnectToWS(setWSsetMessage, setWS_Connected, fieldsType.dataSourceName)
       .then(() => console.log("🔌 WebSocket setup done"))
       .catch((e) => {
         console.error("❌ Cart WebSocket error", e);
@@ -348,7 +349,8 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
       {/* {isEndFinishing && ( */}
       {/* // <LoadingScreen /> */}
       <>
-        <BotChatIndicator />
+        {/* <BotChatIndicator /> */}
+        <BotChat />
         {children}
       </>
       {/* )} */}

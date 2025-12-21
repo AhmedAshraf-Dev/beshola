@@ -25,6 +25,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { theme } from "../../Theme";
 import { isRTL } from "../../utils/operation/isRTL";
+import PricePlansInput from "./PricePlansInput";
 
 const PricePlansSection = ({ pricePlans }) => {
   const [openModal, setOpenModal] = useState(false);
@@ -104,7 +105,7 @@ const PricePlansSection = ({ pricePlans }) => {
 
           <ModalBody>
             <VStack className="space-y-3 mt-1">
-              <Controller
+              {/* <Controller
                 control={control}
                 name="selectedPlan"
                 render={({ field: { value } }) =>
@@ -218,7 +219,8 @@ const PricePlansSection = ({ pricePlans }) => {
                     );
                   })
                 }
-              />
+              /> */}
+              <PricePlansInput pricePlans={pricePlans} />
             </VStack>
           </ModalBody>
 

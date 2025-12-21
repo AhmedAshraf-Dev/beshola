@@ -126,7 +126,11 @@ export const CartProvider = ({ children }) => {
 
     if (cart_WS_Connected) return;
     let cleanup;
-    ConnectToWS(setWSMessageCart, setCartWS_Connected)
+    ConnectToWS(
+      setWSMessageCart,
+      setCartWS_Connected,
+      cartFieldsType.dataSourceName
+    )
       .then(() => {})
       .catch((e) => {
         console.error("❌ Cart WebSocket error", e);

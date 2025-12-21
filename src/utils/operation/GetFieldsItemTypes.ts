@@ -7,6 +7,7 @@ export function GetFieldsItemTypes(schema) {
     imageView: getField(parameters, "companyItemImage"),
     companyName: getField(parameters, "companyName"),
     propertyType: getField(parameters, "propertyType"),
+    attributes: getField(parameters, "attributes"),
     price: getField(parameters, "price"),
     rate: getField(parameters, "rate"),
     verified: getField(parameters, "verified"),

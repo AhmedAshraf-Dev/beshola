@@ -111,6 +111,8 @@ export const LoginWithLeftBackground = () => {
         if (Platform.OS === "web") {
           // window.location.reload(); // Web reload
           window.location.href = "/";
+        } else {
+          navigation.navigate("Home");
         }
 
         // RNRestart.Restart();
@@ -226,6 +228,8 @@ export const LoginWithLeftBackground = () => {
               if (Platform.OS === "web") {
                 // window.location.reload(); // Web reload
                 window.location.href = "/";
+              } else {
+                navigation.navigate("Home" as never);
               }
             }}
           >
