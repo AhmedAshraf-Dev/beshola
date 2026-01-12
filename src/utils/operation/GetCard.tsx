@@ -9,7 +9,7 @@ export function GetCard(
   GetCustomerCart = false,
   dispatch,
   cart,
-  total
+  total,
 ) {
   const fieldsType = GetFieldsItemTypes(schema);
   dispatch(setFields(fieldsType));
@@ -19,7 +19,7 @@ export function GetCard(
       setCartFromStorage({
         cart: [...GetCustomerCart.dataSource],
         totalAmount: total,
-      })
+      }),
     );
   }
   // }

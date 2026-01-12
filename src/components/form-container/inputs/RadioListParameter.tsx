@@ -40,12 +40,12 @@ const RadioListParameter = ({
   //   );
 
   const columns = schema.dashboardFormSchemaParameters.filter(
-    (param) => !param.isIDField
+    (param) => !param.isIDField,
   );
   const getAction =
     schemaActions &&
     schemaActions.find(
-      (action) => action.dashboardFormActionMethodType == "Get"
+      (action) => action.dashboardFormActionMethodType == "Get",
     );
   const dataSourceAPI = (query) => {
     return buildApiUrl(query, {
@@ -54,7 +54,7 @@ const RadioListParameter = ({
   };
 
   const { data, error, isLoading } = useFetchWithoutBaseUrl(
-    dataSourceAPI(getAction)
+    dataSourceAPI(getAction),
   );
   const [selectedValue, setSelectedValue] = useState(null);
   useEffect(() => {

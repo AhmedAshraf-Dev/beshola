@@ -107,7 +107,7 @@ export default function DisplayDetilsItems({
 }) {
   const [isModalVisible, setIsModalVisible] = useState(true);
   const subSchema = schemas.find(
-    (schema) => schema?.dashboardFormSchemaID === col?.lookupID
+    (schema) => schema?.dashboardFormSchemaID === col?.lookupID,
   );
   const {
     control,
@@ -119,21 +119,22 @@ export default function DisplayDetilsItems({
 
   const [state, reducerDispatch] = useReducer(
     reducer,
-    initialState(VIRTUAL_PAGE_SIZE, ScratchVoucherCard.idField)
+    initialState(VIRTUAL_PAGE_SIZE, ScratchVoucherCard.idField),
   );
   const [reqError, setReqError] = useState(null);
   const [disable, setDisable] = useState(null);
   const [row, setRow] = useState(null);
   const localization = useSelector((state) => state.localization.localization);
   const voucherLocale = localization.Hum_screens.profile.collapses.find(
-    (collapse) => collapse.type === "vouchers"
+    (collapse) => collapse.type === "vouchers",
   ).childrenText;
 
   const [currentSkip, setCurrentSkip] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const dataSourceAPI = (query, skip, take) => {
     return buildApiUrl(query, {
-      pageIndex: skip + currentPage,
+      pageIndex: Math.floor((skip + currentPage) / take) + 1,
+
       pageSize: take,
     });
   };
@@ -141,7 +142,7 @@ export default function DisplayDetilsItems({
   const getAction =
     CustomerSaleInvoicesActions &&
     CustomerSaleInvoicesActions.find(
-      (action) => action.dashboardFormActionMethodType === "Get"
+      (action) => action.dashboardFormActionMethodType === "Get",
     );
 
   const { rows, skip, totalCount, loading } = state;

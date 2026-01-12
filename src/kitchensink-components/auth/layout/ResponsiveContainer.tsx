@@ -6,7 +6,7 @@ import { theme } from "../../../Theme";
 
 const ResponsiveContainer = ({ children, style, setMargin }) => {
   const [windowWidth, setWindowWidth] = useState(
-    Dimensions.get("window").width
+    Dimensions.get("window").width,
   );
 
   useEffect(() => {

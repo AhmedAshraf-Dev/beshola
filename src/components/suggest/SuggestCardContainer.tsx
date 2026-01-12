@@ -6,7 +6,7 @@ import {
   useReducer,
   useState,
 } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 import { useSelector } from "react-redux";
 import { useNetwork } from "../../../context/NetworkContext";
 import { useWS } from "../../../context/WSProvider";
@@ -26,11 +26,14 @@ import { useSchemas } from "../../../context/SchemaProvider";
 import { useShopNode } from "../../../context/ShopNodeProvider";
 import { getItemsLoadingCount } from "../../utils/operation/getItemsLoadingCount";
 import FavoriteMenuItemsSchema from "../../Schemas/MenuSchema/FavoriteMenuItemsSchema.json";
+import { Heading } from "../../../components/ui";
+import { isRTL } from "../../utils/operation/isRTL";
 export default function SuggestCardContainer({
   row = {},
   schemaActions,
   suggestContainerType = 1,
   shownNodeMenuItemIDs,
+  header = "",
 }) {
   const { status, isOnline } = useNetwork();
   const [WS_Connected, setWS_Connected] = useState(false);
@@ -39,7 +42,7 @@ export default function SuggestCardContainer({
   const { suggestCardState } = useSchemas();
   const [suggestState, suggestReducerDispatch] = useReducer(
     reducer,
-    initialState(4000, suggestCardState.schema.idField)
+    initialState(4000, suggestCardState.schema.idField),
   );
   const itemsLoadingCount = useMemo(() => getItemsLoadingCount(), []);
 
@@ -48,17 +51,17 @@ export default function SuggestCardContainer({
   const getSuggestAction =
     schemaActions &&
     schemaActions.find(
-      (action) => action.dashboardFormActionMethodType === "Get"
+      (action) => action.dashboardFormActionMethodType === "Get",
     );
   const reduxSelectedLocation = useSelector(
-    (state: any) => state.location?.selectedLocation
+    (state: any) => state.location?.selectedLocation,
   );
   const reduxSelectedNode = useSelector(
-    (state: any) => state.location?.selectedNode
+    (state: any) => state.location?.selectedNode,
   );
 
   const [selectedLocation, setSelectedLocation] = useState(
-    reduxSelectedLocation || null
+    reduxSelectedLocation || null,
   );
   const { selectedNode } = useShopNode();
   const suggestFieldsType = {
@@ -119,7 +122,7 @@ export default function SuggestCardContainer({
     ConnectToWS(
       setWSMessageSuggest,
       setWS_Connected,
-      suggestFieldsType.dataSourceName
+      suggestFieldsType.dataSourceName,
     )
       .then(() => console.log("🔌 WebSocket setup done"))
       .catch((e) => {});
@@ -142,6 +145,9 @@ export default function SuggestCardContainer({
 
   // 📨 React to WebSocket messages only when valid
   useEffect(() => {
+    console.log("====================================");
+    console.log(_wsMessageSuggest, "_wsMessageSuggest");
+    console.log("====================================");
     if (!_wsMessageSuggest) return;
     const _handleWSMessage = new WSMessageHandler({
       _WSsetMessage: _wsMessageSuggest,
@@ -150,7 +156,11 @@ export default function SuggestCardContainer({
       totalCount: suggestTotalCount,
       callbackReducerUpdate,
     });
+
     _handleWSMessage.process();
+    console.log("====================================");
+    console.log(suggestRows, "suggestRows");
+    console.log("====================================");
     //setWSMessageMenuItem(_wsMessageMenuItem);
   }, [_wsMessageSuggest]);
   const loadData = useCallback(() => {
@@ -186,35 +196,39 @@ export default function SuggestCardContainer({
       loadData();
     }, 0);
   }, [loadData, shownNodeMenuItemIDs]);
-  return (
-    <ScrollView
-      horizontal
-      className="mt-2"
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{
-        gap: 12,
-        paddingHorizontal: 12,
-        alignItems: "flex-start",
-      }}
-    >
-      <RenderSuggestCards
-        items={suggestRows}
-        schemaActions={schemaActions}
-        suggestContainerType={suggestContainerType}
-        suggestFieldsType={suggestFieldsType}
-      />
-      {suggestLoading && (
-        <>
-          {Array.from({ length: itemsLoadingCount }).map((_, i) => (
-            <SkeletonWrapper
-              key={i}
-              isLoading={suggestLoading}
-              SkeletonComponent={SuggestCardSkeleton} // optional, if you have a custom skeleton
-              // skeletonProps={{ width: "100%", height: 200 }}
-            ></SkeletonWrapper>
-          ))}
-        </>
-      )}
-    </ScrollView>
-  );
+  return suggestTotalCount > 0 ? (
+    <View className="flex-col">
+      <Heading className="text-text font-bold text-xl">{header}</Heading>
+      <ScrollView
+        horizontal
+        className="mt-2"
+        inverted={isRTL()} // ✅ RTL scroll on mobile
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          gap: 12,
+          paddingHorizontal: 12,
+          alignItems: "flex-start",
+        }}
+      >
+        <RenderSuggestCards
+          items={suggestRows}
+          schemaActions={schemaActions}
+          suggestContainerType={suggestContainerType}
+          suggestFieldsType={suggestFieldsType}
+        />
+        {suggestLoading && (
+          <>
+            {Array.from({ length: itemsLoadingCount }).map((_, i) => (
+              <SkeletonWrapper
+                key={i}
+                isLoading={suggestLoading}
+                SkeletonComponent={SuggestCardSkeleton} // optional, if you have a custom skeleton
+                // skeletonProps={{ width: "100%", height: 200 }}
+              ></SkeletonWrapper>
+            ))}
+          </>
+        )}
+      </ScrollView>
+    </View>
+  ) : null;
 }

@@ -37,7 +37,7 @@ export default function Security() {
   const postAction =
     PersonInfoSchemaActions &&
     PersonInfoSchemaActions.find(
-      (action) => action.dashboardFormActionMethodType === "Post"
+      (action) => action.dashboardFormActionMethodType === "Post",
     );
   const onSubmit = async (data: any) => {
     // Destructure to remove confirmPassword from the sent data
@@ -52,7 +52,7 @@ export default function Security() {
         signupState.schema.idField,
         true,
         postAction,
-        signupState.schema.projectProxyRoute
+        signupState.schema.projectProxyRoute,
       );
       setResult(request);
       if (request && request.success === true) {

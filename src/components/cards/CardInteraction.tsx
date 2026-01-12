@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import {
   ActivityIndicator,
   Animated,
+  Platform,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -14,7 +15,7 @@ import { Vibration } from "react-native";
 
 export default function CardInteraction({ item, fieldsType, schemaActions }) {
   const [active, setActive] = useState(
-    item[fieldsType.indexOfInteraction] ?? 0
+    item[fieldsType.indexOfInteraction] ?? 0,
   ); // 1: like, -1: dislike, 0: none
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -57,12 +58,12 @@ export default function CardInteraction({ item, fieldsType, schemaActions }) {
       Animated.timing(likeAnim, {
         toValue: active === 1 ? 1 : 0,
         duration: 300,
-        useNativeDriver: false,
+        useNativeDriver: Platform.OS !== "web",
       }),
       Animated.timing(dislikeAnim, {
         toValue: active === -1 ? 1 : 0,
         duration: 300,
-        useNativeDriver: false,
+        useNativeDriver: Platform.OS !== "web",
       }),
     ]).start();
   }, [active, likeAnim, dislikeAnim]);
@@ -88,7 +89,7 @@ export default function CardInteraction({ item, fieldsType, schemaActions }) {
         item[fieldsType.idField],
         newIndex !== 0,
         schemaActions,
-        fieldsType.proxyRoute
+        fieldsType.proxyRoute,
       );
 
       if (req) {

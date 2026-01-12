@@ -93,13 +93,14 @@ const VIRTUAL_PAGE_SIZE = 2;
 const PurchasesCollapse = ({ schemas = SaleInvoiceSchema }) => {
   const [state, reducerDispatch] = useReducer(
     reducer,
-    initialState(VIRTUAL_PAGE_SIZE, schemas[0].idField)
+    initialState(VIRTUAL_PAGE_SIZE, schemas[0].idField),
   );
   const localization = useSelector((state) => state.localization.localization);
   const [currentPage, setCurrentPage] = useState(1);
   const dataSourceAPI = (query, skip, take) => {
     return buildApiUrl(query, {
-      pageIndex: skip + currentPage,
+      pageIndex: Math.floor((skip + currentPage) / take) + 1,
+
       pageSize: take,
     });
   };
@@ -107,7 +108,7 @@ const PurchasesCollapse = ({ schemas = SaleInvoiceSchema }) => {
   const getAction =
     CustomerSaleInvoicesActions &&
     CustomerSaleInvoicesActions.find(
-      (action) => action.dashboardFormActionMethodType === "Get"
+      (action) => action.dashboardFormActionMethodType === "Get",
     );
 
   const { rows, skip, totalCount, loading } = state;
@@ -126,7 +127,7 @@ const PurchasesCollapse = ({ schemas = SaleInvoiceSchema }) => {
   }, [currentPage]);
   const getCollapse = (type) =>
     localization.Hum_screens.profile.collapses.find(
-      (collapse) => collapse.type === type
+      (collapse) => collapse.type === type,
     );
 
   return (

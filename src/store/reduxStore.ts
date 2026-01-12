@@ -15,7 +15,7 @@ import PaymentReducer from "../reducers/PaymentReducer";
 import localizationReducer from "../reducers/localizationReducer"; // ✅ import this
 import SchemasReducer from "../reducers/SchemasReducer"; // ✅ import this
 import redirectReducer from "../reducers/redirectReducer"; // ✅ import this
-export const version = 10;
+export const version = 7;
 
 const appReducer = combineReducers({
   cart: CartReducer,
@@ -32,12 +32,14 @@ const appReducer = combineReducers({
 const rootReducer = (state, action) => {
   if (action.type === "RESET_STORE") {
     return {
-      localization: state?.localization, // ✅ preserve only this
-      schemas: state?.schemas, // ✅ preserve only this
+      localization: state?.localization,
+      // [`schemas/${version}`]: state?.[`schemas/${version}`],
     };
   }
+
   return appReducer(state, action);
 };
+
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,

@@ -8,14 +8,15 @@ import {
   StyleSheet,
   Modal,
   Dimensions,
-  I18nManager,
   TouchableWithoutFeedback,
+  Platform,
 } from "react-native";
 import { Controller } from "react-hook-form";
 import { theme } from "../../../Theme";
 import { useSelector } from "react-redux";
 import { useSchemas } from "../../../../context/SchemaProvider";
 import FlagIcon from "../../../utils/component/DrawFlag";
+import { isRTL } from "../../../utils/operation/isRTL";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -34,14 +35,15 @@ const PhoneNumberParameter = ({
   const [showDropdown, setShowDropdown] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 });
   const buttonRef = useRef(null);
-  const isRTL = I18nManager.isRTL;
 
   const { signupState } = useSchemas();
 
   const countryCodeParam =
-    formSchemaParameters.find((param) => param.parameterType === "hidden") ??
+    formSchemaParameters.find(
+      (param) => param.parameterType === "hiddenCountryCode",
+    ) ??
     signupState.schema.dashboardFormSchemaParameters.find(
-      (param) => param.parameterType === "hidden"
+      (param) => param.parameterType === "hiddenCountryCode",
     );
 
   const handleSelectCode = (item) => {
@@ -60,8 +62,13 @@ const PhoneNumberParameter = ({
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.inputGroup}>
+    <View style={[styles.container]}>
+      <View
+        style={[
+          styles.inputGroup,
+          { flexDirection: isRTL() ? "row-reverse" : "row" },
+        ]}
+      >
         {/* Country Selector Button */}
         <TouchableOpacity
           ref={buttonRef}
@@ -69,12 +76,7 @@ const PhoneNumberParameter = ({
           onPress={openDropdown}
           disabled={!enable}
         >
-          <View
-            style={[
-              styles.flagWrapper,
-              isRTL && { flexDirection: "row-reverse" },
-            ]}
-          >
+          <View style={[styles.flagWrapper, { flexDirection: "row" }]}>
             <FlagIcon code={selectedCountry.iso} />
             <Text style={styles.codeText}>{selectedCountry.code}</Text>
             <Text style={styles.arrow}>▼</Text>
@@ -89,7 +91,6 @@ const PhoneNumberParameter = ({
           onRequestClose={() => setShowDropdown(false)}
         >
           <View style={styles.modalOverlay}>
-            {/* Dropdown box (touchable inside) */}
             <TouchableWithoutFeedback>
               <View
                 style={[
@@ -109,20 +110,14 @@ const PhoneNumberParameter = ({
                   keyExtractor={(item) => item.code}
                   renderItem={({ item }) => (
                     <TouchableOpacity
-                      style={[
-                        styles.dropdownItem,
-                        isRTL && { flexDirection: "row-reverse" },
-                      ]}
+                      style={[styles.dropdownItem, { flexDirection: "row" }]}
                       onPress={() => handleSelectCode(item)}
                     >
                       <FlagIcon code={item.iso} />
                       <Text
                         style={[
                           styles.dropdownText,
-                          {
-                            textAlign: isRTL ? "right" : "left",
-                            writingDirection: isRTL ? "rtl" : "ltr",
-                          },
+                          { textAlign: "left", writingDirection: "ltr" },
                         ]}
                       >
                         {item.country} ({item.code})
@@ -172,7 +167,8 @@ const PhoneNumberParameter = ({
                   styles.input,
                   !enable && styles.disabledInput,
                   error && { borderColor: "red" },
-                  isRTL && { textAlign: "right" },
+                  { textAlign: "left", writingDirection: "ltr" },
+                  isRTL() && { textAlign: "right" },
                 ]}
                 className="p-3"
                 placeholder="123-456-7890"
@@ -209,16 +205,14 @@ export default PhoneNumberParameter;
 
 const styles = StyleSheet.create({
   container: { marginTop: 10 },
-  inputGroup: { flexDirection: "row", alignItems: "center" },
+  inputGroup: { alignItems: "center" },
 
   flagWrapper: {
-    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
 
   codeButton: {
-    flexDirection: "row",
     alignItems: "center",
     backgroundColor: theme.body,
     borderColor: theme.border,
@@ -248,7 +242,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   dropdownItem: {
-    flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
     paddingVertical: 10,
@@ -266,7 +259,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 8,
     borderBottomRightRadius: 8,
     paddingHorizontal: 10,
-    height: 60,
+    height: Platform.OS === "web" ? 60 : 40,
     backgroundColor: theme.body,
     color: theme.text,
   },

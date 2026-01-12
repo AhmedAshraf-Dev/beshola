@@ -72,7 +72,7 @@ const RequiredScreens = () => {
     } else if (user) {
       return <AppNavigator />;
     } else {
-      return <OutsideStack />;
+      return <AppNavigator />;
     }
   };
   const webScreens = () => {

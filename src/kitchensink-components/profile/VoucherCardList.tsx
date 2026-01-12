@@ -17,17 +17,18 @@ import { createRowCache } from "../../components/Pagination/createRowCache";
 import { initialState } from "../../components/Pagination/initialState";
 import { useSelector } from "react-redux";
 import VoucherCard from "./VoucherCard";
+import { isRTL } from "../../utils/operation/isRTL";
 
 const VIRTUAL_PAGE_SIZE = 2;
 
 const VoucherCardList = () => {
   const [state, reducerDispatch] = useReducer(
     reducer,
-    initialState(VIRTUAL_PAGE_SIZE, ScratchVoucherCard.idField)
+    initialState(VIRTUAL_PAGE_SIZE, ScratchVoucherCard.idField),
   );
   const localization = useSelector((state) => state.localization.localization);
   const voucherLocale = localization.Hum_screens.profile.collapses.find(
-    (collapse) => collapse.type === "vouchers"
+    (collapse) => collapse.type === "vouchers",
   ).childrenText;
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,7 +44,7 @@ const VoucherCardList = () => {
   const getAction =
     ScratchVoucherCardActions &&
     ScratchVoucherCardActions.find(
-      (action) => action.dashboardFormActionMethodType === "Get"
+      (action) => action.dashboardFormActionMethodType === "Get",
     );
 
   const { rows, totalCount } = state;
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   paginationContainer: {
-    flexDirection: "row",
+    flexDirection: isRTL() ? "row-reverse" : "row",
     justifyContent: "center",
     marginVertical: 10,
     flexWrap: "wrap",

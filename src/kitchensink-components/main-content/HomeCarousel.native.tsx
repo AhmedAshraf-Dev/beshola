@@ -1,59 +1,37 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-  Platform,
-  Text,
-} from "react-native";
-import Carousel from "react-native-reanimated-carousel"; // Works on mobile
+import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
+import Carousel from "react-native-reanimated-carousel";
 import AnimatedDotsCarousel from "react-native-animated-dots-carousel";
-import { Image } from "../../../components/ui";
 import AddCard from "../../components/cards/AddMediaCard";
 import { theme } from "../../Theme";
-import SuggestCardContainer from "../../components/suggest/SuggestCardContainer";
-import AddressLocationCollapsible from "../../utils/component/AddressLocationCollapsible";
-
 const { width } = Dimensions.get("window");
 
 const data = [
-  { src: require("../../../assets/display/food1.jpg") },
-  { src: require("../../../assets/display/food.jpg") },
-  { src: require("../../../assets/display/food.jpg") },
-  { src: require("../../../assets/display/food.jpg") },
-  { src: require("../../../assets/display/food.jpg") },
+  { src: require("../../../assets/display/ad1.jpg") },
+  { src: require("../../../assets/display/ad2.jpg") },
+  { src: require("../../../assets/display/ad3.jpg") },
+  { src: require("../../../assets/display/ad4.jpg") },
 ];
 
 const HomeCarousel = () => {
   const [index, setIndex] = useState(0);
-  const scrollViewRef = useRef(null);
-
-  // Auto-scroll logic for Web
-  // useEffect(() => {
-  //   if (Platform.OS === "web") {
-  //     const interval = setInterval(() => {
-  //       setIndex((prevIndex) => (prevIndex + 1) % data.length);
-  //     }, 3000); // Change slide every 3 seconds
-  //     return () => clearInterval(interval);
-  //   }
-  // }, []);
+  const carouselRef = useRef(null);
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: theme.body }}>
       <View style={{ flex: 1, paddingBottom: 20 }}>
-        {/* Header Section */}
-
         {/* Carousel Section */}
-        <View style={{ paddingHorizontal: 12, marginTop: 12 }}>
+        <View style={{ marginTop: 12 }}>
           <Carousel
-            width={width - 24} // Account for horizontal padding
+            ref={carouselRef}
+            loop
+            autoPlay
+            autoPlayInterval={3000} // 🔥 AUTOPLAY HERE
+            width={width - 24}
             height={200}
             data={data}
-            scrollAnimationDuration={500}
-            defaultIndex={index}
-            autoPlay={false}
-            onSnapToItem={(newIndex) => setIndex(newIndex)}
+            scrollAnimationDuration={800}
+            onSnapToItem={(i) => setIndex(i)}
             renderItem={({ item }) => <AddCard source={item.src} />}
           />
         </View>
@@ -63,25 +41,8 @@ const HomeCarousel = () => {
           <AnimatedDotsCarousel
             length={data.length}
             currentIndex={index}
-            scrollableDotsConfig={{
-              setIndex,
-              onNewIndex: (newIndex) => {
-                scrollViewRef?.current?.scrollTo?.({
-                  x: newIndex * width,
-                  animated: false,
-                });
-              },
-              containerBackgroundColor: theme.card,
-              container: {
-                alignItems: "center",
-                borderRadius: 15,
-                height: 30,
-                justifyContent: "center",
-                paddingHorizontal: 15,
-              },
-            }}
             maxIndicators={4}
-            interpolateOpacityAndColor={true}
+            interpolateOpacityAndColor
             activeIndicatorConfig={{
               color: theme.text,
               margin: 3,
@@ -96,30 +57,29 @@ const HomeCarousel = () => {
             }}
             decreasingDots={[
               {
-                config: { color: theme.text, margin: 3, opacity: 0.5, size: 6 },
+                config: {
+                  color: theme.text,
+                  margin: 3,
+                  opacity: 0.5,
+                  size: 6,
+                },
                 quantity: 1,
               },
               {
-                config: { color: theme.text, margin: 3, opacity: 0.5, size: 4 },
+                config: {
+                  color: theme.text,
+                  margin: 3,
+                  opacity: 0.5,
+                  size: 4,
+                },
                 quantity: 1,
               },
             ]}
           />
         </View>
-
-        {/* Suggest Cards Section */}
-        <SuggestCardContainer />
       </View>
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", alignItems: "center" },
-  webCarousel: {
-    flexDirection: "row",
-    width: "100%",
-  },
-});
 
 export default HomeCarousel;

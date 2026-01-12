@@ -10,7 +10,7 @@ import { scale } from "react-native-size-matters";
  */
 export function getResponsiveImageSize(
   percent: number = 0.3,
-  options?: { min?: number; max?: number }
+  options?: { min?: number; max?: number },
 ): number {
   const screenWidth = Dimensions.get("window").width;
   let size = screenWidth * percent;

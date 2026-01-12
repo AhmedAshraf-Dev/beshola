@@ -9,7 +9,7 @@ export function mapItemsWithActions(items, conditionKey, casesWithActions) {
       acc[caseName] = action;
       return acc;
     },
-    {}
+    {},
   );
 
   // Loop through items once
@@ -17,7 +17,7 @@ export function mapItemsWithActions(items, conditionKey, casesWithActions) {
     const action = actionMap[item[conditionKey]];
     const actions = await fetchData(
       GetSchemaActionsUrl(item.dashboardFormSchemaID),
-      defaultCentralizationProxyRoute
+      defaultCentralizationProxyRoute,
     );
     if (action) {
       action({ schema: item, actions: actions.data });

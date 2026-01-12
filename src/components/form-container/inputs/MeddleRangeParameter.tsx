@@ -14,14 +14,12 @@ export default function MeddleRangeParameter({
   invalidInput,
   value = { min: 10, max: 500 }, // Default value for the `value` prop
 }) {
-  const [minValue, setMinValue] = useState(value.min);
-  const [maxValue, setMaxValue] = useState(value.max);
-  const range = minValue - maxValue;
-  const baseWidth = 300; // minimum width
-  const maxWidth = 600; // maximum width allowed
+  const MIN_DEFAULT = 10;
+  const MAX_DEFAULT = 500;
 
-  // Calculate slider width proportional to range
-  const sliderWidth = Math.min(baseWidth + range * 2, maxWidth);
+  const [minValue, setMinValue] = useState(value.min || MIN_DEFAULT);
+  const [maxValue, setMaxValue] = useState(value.max || MAX_DEFAULT);
+
   return (
     <View style={{ height: scale(100) }}>
       <GestureHandlerRootView>
@@ -32,9 +30,9 @@ export default function MeddleRangeParameter({
             defaultValue={{ min: minValue, max: maxValue }} // Default range values
             render={({ field: { onChange, value } }) => (
               <RangeSlider
-                max={value.min}
-                min={value.max}
-                sliderWidth={100}
+                max={MAX_DEFAULT}
+                min={MIN_DEFAULT}
+                sliderWidth={300}
                 step={step}
                 onValueChange={(range) => {
                   setMinValue(range.min);

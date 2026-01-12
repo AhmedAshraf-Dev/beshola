@@ -49,7 +49,7 @@ export default function SelectComponent({
   const localization = useSelector((state) => state.localization.localization);
   const { os } = useDeviceInfo();
   const platformStyleClassName = () => {
-    if (os === "web" || !subtitle) {
+    if (os === "web" || subtitle?.length === 0) {
       return "!py-2";
     } else {
       return "!justify-center !h-28 !py-7";
@@ -73,7 +73,7 @@ export default function SelectComponent({
           <SelectInput
             placeholder={localization.inputs.select.placeholder}
             value={selectedValue}
-            className="text-base text-text"
+            className="text-base !text-text"
             style={{ direction: "inherit" }}
           />
         </View>

@@ -16,7 +16,7 @@ const HomePage = () => {
     <>
       <Box className="flex-1">
         <StatusBar
-          backgroundColor={theme.notification} // Android
+          backgroundColor={theme.body} // Android
           barStyle="dark-content" // or "light-content" based on your text color
         />
         <Box className="flex-1">

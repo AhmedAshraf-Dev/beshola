@@ -5,7 +5,7 @@ export const getTabBarVisibility = (route) => {
 
   if (
     ["CheckoutScreen", "Payment", "Cart", "DetailsProductScreen"].includes(
-      routeName
+      routeName,
     )
   ) {
     return "none";

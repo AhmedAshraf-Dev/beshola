@@ -1,5 +1,5 @@
 import Entypo from "@expo/vector-icons/Entypo";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";
 import {
   Input,
@@ -11,14 +11,27 @@ import { View } from "react-native";
 import { useSelector } from "react-redux";
 import { Text } from "react-native";
 import { theme } from "../../../Theme";
+import { isRTL } from "../../../utils/operation/isRTL";
 function InputPassword({ ...props }) {
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [confirmPassword, setConfirmPassword] = useState(null);
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const localization = useSelector((state) => state.localization.localization);
   const errorText = localization.inputs.password.error;
 
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+
+  const openEyeForPassword = useRef(false);
+  const openEyeForConfirmPassword = useRef(false);
+
   const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
+    openEyeForPassword.current = !openEyeForPassword.current;
+    setPasswordVisible((v) => !v);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    openEyeForConfirmPassword.current = !openEyeForConfirmPassword.current;
+    setConfirmPasswordVisible((v) => !v);
   };
   let {
     value: defaultValue,
@@ -77,30 +90,21 @@ function InputPassword({ ...props }) {
               value={value}
               defaultValue={defaultValue}
               editable={enable}
-              onFocus={(e) => {
-                if (!e?.nativeEvent?.targetIsEyeIcon) {
-                  onChange("");
-                  setConfirmPassword("");
-                }
-              }}
+              // onFocus={(e) => {
+
+              //   if (!openEyeForPassword.current) {
+              //     onChange("");
+              //     setConfirmPassword("");
+              //   }
+              // }}
               placeholder={placeholder}
               style={props.style}
             />
-            <InputSlot
-              onPress={(e) => {
-                // Toggle visibility
-                setPasswordVisible(!passwordVisible);
-
-                // Stop focus from firing onFocus handler
-                e.nativeEvent.targetIsEyeIcon = true;
-              }}
-              className="w-auto sm:w-8 items-center"
-            >
-              {passwordVisible ? (
-                <Entypo name="eye" size={24} color="black" />
-              ) : (
-                <Entypo name="eye-with-line" size={24} color="black" />
-              )}
+            <InputSlot onPress={togglePasswordVisibility}>
+              <Entypo
+                name={passwordVisible ? "eye" : "eye-with-line"}
+                size={20}
+              />
             </InputSlot>
           </Input>
           {mustConfirmed && (
@@ -125,28 +129,20 @@ function InputPassword({ ...props }) {
                 secureTextEntry={!passwordVisible}
                 editable={enable}
                 placeholder={placeholder} //!localiztion
-                style={props.style}
+                style={[props.style, { textAlign: isRTL() ? "right" : "left" }]}
                 value={confirmPassword}
-                onFocus={() => {
-                  if (!e?.nativeEvent?.targetIsEyeIcon) {
-                    setConfirmPassword("");
-                  }
-                }}
+                // onFocus={(e) => {
+
+                //   if (!openEyeForConfirmPassword.current) {
+                //     setConfirmPassword("");
+                //   }
+                // }}
               />
-              <InputSlot
-                onPress={(e) => {
-                  // Toggle visibility
-                  setPasswordVisible(!passwordVisible);
-                  // Stop focus from firing onFocus handler
-                  e.nativeEvent.targetIsEyeIcon = true;
-                }}
-                className="w-auto sm:w-8 items-center"
-              >
-                {passwordVisible ? (
-                  <Entypo name="eye" size={24} color="black" />
-                ) : (
-                  <Entypo name="eye-with-line" size={24} color="black" />
-                )}
+              <InputSlot onPress={toggleConfirmPasswordVisibility}>
+                <Entypo
+                  name={confirmPasswordVisible ? "eye" : "eye-with-line"}
+                  size={20}
+                />
               </InputSlot>
             </Input>
           )}

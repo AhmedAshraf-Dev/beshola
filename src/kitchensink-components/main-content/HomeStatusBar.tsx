@@ -9,52 +9,7 @@ import {
 } from "../../../components/ui";
 import { ScrollView } from "react-native";
 
-const data = [
-  {
-    src: require("../../../assets/display/image1.png"),
-    seen: false,
-  },
-  {
-    src: require("../../../assets/display/image2.png"),
-    seen: true,
-  },
-  {
-    src: require("../../../assets/display/image4.png"),
-    seen: false,
-  },
-  {
-    src: require("../../../assets/display/image6.png"),
-    seen: false,
-  },
-  {
-    src: require("../../../assets/display/image8.png"),
-    seen: false,
-  },
-  {
-    src: require("../../../assets/display/image10.png"),
-    seen: false,
-  },
-  {
-    src: require("../../../assets/display/image14.png"),
-    seen: true,
-  },
-  {
-    src: require("../../../assets/display/image11.png"),
-    seen: false,
-  },
-  {
-    src: require("../../../assets/display/image12.png"),
-    seen: false,
-  },
-  {
-    src: require("../../../assets/display/image13.png"),
-    seen: false,
-  },
-  {
-    src: require("../../../assets/display/image14.png"),
-    seen: false,
-  },
-];
+const data = [];
 
 const HomeStatusBar = () => {
   const scrollViewRef = useRef(null);

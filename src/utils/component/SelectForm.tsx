@@ -9,7 +9,7 @@ export default function SelectForm({
   errorResult = {},
 }) {
   const schema = schemas.find(
-    (schema) => schema.dashboardFormSchemaID === schemaID
+    (schema) => schema.dashboardFormSchemaID === schemaID,
   );
   if (schema?.schemaType.startsWith("Table")) {
     return <DynamicTable key={schema.idField} schemas={schemas} data={data} />;

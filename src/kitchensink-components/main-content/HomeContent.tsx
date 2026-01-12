@@ -52,7 +52,7 @@ const HomeContent = () => {
           >
             <VStack className="items-center">
               <Image
-                source={require("../../../assets/display/image11.png")}
+                source={require("../../../assets/display/ad1.jpg")}
                 className="!size-12 md:!size-28 aspect-square rounded-full"
                 resizeMode="cover"
               />

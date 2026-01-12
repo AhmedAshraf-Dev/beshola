@@ -5,7 +5,7 @@ import { theme } from "../../Theme";
 export const SetResponsiveContainer = (
   screen,
   setMargin = false,
-  style = {}
+  style = {},
 ) => {
   return (
     <ResponsiveContainer style={style} setMargin={setMargin}>

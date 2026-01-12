@@ -17,11 +17,11 @@ const RangeSlider = ({
   onValueChange,
 }) => {
   const position = useSharedValue(
-    ((value.min - min) / (max - min)) * sliderWidth
-  );
+    ((value.min - min) / (max - min)) * sliderWidth,
+  ); // Initialize with value.min
   const position2 = useSharedValue(
-    ((value.max - min) / (max - min)) * sliderWidth
-  );
+    ((value.max - min) / (max - min)) * sliderWidth,
+  ); // Initialize with value.max
   const opacity = useSharedValue(0);
   const opacity2 = useSharedValue(0);
   const zIndex = useSharedValue(0);
@@ -149,7 +149,7 @@ const RangeSlider = ({
               defaultValue={`$${
                 min +
                 Math.floor(
-                  position.value / (sliderWidth / ((max - min) / step))
+                  position.value / (sliderWidth / ((max - min) / step)),
                 ) *
                   step
               }`}
@@ -167,7 +167,7 @@ const RangeSlider = ({
               defaultValue={`$${
                 min +
                 Math.floor(
-                  position2.value / (sliderWidth / ((max - min) / step))
+                  position2.value / (sliderWidth / ((max - min) / step)),
                 ) *
                   step
               }`}

@@ -27,13 +27,14 @@ import PurchaseCardDetils from "./PurchaseCardDetils";
 import PurchaseCardDetails from "./PurchaseCardDetils";
 import { parseDate, setdateTime } from "../../utils/operation/dateutilies";
 import DetilsButtonCollops from "../../utils/component/DetilsButtonCollops";
+import DiagonalRibbon from "../../components/cards/DiagonalRibbon";
 const PurchaseCard = ({ schemas, item }) => {
   const localization = useSelector((state) => state.localization.localization);
   const parametersFirstSchema = schemas[0].dashboardFormSchemaParameters;
   const parametersSecondSchema = schemas[1].dashboardFormSchemaParameters;
   const [child, setChild] = useState(null);
   const selectedNode = useSelector(
-    (state) => state.location.selectedNodePickup
+    (state) => state.location.selectedNodePickup,
   );
   const selectedTab = useSelector((state) => state.location.selectedTab);
   const ordersFieldsType = {
@@ -49,12 +50,12 @@ const PurchaseCard = ({ schemas, item }) => {
     invoiceItemsTaxAmount: getField(
       parametersSecondSchema,
       "invoiceItemsTaxAmount",
-      false
+      false,
     ),
     invoiceTaxAmount: getField(
       parametersSecondSchema,
       "invoiceTaxAmount",
-      false
+      false,
     ),
     totalFeesAmount: getField(parametersSecondSchema, "totalFeesAmount", false),
     feesAmount: getField(parametersSecondSchema, "feesAmount", false),
@@ -62,23 +63,23 @@ const PurchaseCard = ({ schemas, item }) => {
     invoiceItemsDiscountAmount: getField(
       parametersSecondSchema,
       "invoiceItemsDiscountAmount",
-      false
+      false,
     ),
     invoiceDiscountAmount: getField(
       parametersSecondSchema,
       "invoiceDiscountAmount",
-      false
+      false,
     ),
     totalDiscountAmount: getField(
       parametersSecondSchema,
       "totalDiscountAmount",
-      false
+      false,
     ),
     totalTaxAmount: getField(parametersSecondSchema, "totalTaxAmount", false),
     totalShipmentsNeeded: getField(
       parametersSecondSchema,
       "totalShipmentsNeeded",
-      false
+      false,
     ),
 
     netPayAmount: getField(parametersSecondSchema, "netPayAmount", false),
@@ -109,9 +110,14 @@ const PurchaseCard = ({ schemas, item }) => {
     return orderType === 0 ? pickupSteps : deliverySteps;
   };
   const labels = getStepLabels(item[ordersFieldsType.orderType]);
-
+  const [parentWidth, setParentWidth] = React.useState(0);
+  const [parentHeight, setParentHeight] = React.useState(0);
   return (
     <View
+      onLayout={(e) => {
+        setParentWidth(e.nativeEvent.layout.width);
+        setParentHeight(e.nativeEvent.layout.height);
+      }}
       // key={item[ordersFieldsType.idField]}
       className="!bg-body p-4 rounded-xl mb-2 overflow-hidden"
     >
@@ -147,33 +153,23 @@ const PurchaseCard = ({ schemas, item }) => {
         setChild={setChild}
       />
       {ordersFieldsType.isPaid && item[ordersFieldsType.isPaid] && (
-        <View
-          key={`${item[ordersFieldsType.idField]}-${ordersFieldsType.isPaid}-${
-            item[ordersFieldsType.isPaid]
-          }`}
-          style={{
-            backgroundColor: theme.accentHover,
-            paddingHorizontal: 30,
-            paddingVertical: 4,
-            top: 10,
-            zIndex: 200,
-            overflow: "hidden",
-          }}
-          className={`${
-            isRTL() ? "-left-[20px] -rotate-45" : "-right-[20px] rotate-45"
-          } absolute`}
-        >
-          <Text style={{ color: theme.body, fontWeight: "bold", fontSize: 12 }}>
-            {localization.Hum_screens.orders.paid}
-          </Text>
-        </View>
+        <DiagonalRibbon
+          diagonalKey={`${item[ordersFieldsType.idField]}-${
+            ordersFieldsType.isPaid
+          }-${item[ordersFieldsType.isPaid]}`}
+          text={localization.Hum_screens.orders.paid}
+          color={theme.accentHover}
+          parentWidth={parentWidth}
+          parentHeight={parentHeight}
+          txtColor={theme.body}
+        />
       )}
     </View>
   );
 };
 const styles = StyleSheet.create({
   date: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 800,
     textAlign: "center",
     textShadowRadius: 2,

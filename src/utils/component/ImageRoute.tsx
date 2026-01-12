@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Platform } from "react-native";
 import { Image } from "expo-image";
+import React, { useEffect, useRef, useState } from "react";
+import { Platform, StyleSheet, View } from "react-native";
 import { useSelector } from "react-redux";
 import { GetMediaUrl } from "../operation/GetMediaUrl";
-import { useMenu } from "../../../context/SearchProvider";
 
 export default function ImageRoute({ item }) {
   const fieldsType = useSelector((state) => state.menuItem.fieldsType);
@@ -12,11 +11,12 @@ export default function ImageRoute({ item }) {
   const [imageSrc, setImageSrc] = useState(null);
   const [hasError, setHasError] = useState(false);
   const imageUrlRef = useRef(null);
-
+  const [key, setKey] = useState(route?.replace(/[^\w-]/g, "_") || "no_route");
+  //const key = ;
   // ✅ Generate valid image URL
   useEffect(() => {
     if (!route) {
-      setImageSrc(require("../../../assets/display/icon.webp"));
+      setImageSrc(require("../../../assets/display/Default.webp"));
       return;
     }
 
@@ -24,10 +24,10 @@ export default function ImageRoute({ item }) {
     imageUrlRef.current = url;
     setHasError(false);
     setImageSrc({ uri: url });
+    setKey(route?.replace(/[^\w-]/g, "_") || "no_route");
   }, [route]);
 
   // ✅ Clean route for key stability
-  const key = route?.replace(/[^\w-]/g, "_") || "no_route";
 
   // ✅ Wait until imageSrc is ready before rendering Image
   if (!imageSrc) {
@@ -38,13 +38,15 @@ export default function ImageRoute({ item }) {
     <View style={styles.container}>
       <Image
         key={key}
-        source={hasError ? require("../../../assets/display/icon.webp") : route}
+        source={
+          hasError ? require("../../../assets/display/Default.webp") : imageSrc
+        }
         style={styles.image}
         contentFit="cover"
         cachePolicy="memory-disk"
         transition={300}
         alt={item?.[fieldsType.text] ?? "image"}
-        placeholder={require("../../../assets/display/icon.webp")}
+        placeholder={require("../../../assets/display/Default.webp")}
         onError={() => setHasError(true)}
         {...(Platform.OS === "web" ? { fetchPriority: "high" } : {})}
       />

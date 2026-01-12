@@ -33,7 +33,7 @@ export default function InputWithLabel({
     reset,
   } = useForm();
   const originalValue = parseFloat(
-    lookupDisplayField ? value?.[lookupDisplayField] : value || 0
+    lookupDisplayField ? value?.[lookupDisplayField] : value || 0,
   );
   const currentEdit = parseFloat(editValue || 0);
   // const labelValue = originalValue - currentEdit;
@@ -105,7 +105,7 @@ export default function InputWithLabel({
   const postAction =
     ScratchVoucherCardActions &&
     ScratchVoucherCardActions.find(
-      (action) => action.dashboardFormActionMethodType === "Post"
+      (action) => action.dashboardFormActionMethodType === "Post",
     );
   const onSubmit = async (data: any) => {
     await handleSubmitWithCallback({
@@ -165,7 +165,7 @@ export default function InputWithLabel({
         />
         <View
           className={
-            "bg-accent px-4 py-3 flex flex-row justify-center items-center h-full w-12 " +
+            "bg-accent px-4 py-3 flex flex-row justify-center items-center h-full max-w-24 " +
             `${isRTL() ? "rounded-l-lg" : "rounded-r-lg"}`
           }
         >

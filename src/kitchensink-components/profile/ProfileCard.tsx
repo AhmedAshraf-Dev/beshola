@@ -1,6 +1,6 @@
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { useSelector } from "react-redux";
 import useFetch from "../../../components/hooks/APIsFunctions/useFetch";
 import {
@@ -35,7 +35,7 @@ export const ProfileCard = ({ profileInfo }) => {
   const allParams = signupState.schema.dashboardFormSchemaParameters;
 
   // Get the parameterField values for phoneNumber and confirmPassword
-  const firstNameField = getField(allParams, "hidden");
+  const fullNameField = getField(allParams, "hiddenFullName");
   const {
     status: { isConnected: isOnline },
   } = useNetwork();
@@ -45,7 +45,7 @@ export const ProfileCard = ({ profileInfo }) => {
     ConnectToWS(
       setWSMessageAccounting,
       setWS_Connected,
-      fieldsType.dataSourceName
+      fieldsType.dataSourceName,
     )
       .then(() => console.log("🔌 WebSocket setup done"))
       .catch((e) => console.error("❌ WebSocket setup error", e));
@@ -71,22 +71,22 @@ export const ProfileCard = ({ profileInfo }) => {
   const creditField = getField(
     CreditsSchema.dashboardFormSchemaParameters,
     "credit",
-    false
+    false,
   );
 
   const pointsField = getField(
     CreditsSchema.dashboardFormSchemaParameters,
     "points",
-    false
+    false,
   );
   const getAction =
     PaymentOptionsActions &&
     PaymentOptionsActions.find(
-      (action) => action.dashboardFormActionMethodType.toLowerCase() === "get"
+      (action) => action.dashboardFormActionMethodType.toLowerCase() === "get",
     );
   const { data, error, isLoading } = useFetch(
     `/${getAction.routeAdderss}`,
-    CreditsSchema.projectProxyRoute
+    CreditsSchema.projectProxyRoute,
   );
   useEffect(() => {
     if (!_wsMessageAccounting) return;
@@ -105,7 +105,7 @@ export const ProfileCard = ({ profileInfo }) => {
       <HStack space="md" className="items-center">
         <Avatar className="bg-body">
           <AvatarFallbackText>
-            {profileInfo?.[firstNameField]}
+            {profileInfo?.[fullNameField]}
           </AvatarFallbackText>
           <AvatarImage
             source={{
@@ -115,7 +115,7 @@ export const ProfileCard = ({ profileInfo }) => {
         </Avatar>
         <VStack>
           <Text className="!text-text text-lg">
-            {profileInfo?.[firstNameField]}
+            {profileInfo?.[fullNameField]}
           </Text>
           {data && !isLoading && (
             <VStack>
@@ -163,8 +163,14 @@ export const ProfileCard = ({ profileInfo }) => {
           )}
         </VStack>
       </HStack>
-      <View className="max-w-36 max-h-32 sm:max-w-52">
-        <LanguageSelector key={1} />
+      <View
+        className={
+          Platform.OS === "web"
+            ? "max-w-36 max-h-32 sm:max-w-52"
+            : "min-w-[120px] !max-h-[60px] flex-row items-center justify-center"
+        }
+      >
+        <LanguageSelector />
       </View>
     </HStack>
   );

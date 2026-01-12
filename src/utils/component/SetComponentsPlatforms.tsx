@@ -6,7 +6,7 @@ const SetComponentsPlatforms = ({ components }) => {
 
   // Find the correct component based on platform
   const selectedComponent = components.find(
-    (component) => component.platform === os
+    (component) => component.platform === os,
   )?.component;
 
   return selectedComponent || null; // Render the selected component or return null if not found

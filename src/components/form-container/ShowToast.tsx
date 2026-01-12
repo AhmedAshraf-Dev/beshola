@@ -6,6 +6,7 @@ import {
 } from "../../../components/ui";
 import { View, Vibration } from "react-native";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons"; // expo vector icons
+import { theme } from "../../Theme";
 
 export function useDisplayToast() {
   const toast = useToast();
@@ -22,7 +23,7 @@ export function useDisplayToast() {
     description?: string,
     action: "success" | "error" | "info" | "warning" = "info",
     variant: "solid" | "outline" = "solid",
-    placement: "top" | "bottom" = "bottom"
+    placement: "top" | "bottom" = "bottom",
   ) => {
     const toastId = Math.random().toString();
 
@@ -46,8 +47,8 @@ export function useDisplayToast() {
             borderRadius: 12,
             paddingVertical: 10,
             paddingHorizontal: 14,
-            backgroundColor: "white",
-            shadowColor: "#000",
+            backgroundColor: theme.surface,
+            shadowColor: theme.overlay,
             shadowOpacity: 0.15,
             shadowRadius: 6,
             elevation: 4,

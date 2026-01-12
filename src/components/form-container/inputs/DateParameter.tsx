@@ -11,6 +11,7 @@ import moment from "moment";
 import { Controller } from "react-hook-form";
 import DatepickerComponent from "./DatepickerComponent";
 import { useSelector } from "react-redux";
+import { theme } from "../../../Theme";
 
 export default function DateParameter({
   fieldName: name,
@@ -25,22 +26,32 @@ export default function DateParameter({
   const languageRow = useSelector((state) => state.localization.languageRow);
   const dateTime = localization.dateTime;
 
-  const today = new Date();
   const isBirthday = props.type === "birthday";
   const isPushTime = props.type === "pushTime";
   const isDateTime = props.type === "datetime";
 
   const mode = isPushTime ? "time" : isDateTime ? "datetime" : "date";
 
-  const minDate = isBirthday
-    ? new Date(today.getFullYear() - 60, today.getMonth(), today.getDate())
-    : isPushTime
-    ? new Date()
-    : undefined;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-  const maxDate = isBirthday
-    ? new Date(today.getFullYear() - 14, today.getMonth(), today.getDate())
-    : undefined;
+  function safeUTCDate(y, m, d) {
+    return new Date(Date.UTC(y, m, d, 12, 0, 0));
+  }
+
+  const y = today.getUTCFullYear();
+  const m = today.getUTCMonth();
+  const d = today.getUTCDate();
+
+  let minDate, maxDate;
+
+  if (isBirthday) {
+    // oldest year must be fully visible
+    minDate = safeUTCDate(y - 60, 0, 1); // Jan 1 1965
+    maxDate = safeUTCDate(y - 14, m, d); // Dec 29 2011
+  } else if (isPushTime) {
+    minDate = safeUTCDate(y, m, d);
+  }
 
   const formatValue = (val) => {
     if (!val) return placeholder;
@@ -52,13 +63,14 @@ export default function DateParameter({
     const displayHours = isPM ? hours - 12 || 12 : hours || 12;
 
     const day = date.getDate();
-    const monthName = dateTime?.dateTime?.dxDateBox?.months[date.getMonth()];
+    const monthName = dateTime?.dxDateBox?.months[date.getMonth()];
     const year = date.getFullYear();
     const time = `${displayHours}:${minutes} ${
-      isPM
-        ? dateTime?.dateTime?.dxDateBox?.pm
-        : dateTime?.dateTime?.dxDateBox?.am
+      isPM ? dateTime?.dxDateBox?.pm : dateTime?.dxDateBox?.am
     }`;
+    console.log("====================================");
+    console.log(dateTime, "monthName");
+    console.log("====================================");
 
     if (isPushTime) return time;
     if (isDateTime) return `${monthName} ${day}, ${year} - ${time}`;
@@ -104,7 +116,20 @@ export default function DateParameter({
           <View>
             <TouchableOpacity
               onPress={showDatePicker}
-              style={styles.touchable}
+              // style={styles.touchable}
+              style={{
+                backgroundColor: theme.body,
+                paddingVertical: 14,
+                paddingHorizontal: 18,
+                borderRadius: 14,
+                borderWidth: 1,
+                borderColor: theme.accent,
+                shadowColor: theme.overlay,
+                shadowOpacity: 0.08,
+                shadowRadius: 6,
+                shadowOffset: { width: 0, height: 2 },
+                elevation: 3,
+              }}
               {...props}
             >
               <Text style={styles.text}>
@@ -115,7 +140,7 @@ export default function DateParameter({
             <DateTimePickerModal
               isVisible={isDatePickerVisible}
               mode={mode}
-              locale={languageRow.shortname}
+              locale={"ar"}
               onConfirm={(selectedDate) => {
                 onChange(selectedDate);
                 hideDatePicker();

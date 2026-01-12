@@ -25,12 +25,14 @@ import FormContainer from "../../../components/form-container/FormContainer";
 import { useForm } from "react-hook-form";
 import { ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from "react-native";
 
 const VerifyScreen = ({ route }) => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [resendResponse, setResendResponse] = useState({});
   const defaultTimer = route?.params?.timer ?? 120; // default from route
+  const goBackRoute = route?.params?.goBackRoute ?? "SignIn"; // default from route
   const [timer, setTimer] = useState(defaultTimer);
   const timerRef = useRef(null);
   const localization = useSelector((state) => state.localization.localization);
@@ -51,71 +53,98 @@ const VerifyScreen = ({ route }) => {
 
   const phoneNumberField = getField(
     signupState.schema.dashboardFormSchemaParameters,
-    "phoneNumber"
+    "phoneNumber",
   );
   const { isOnline } = useNetwork();
   const { [phoneNumberField]: phoneNumber, schemaActionName } =
     route.params || {}; // if passed from previous screen
   const { os } = useDeviceInfo();
 
-  // 🔹 Load saved timer on mount
+  // Load timer ONCE
   useEffect(() => {
-    const loadTimer = async () => {
+    let isMounted = true;
+
+    const loadTimerFromStorage = async () => {
       try {
-        const savedTimer = await AsyncStorage.getItem("verify_timer");
-        if (savedTimer) {
-          setTimer(parseInt(savedTimer, 10));
-        } else {
-          setTimer(defaultTimer);
-          await AsyncStorage.setItem("verify_timer", defaultTimer.toString());
+        const saved = await AsyncStorage.getItem("verify_timer");
+
+        if (isMounted) {
+          if (saved !== null) {
+            setTimer(parseInt(saved, 10));
+          } else {
+            setTimer(defaultTimer);
+            await AsyncStorage.setItem("verify_timer", defaultTimer.toString());
+          }
         }
-      } catch (error) {
-        console.error("Error loading timer:", error);
+      } catch (e) {
+        console.log("Timer load error:", e);
       }
     };
-    loadTimer();
-    return async () => {
-      await AsyncStorage.removeItem("verify_timer", defaultTimer.toString());
+
+    loadTimerFromStorage();
+
+    return () => {
+      isMounted = false;
     };
   }, [defaultTimer]);
 
-  // 🔹 Sync timer countdown and AsyncStorage every second
+  // Start countdown AFTER the timer has been loaded
   useEffect(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
+    if (timer === null) return; // prevent running before load
 
-    timerRef.current = setInterval(async () => {
+    timerRef.current && clearInterval(timerRef.current);
+
+    timerRef.current = setInterval(() => {
       setTimer((prev) => {
-        if (prev > 0) {
-          const newTimer = prev - 1;
-          AsyncStorage.setItem("verify_timer", newTimer.toString()); // ✅ store updated value
-          return newTimer;
-        } else {
+        if (prev <= 1) {
           clearInterval(timerRef.current);
-          handleResend(); // auto resend when timer hits 0
           AsyncStorage.setItem("verify_timer", defaultTimer.toString());
-          return defaultTimer;
+          return 0;
         }
+
+        const newValue = prev - 1;
+        AsyncStorage.setItem("verify_timer", newValue.toString());
+        return newValue;
       });
     }, 1000);
 
     return () => clearInterval(timerRef.current);
-  }, [defaultTimer]);
+  }, [timer]); // ❗ runs only if timer changes
 
-  // 🔹 Keep route.params.timer updated (optional — if needed by parent screen)
-  useEffect(() => {
-    route.params.timer = timer;
-  }, [timer]);
+  // When user presses RESEND
+  const handleManualResend = async () => {
+    await handleResend();
+    clearInterval(timerRef.current);
+
+    setTimer(defaultTimer);
+    await AsyncStorage.setItem("verify_timer", defaultTimer.toString());
+
+    // restart timer cleaner
+    timerRef.current = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          AsyncStorage.setItem("verify_timer", defaultTimer.toString());
+          return 0;
+        }
+        const newValue = prev - 1;
+        AsyncStorage.setItem("verify_timer", newValue.toString());
+        return newValue;
+      });
+    }, 1000);
+  };
+
   const handleOTPSubmit = async (data) => {
     if (data[loginVerifyState.schema.idField].length === 6) {
       const getLoginAction =
         loginVerifyState.actions &&
         loginVerifyState.actions.find(
-          (action) => action.dashboardFormActionMethodType === "Get"
+          (action) => action.dashboardFormActionMethodType === "Get",
         );
       const getForgetAction =
         forgetVerifyState.actions &&
         forgetVerifyState.actions.find(
-          (action) => action.dashboardFormActionMethodType === "Get"
+          (action) => action.dashboardFormActionMethodType === "Get",
         );
       const getAction =
         schemaActionName === "login" ? getLoginAction : getForgetAction;
@@ -136,7 +165,7 @@ const VerifyScreen = ({ route }) => {
           getAction,
           loginVerifyState.schema.projectProxyRoute,
           false,
-          constants
+          constants,
         );
         setResult(request);
 
@@ -145,7 +174,7 @@ const VerifyScreen = ({ route }) => {
         } else {
           showToast(
             localization.verify.otpToast.title,
-            localization.verify.otpToast.des
+            localization.verify.otpToast.des,
           );
         }
       } catch (error) {
@@ -158,7 +187,7 @@ const VerifyScreen = ({ route }) => {
     } else {
       showToast(
         localization.verify.otpToast.title,
-        localization.verify.otpToast.des
+        localization.verify.otpToast.des,
       );
     }
   };
@@ -166,7 +195,7 @@ const VerifyScreen = ({ route }) => {
     const postAction =
       resendState.actions &&
       resendState.actions.find(
-        (action) => action.dashboardFormActionMethodType === "Post"
+        (action) => action.dashboardFormActionMethodType === "Post",
       );
     await handleSubmitWithCallback({
       data: { ...route.params },
@@ -199,7 +228,18 @@ const VerifyScreen = ({ route }) => {
             subTitle={null}
             title={null}
             specialAction={() => {
-              navigation.goBack();
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                if (Platform.OS === "web") {
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: goBackRoute }],
+                  });
+                } else {
+                  navigation.navigate(goBackRoute);
+                }
+              }
             }}
           />
           <Text style={styles.title}>{localization.verify.headTitle}</Text>
@@ -225,12 +265,12 @@ const VerifyScreen = ({ route }) => {
           <Text
             style={[styles.title, { color: "#6200ee", marginTop: 10 }]}
             onPress={async () => {
-              await handleResend();
-              setTimer(defaultTimer); // reset when user manually resends
-              await AsyncStorage.setItem(
-                "verify_timer",
-                defaultTimer.toString()
-              );
+              await handleManualResend();
+              // setTimer(defaultTimer); // reset when user manually resends
+              // await AsyncStorage.setItem(
+              //   "verify_timer",
+              //   defaultTimer.toString()
+              // );
             }}
           >
             {localization.verify.resend} ({timer}s)

@@ -1,8 +1,8 @@
 export function loadLibrary(src, type, id, data) {
   return new Promise(function (resolve, reject) {
-    let scriptEle = document.createElement('script');
-    scriptEle.setAttribute('type', type);
-    scriptEle.setAttribute('src', src);
+    let scriptEle = document.createElement("script");
+    scriptEle.setAttribute("type", type);
+    scriptEle.setAttribute("src", src);
     if (id) {
       scriptEle.id = id;
     }
@@ -12,12 +12,11 @@ export function loadLibrary(src, type, id, data) {
       }
     }
     document.body.appendChild(scriptEle);
-    scriptEle.addEventListener('load', () => {
-
+    scriptEle.addEventListener("load", () => {
       resolve(true);
     });
-    scriptEle.addEventListener('error', ev => {
-      console.log('Error on loading ' + src, ev);
+    scriptEle.addEventListener("error", (ev) => {
+      console.log("Error on loading " + src, ev);
       reject(ev);
     });
   });

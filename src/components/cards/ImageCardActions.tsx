@@ -19,13 +19,13 @@ function ImageCardActions({
   const localization = useSelector((state) => state.localization.localization);
 
   return (
-    <View className="w-full items-center">
+    <View className="items-center">
       {item[fieldsType.imageView] && (
         <Box
           key={`${fieldsType.imageView}-${item[fieldsType.imageView]}`}
           style={{
             width: scale(135),
-            height: scale(180),
+            height: scale(135),
             borderRadius: scale(16),
             overflow: "hidden",
             backgroundColor: theme.body || "#fff",
@@ -42,10 +42,25 @@ function ImageCardActions({
           {/* Image */}
           <ImageRoute item={item} />
 
-          {/* Floating Heart Icon
+          {/* Floating Heart Icon */}
           {showFaovertIcon && (
             <FaovertCardIcon fieldsType={fieldsType} item={item} />
-          )} */}
+          )}
+
+          {/* Discount Badge */}
+          {item[fieldsType.discount] > 0 && (
+            <View className="absolute top-0 right-0 bg-red-500 px-2 py-1 rounded-tr-lg rounded-bl-lg w-1/2">
+              <Text
+                className="text-body font-bold text-sm"
+                style={{
+                  fontSize: scale(7),
+                }}
+                numberOfLines={1}
+              >
+                {item[fieldsType.discount]}% {localization.menu.off}
+              </Text>
+            </View>
+          )}
 
           {/* Top overlay for interaction */}
           {children}

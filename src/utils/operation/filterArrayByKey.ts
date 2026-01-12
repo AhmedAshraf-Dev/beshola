@@ -1,7 +1,7 @@
 export function filterArrayByKey<T extends Record<string, any>>(
   referenceArr: T[],
   targetArr: T[],
-  key: keyof T
+  key: keyof T,
 ): T[] {
   const referenceKeys = new Set(referenceArr.map((item) => item[key]));
 

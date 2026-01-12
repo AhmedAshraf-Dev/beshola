@@ -1,7 +1,7 @@
 import LoadData from "../../../components/hooks/APIsFunctions/LoadData";
 import { updateRows } from "../../components/Pagination/updateRows";
 
-const prepareLoad =async ({
+const prepareLoad = async ({
   state,
   dataSourceAPI,
   getAction,
@@ -14,6 +14,6 @@ const prepareLoad =async ({
     getAction,
     cache,
     updateRows(reducerDispatch, cache, state),
-    reducerDispatch
+    reducerDispatch,
   );
 };

@@ -17,17 +17,17 @@ export default function PurchaseButtonsActions({ item, fieldsType }) {
   const { rateState, reviewsState } = useSchemas();
   const [rate, setRate] = useState(item?.[fieldsType?.customerRate] || 0);
   const [review, setReview] = useState(
-    item?.[fieldsType?.customerReview] || ""
+    item?.[fieldsType?.customerReview] || "",
   );
   const [displayRate, setDisplayRate] = useState(
-    item?.[fieldsType?.customerRate] || 0
+    item?.[fieldsType?.customerRate] || 0,
   );
   const [displayReview, setDisplayReview] = useState(
-    item?.[fieldsType?.customerReview] || ""
+    item?.[fieldsType?.customerReview] || "",
   );
   const localization = useSelector((state) => state.localization.localization);
   const purchasesLocale = localization.Hum_screens.profile.collapses.find(
-    (collapse) => collapse.type === "purchases"
+    (collapse) => collapse.type === "purchases",
   ).childrenText;
   const onSubmitRate = async () => {
     try {
@@ -37,7 +37,7 @@ export default function PurchaseButtonsActions({ item, fieldsType }) {
         item[fieldsType.itemidField],
         isModalRateVisible ? rate : review,
         isModalRateVisible ? rateState.actions : reviewsState.actions,
-        rateState.actions.proxyRoute
+        rateState.actions.proxyRoute,
       );
       if (req) {
         setLoading(false);

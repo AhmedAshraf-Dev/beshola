@@ -42,7 +42,7 @@ const LocationMap = ({
       fields.find(
         (f) =>
           f.parameterType ===
-          (haveRadius ? "areaMapLatitudePoint" : "mapLatitudePoint")
+          (haveRadius ? "areaMapLatitudePoint" : "mapLatitudePoint"),
       )?.parameterField
     ] || 30.031041;
   const lng =
@@ -50,7 +50,7 @@ const LocationMap = ({
       fields.find(
         (f) =>
           f.parameterType ===
-          (haveRadius ? "areaMapLongitudePoint" : "mapLongitudePoint")
+          (haveRadius ? "areaMapLongitudePoint" : "mapLongitudePoint"),
       )?.parameterField
     ] || 31.24066;
   const radius =
@@ -78,18 +78,18 @@ const LocationMap = ({
             [fields.find(
               (f) =>
                 f.parameterType ===
-                (haveRadius ? "areaMapLatitudePoint" : "mapLatitudePoint")
+                (haveRadius ? "areaMapLatitudePoint" : "mapLatitudePoint"),
             )?.parameterField]: newLat,
             [fields.find(
               (f) =>
                 f.parameterType ===
-                (haveRadius ? "areaMapLongitudePoint" : "mapLongitudePoint")
+                (haveRadius ? "areaMapLongitudePoint" : "mapLongitudePoint"),
             )?.parameterField]: newLng,
           };
           if (haveRadius)
             newLocation[
               fields.find(
-                (f) => f.parameterType === "areaMapRadius"
+                (f) => f.parameterType === "areaMapRadius",
               )?.parameterField
             ] = radius;
           onLocationChange(newLocation, locationInfo);

@@ -10,6 +10,7 @@ import { getField } from "../../utils/operation/getField";
 import ScratchVoucherCard from "../../Schemas/MenuSchema/ScratchVoucherCard.json";
 import { scale } from "react-native-size-matters";
 import { setdateTime } from "../../utils/operation/dateutilies";
+import { theme } from "../../Theme";
 
 export default function VoucherCard({ item }) {
   const parameters = ScratchVoucherCard?.dashboardFormSchemaParameters ?? [];
@@ -78,35 +79,39 @@ const styles = StyleSheet.create({
   },
   overlay: {
     backgroundColor: "rgba(0, 0, 0, 0.35)",
-    padding: 20,
-    borderRadius: 16,
+    padding: 16,
     width: "100%",
     height: "100%",
-    justifyContent: "space-between", // This separates top and bottom elements
+    justifyContent: "space-between",
   },
+
+  /* CENTER CODE PROPERLY */
   codeContainer: {
-    marginTop: 60,
     flex: 1,
+    marginTop: 20,
     justifyContent: "center",
     alignItems: "center",
   },
+
   code: {
-    fontSize: scale(6),
+    fontSize: 16, // 🔴 scale(6) is TOO SMALL on mobile
     fontWeight: "bold",
-    color: "#fff",
+    color: theme.body,
     textAlign: "center",
     textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
+
+  /* BOTTOM DATE */
   dateContainer: {
-    marginTop: 50,
     alignItems: "center",
-    paddingBottom: 10,
+    // paddingBottom: 6,
   },
+
   date: {
-    fontSize: 15,
-    color: "#fff",
+    fontSize: 14,
+    color: theme.body,
     textAlign: "center",
     textShadowColor: "rgba(0, 0, 0, 0.5)",
     textShadowOffset: { width: 1, height: 1 },

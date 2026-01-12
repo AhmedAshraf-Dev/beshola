@@ -11,7 +11,7 @@ import { DevSettings, Platform } from "react-native";
 import { useDeviceInfo } from "../src/utils/component/useDeviceInfo";
 import { jwtDecode } from "jwt-decode";
 import { checkOnboarding } from "../src/utils/operation/checkOnboarding";
-import { persistor } from "../src/store/reduxStore";
+import { persistor, store } from "../src/store/reduxStore";
 import { useDisplayToast } from "../src/components/form-container/ShowToast";
 import { isRTL } from "../src/utils/operation/isRTL";
 import { useDispatch } from "react-redux";
@@ -72,22 +72,71 @@ function AuthProvider(props) {
       setTimeout(() => setNotifications([]), 0);
     }
   }, [notifications]);
-
   const signOut = useCallback(async () => {
-    setUser(undefined);
-    await deleteKey("token");
-    await deleteKey("rememberMe");
+    console.log("======= SIGN OUT START =======");
 
-    // ✅ Reset Redux except localization
-    dispatch({ type: "RESET_STORE" });
-    // persistor.purge();
+    try {
+      console.log("→ Clearing user state");
+      setUser(undefined);
 
-    if (Platform.OS === "web") {
-      window.location.href = "/";
-    } else {
-      DevSettings.reload();
+      console.log("→ Deleting saved keys...");
+      await deleteKey("token");
+      console.log("✓ token deleted");
+
+      await deleteKey("rememberMe");
+      console.log("✓ rememberMe deleted");
+
+      console.log("→ Resetting Redux store");
+      dispatch({ type: "RESET_STORE" });
+
+      console.log("→ Reload / Redirect based on platform");
+      if (Platform.OS === "web") {
+        console.log("→ Web: redirecting to /");
+        window.location.href = "/";
+      } else {
+        console.log("→ Mobile: reloading app (DevSettings.reload())");
+        DevSettings.reload();
+      }
+
+      console.log("======= SIGN OUT DONE =======");
+    } catch (err) {
+      console.error("❌ SIGN OUT ERROR:", err);
     }
   }, []);
+
+  // const signOut = useCallback(async () => {
+  //   console.log("signOut");
+  //   setUser(undefined);
+  //   await deleteKey("token");
+  //   await deleteKey("rememberMe");
+
+  //   // ✅ Reset Redux except localization
+  //   dispatch({ type: "RESET_STORE" });
+  //   // persistor.purge();
+
+  //   if (Platform.OS === "web") {
+  //     window.location.href = "/";
+  //   } else {
+  //     DevSettings.reload();
+  //   }
+  // }, []);
+
+  // const signOut = useCallback(async () => {
+  //   console.log("signOut");
+  //   setUser(undefined);
+  //   await deleteKey("token");
+  //   await deleteKey("rememberMe");
+
+  //   // ✅ Reset Redux except localization
+  //   dispatch({ type: "RESET_STORE" });
+  //   // persistor.purge();
+
+  //   if (Platform.OS === "web") {
+  //     window.location.href = "/";
+  //   } else {
+  //     DevSettings.reload();
+  //   }
+  // }, []);
 
   function CheckPortalMenuItem(menuItemID) {
     const usersGroupDashboardMenuItemsJson = JSON.parse(

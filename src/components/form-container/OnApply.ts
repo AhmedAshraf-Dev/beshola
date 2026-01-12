@@ -11,7 +11,7 @@ export const onApply = async (
   action: {},
   proxyRoute = "",
   schemaParameters = false,
-  constants = {}
+  constants = {},
 ) => {
   // const { showErrorToast } = useErrorToast();
   // const { isOnline, checkNetwork } = useNetwork();
@@ -38,7 +38,7 @@ export const onApply = async (
   const res = await APIHandling(
     dataSourceAPI(action),
     action.dashboardFormActionMethodType,
-    body
+    body,
   );
   return res;
 };

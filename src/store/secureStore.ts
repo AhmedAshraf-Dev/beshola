@@ -1,12 +1,21 @@
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 import LZString from "lz-string";
-// Helpers for web cookies
-function setCookie(key, value, days = 30) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${key}=${encodeURIComponent(
-    value
-  )}; expires=${expires}; path=/`;
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// Web cookie helpers
+function setCookie(key, value, expires) {
+  if (!expires) {
+    // Session cookie: no expires attribute
+    document.cookie = `${key}=${encodeURIComponent(value)}; path=/`;
+  } else {
+    console.log("====================================");
+    console.log(expires, key, "expires");
+    console.log("====================================");
+    document.cookie = `${key}=${encodeURIComponent(
+      value,
+    )}; expires=${expires}; path=/`;
+  }
 }
 
 function getCookie(key) {
@@ -21,27 +30,68 @@ function getCookie(key) {
 function deleteCookie(key) {
   document.cookie = `${key}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
-// Secure store fallback handling
-export const saveSecureValue = async (key, value) => {
+
+// Unified SecureStore function
+export const saveSecureValue = async (
+  key,
+  value,
+  expiresAt,
+  sessionOnly = false,
+) => {
   if (Platform.OS === "web") {
-    setCookie(key, value);
-  } else {
-    const compressed = LZString.compressToUTF16(value);
-    await SecureStore.setItemAsync(key, compressed);
+    if (typeof document === "undefined") return;
+
+    if (sessionOnly) {
+      // Session cookie
+      document.cookie = `${key}=${encodeURIComponent(value)}; path=/`;
+    } else {
+      // Persistent cookie
+      document.cookie = `${key}=${encodeURIComponent(
+        value,
+      )}; expires=${expiresAt}; path=/`;
+    }
+
+    return;
   }
+
+  // 📱 Mobile SecureStore (JSON + compressed)
+  const payload = JSON.stringify({
+    value,
+    expiresAt: sessionOnly ? null : expiresAt,
+  });
+  await AsyncStorage.setItem(key, payload);
 };
 
 export const retrieveSecureValue = async (key) => {
+  let stored;
   if (Platform.OS === "web") {
-    return getCookie(key);
-  } else {
-    const stored = await SecureStore.getItemAsync(key);
+    const value = getCookie(key);
+    if (!value) return null;
 
-    if (!stored) return null;
+    const expires = getCookie(`${key}_expires`);
+    if (expires && new Date(expires) < new Date()) {
+      deleteCookie(key);
+      deleteCookie(`${key}_expires`);
+      return null;
+    }
 
-    const decompressed = LZString.decompressFromUTF16(stored);
+    return value;
+  }
 
-    return decompressed;
+  // MOBILE
+  stored = await AsyncStorage.getItem(key);
+  if (!stored) return null;
+
+  try {
+    const parsed = JSON.parse(stored);
+    if (parsed.expiresAt && new Date(parsed.expiresAt) < new Date()) {
+      await deleteKey(key);
+      return null;
+    }
+    return parsed.value;
+  } catch {
+    await deleteKey(key);
+    return null;
   }
 };
 
@@ -49,6 +99,6 @@ export const deleteKey = async (key) => {
   if (Platform.OS === "web") {
     deleteCookie(key);
   } else {
-    await SecureStore.deleteItemAsync(key);
+    await AsyncStorage.removeItem(key);
   }
 };

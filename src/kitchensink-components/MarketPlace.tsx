@@ -16,9 +16,9 @@ export default function MarketPlace() {
   };
 
   return (
-        <Input>
-    <InputField placeholder="Type here..." />
-  </Input>
+    <Input>
+      <InputField placeholder="Type here..." />
+    </Input>
     // <ScrollView>
     //   <View className="flex-row items-center justify-center overflow-auto">
     //     <AddLocation />

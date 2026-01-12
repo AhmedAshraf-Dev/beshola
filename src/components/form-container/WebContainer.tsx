@@ -25,7 +25,7 @@ export const WebContainer = ({
                 !avoidColsTypes.find(
                   (columnType) => column.parameterType === columnType
                 ) &&
-                column.parameterType !== "hidden"
+                !column.parameterType.startsWith("hidden")
             )
             .map((param: any) => (
               <Col

@@ -54,7 +54,7 @@ const SignUpWithLeftBackground = () => {
     if (!isAccepted) {
       showToast(
         localization.sighUp.privacyToast.title,
-        localization.sighUp.privacyToast.des
+        localization.sighUp.privacyToast.des,
       );
       return;
     }
@@ -68,14 +68,14 @@ const SignUpWithLeftBackground = () => {
         null,
         true,
         signupState.actions,
-        signupState.schema.projectProxyRoute
+        signupState.schema.projectProxyRoute,
       );
       setResult(request);
 
       if (request && request.success === true) {
         const passwordField = getField(
           signupState.schema.dashboardFormSchemaParameters,
-          "confirmPassword"
+          "confirmPassword",
         );
         const { [passwordField]: removedPassword, ...dataWithoutPassword } =
           data;
@@ -84,6 +84,7 @@ const SignUpWithLeftBackground = () => {
           ...dataWithoutPassword,
           ...request.data,
           schemaActionName: "login",
+          goBackRoute: "SignUp",
         });
       }
     } catch (error) {
@@ -143,7 +144,7 @@ const SignUpWithLeftBackground = () => {
             style={{
               objectFit: "contain",
             }}
-            source={require("../../../../assets/display/logo.webp")}
+            source={require("../../../../assets/display/logo.jpeg")}
           />
           <VStack space="lg">
             <Heading className="text-center" size="3xl">
@@ -221,11 +222,14 @@ const SignUpWithLeftBackground = () => {
                 onPress={() => {
                   const url = localization.sighUp.privacyUrl; // Replace with your actual URL
                   Linking.openURL(url).catch((err) =>
-                    console.error("Failed to open URL:", err)
+                    console.error("Failed to open URL:", err),
                   );
                 }}
               >
-                {localization.sighUp.acceptPrivacyLinkText || "Privacy Policy"}
+                <Text>
+                  {localization.sighUp.acceptPrivacyLinkText ||
+                    "Privacy Policy"}
+                </Text>
               </Pressable>
               {localization.sighUp.acceptPrivacy.split("{link}")[1]}
             </CheckboxLabel>

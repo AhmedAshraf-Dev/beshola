@@ -6,14 +6,14 @@ export default async function FieldAction(
   // modalIsOpen,
   // setModalIsOpen,
   value,
-  action
+  action,
 ) {
   console.log("action", action);
   if (action) {
     const actionRequest = await APIHandling(
       `${GetProjectUrl(action.projectProxyRoute)}/${action.routeAdderss}/${id}`,
       action.dashboardFormActionMethodType.split(":")[1],
-      value
+      value,
     );
     return actionRequest;
   }

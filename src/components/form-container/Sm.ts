@@ -4,7 +4,11 @@ export function SmMobile(param) {
   // } else if (param.parameterType !== "text") {
   //   return 100;
   // } else return 50;
-  return 100;
+  if (param.lookupID !== null) {
+    return 100;
+  } else if (param.parameterType !== "text") {
+    return 100;
+  } else return 50;
 }
 export function SmWeb(param) {
   if (param.lookupID !== null) {

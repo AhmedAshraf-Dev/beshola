@@ -48,7 +48,7 @@ const ForgotPasswordScreen = ({ route }) => {
     const postAction =
       forgetState.actions &&
       forgetState.actions.find(
-        (action) => action.dashboardFormActionMethodType === "Post"
+        (action) => action.dashboardFormActionMethodType === "Post",
       );
     await handleSubmitWithCallback({
       data: body,
@@ -61,6 +61,7 @@ const ForgotPasswordScreen = ({ route }) => {
           ...data,
           ...resultData,
           schemaActionName: "forgetPassword",
+          goBackRoute: "SignIn",
         });
       },
     });

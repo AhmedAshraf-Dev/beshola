@@ -25,20 +25,20 @@ export default function Sheet({
     <Actionsheet isOpen={isOpen} onClose={onClose} snapPoints={[95]}>
       <ActionsheetBackdrop />
 
-      <ActionsheetContent className="bg-body rounded-t-3xl w-full flex-1">
-        {/* Drag Indicator */}
+      <ActionsheetContent
+        className="bg-body rounded-t-3xl flex-1 items-stretch"
+        style={{ width: "100%", maxWidth: "100%" }}
+      >
         <ActionsheetDragIndicatorWrapper>
           <ActionsheetDragIndicator />
         </ActionsheetDragIndicatorWrapper>
 
-        {/* HEADER */}
         <View className="px-4 pt-2 pb-4 border-b border-border">
           <Text className="text-base font-bold text-center text-text">
             {title}
           </Text>
         </View>
 
-        {/* BODY */}
         <ScrollView
           className="flex-1 px-4 pt-4"
           showsVerticalScrollIndicator={false}

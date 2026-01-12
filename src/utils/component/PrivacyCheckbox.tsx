@@ -21,14 +21,14 @@ export default function PrivacyCheckbox({ row, setRow, fastWayState }) {
   const postAction =
     fastWayState.actions &&
     fastWayState.actions.find(
-      (action) => action.dashboardFormActionMethodType === "Post"
+      (action) => action.dashboardFormActionMethodType === "Post",
     );
   if (selectedTab !== 1) {
     return null;
   }
   const isFastWayField = getField(
     fastWayState.schema.dashboardFormSchemaParameters,
-    "checkBox"
+    "checkBox",
   );
   return (
     postAction && (

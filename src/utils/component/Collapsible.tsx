@@ -22,7 +22,7 @@ export const CollapsibleSection = ({
   const navigation = !setheader && useNavigation();
   const [openAction, setOpenAction] = useState(true);
   const [expandedSection, setExpandedSection] = useState(
-    defaultExpandedSection
+    defaultExpandedSection,
   );
   const toggleSection = () => {
     setExpandedSection(!expandedSection);

@@ -4,7 +4,7 @@ import { Chase } from "react-native-animated-spinkit";
 import { useSelector } from "react-redux";
 import { buildApiUrl } from "../../../components/hooks/APIsFunctions/BuildApiUrl";
 import LoadData from "../../../components/hooks/APIsFunctions/LoadData";
-import { HStack, Text } from "../../../components/ui";
+import { Heading, HStack, Text } from "../../../components/ui";
 import { useNetwork } from "../../../context/NetworkContext";
 import { useSchemas } from "../../../context/SchemaProvider";
 import { useShopNode } from "../../../context/ShopNodeProvider";
@@ -31,7 +31,7 @@ const FaovertMenuItems = () => {
   const { favState, setFavState } = useSchemas();
   const [state, reducerDispatch] = useReducer(
     reducer,
-    initialState(VIRTUAL_PAGE_SIZE, favState.schema.idField)
+    initialState(VIRTUAL_PAGE_SIZE, favState.schema.idField),
   );
   const { userGust } = useAuth();
 
@@ -41,17 +41,17 @@ const FaovertMenuItems = () => {
   const getAction =
     favState.actions &&
     favState.actions?.find(
-      (action) => action.dashboardFormActionMethodType === "Get"
+      (action) => action.dashboardFormActionMethodType === "Get",
     );
   const reduxSelectedLocation = useSelector(
-    (state: any) => state.location?.selectedLocation
+    (state: any) => state.location?.selectedLocation,
   );
   const reduxSelectedNode = useSelector(
-    (state: any) => state.location?.selectedNode
+    (state: any) => state.location?.selectedNode,
   );
 
   const [selectedLocation, setSelectedLocation] = useState(
-    reduxSelectedLocation || null
+    reduxSelectedLocation || null,
   );
   const { selectedNode } = useShopNode();
   const favFieldsType = {
@@ -70,7 +70,7 @@ const FaovertMenuItems = () => {
   };
   const dataSourceAPI = (query, skip, take) => {
     return buildApiUrl(query, {
-      pageIndex: skip + 1,
+      pageIndex: Math.floor(skip / take) + 1,
       pageSize: take,
 
       // ...row,
@@ -87,7 +87,7 @@ const FaovertMenuItems = () => {
       getAction,
       cache,
       updateRows(reducerDispatch, cache, state),
-      reducerDispatch
+      reducerDispatch,
     );
   }, [currentSkip, userGust]);
   const handleScroll = (event) => {
@@ -144,53 +144,12 @@ const FaovertMenuItems = () => {
   if (loading) {
     return <LoadingScreen LoadingComponent={<Chase size={40} />} />;
   }
-  return (
+  return totalCount > 0 ? (
     <>
       <HStack className="flex-1 items-center justify-between">
-        <Text>{localization.Hum_screens.home.faovert}</Text>
-        <Text className="text-primary-custom">{rows.length}</Text>
+        <Heading>{localization.Hum_screens.home.faovert}</Heading>
       </HStack>
-      {/* <HStack className="flex-wrap flex-row flex mx-2 mb-6"> */}
-      {/* {favoriteItems.map((favoriteItem) => (
-          // <TouchableOpacity
-          //   onPress={() =>
-          //     navigation.navigate("DetailsProductScreen", favoriteItem)
-          //   }
-          //   key={favoriteItem[fieldsType.idField]}
-          //   className="relative w-1/3 md:w-1/4 aspect-square shrink border-[4px] border-card rounded-lg"
-          // >
-          //   <Card style={{ borderRadius: 12 }}>
-          //     <VStack className="items-center">
-          //       <Image
-          //         source={GetMediaUrl(
-          //           favoriteItem[fieldsType.imageView],
-          //           "publicImage"
-          //         )}
-          //         className="!size-12 md:!size-28 aspect-square rounded-full"
-          //         resizeMode="cover"
-          //         alt=""
-          //       />
-          //       <Text className="mt-2 text-sm font-bold">
-          //         {favoriteItem[fieldsType.text]}
-          //       </Text>
-          //     </VStack>
-          //     <Icon
-          //       as={() => (
-          //         <AntDesign
-          //           name="heart"
-          //           size={16}
-          //           className="absolute bottom-1 left-1 !text-red-500"
-          //         />
-          //       )}
-          //     />
-          //   </Card>
-          // </TouchableOpacity>
-          <SuggestCard
-            key={favoriteItem[fieldsType.idField]}
-            item={favoriteItem}
-            schemaActions={SuggestCardSchemaActions}
-          />
-        ))} */}
+
       <ScrollView
         horizontal
         className="mt-2"
@@ -208,9 +167,8 @@ const FaovertMenuItems = () => {
           suggestFieldsType={favFieldsType}
         />
       </ScrollView>
-      {/* </HStack> */}
     </>
-  );
+  ) : null;
 };
 
 export default FaovertMenuItems;

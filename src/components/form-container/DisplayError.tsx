@@ -37,7 +37,12 @@ function DisplayError({ dataError, parameterField, setTitle, title }) {
     const errorMessage = title + " " + localization.inputs.error;
     return (
       <View>
-        <Text className="!text-error mt-1 text-sm">{errorMessage}</Text>
+        <Text
+          style={{ color: theme.error }}
+          className="!text-error mt-1 text-sm"
+        >
+          {errorMessage}
+        </Text>
       </View>
     );
   }

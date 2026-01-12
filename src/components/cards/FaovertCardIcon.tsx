@@ -1,5 +1,5 @@
-import { FontAwesome } from "@expo/vector-icons";
-import React from "react";
+import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
+import React, { useEffect, useState } from "react";
 import { TouchableOpacity } from "react-native";
 import { scale } from "react-native-size-matters";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,21 +8,25 @@ import FavoriteMenuItemsSchemaActions from "../../Schemas/MenuSchema/FavoriteMen
 import { theme } from "../../Theme";
 import { onApply } from "../form-container/OnApply";
 import { RunsSpacialAction } from "../../utils/operation/RunsSpacialAction";
+import { Text } from "react-native";
 export default function FaovertCardIcon({
   fieldsType,
   item,
   withAbsolutePos = true,
 }) {
   const favoriteItems = useSelector((state) => state.menuItem.favoriteItems);
-  const isFavorite = item[fieldsType.isFav];
+  const [isFavorite, setIsFavorite] = useState(item[fieldsType.isFav]);
   const dispatch = useDispatch();
+  useEffect(() => {
+    setIsFavorite(item[fieldsType.isFav]);
+  }, [item]);
   async function handleFavoritePress() {
     const req = await RunsSpacialAction(
       "fav",
       item[fieldsType.idField],
       !isFavorite,
       FavoriteMenuItemsSchemaActions,
-      fieldsType.proxyRoute
+      fieldsType.proxyRoute,
     );
     if (req)
       if (isFavorite) {
@@ -34,6 +38,9 @@ export default function FaovertCardIcon({
   return (
     <TouchableOpacity
       onPress={handleFavoritePress}
+      key={`${item[fieldsType.idField]}-${fieldsType.isFav}-${
+        item[fieldsType.isFav]
+      }`}
       style={{
         // position: "absolute",
         // top: scale(8),
@@ -46,10 +53,14 @@ export default function FaovertCardIcon({
       }}
       className={withAbsolutePos ? "absolute top-2 left-2" : "items-center"}
     >
-      <FontAwesome
-        name={isFavorite ? "heart" : "heart-o"}
+      <FontAwesome5
+        key={`${item[fieldsType.idField]}-${fieldsType.isFav}-${
+          item[fieldsType.isFav]
+        }`}
+        name="heart"
+        solid={isFavorite} // filled if favorite
         size={20}
-        color={"red"}
+        color="red"
       />
     </TouchableOpacity>
   );

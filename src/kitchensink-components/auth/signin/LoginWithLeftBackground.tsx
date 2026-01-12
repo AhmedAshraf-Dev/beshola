@@ -10,7 +10,7 @@ import { onApply } from "@/src/components/form-container/OnApply";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import { jwtDecode } from "jwt-decode";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Keyboard, Platform, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
@@ -31,6 +31,7 @@ import { useNetwork } from "../../../../context/NetworkContext";
 import { useDisplayToast } from "../../../components/form-container/ShowToast";
 import { useSchemas } from "../../../../context/SchemaProvider";
 import LanguageSelector from "../../../components/language/LanguageSelector";
+import RNRestart from "react-native-restart";
 
 export const LoginWithLeftBackground = () => {
   const localization = useSelector((state) => state.localization.localization);
@@ -38,38 +39,35 @@ export const LoginWithLeftBackground = () => {
   const { isOnline } = useNetwork();
   const { setUser } = useAuth();
   const { loginFormState } = useSchemas();
+  const { showToast } = useDisplayToast();
 
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState();
   const passwordField = getField(
     loginFormState.schema.dashboardFormSchemaParameters,
-    "password"
+    "password",
+  );
+  const phoneNumberField = getField(
+    loginFormState.schema.dashboardFormSchemaParameters,
+    "phoneNumber",
   );
 
-  const DValues = {
-    password: "123456",
-    username: "testAhmed12",
-    rememberme: false,
-  };
-  const [showPassword, setShowPassword] = useState(false);
+  const DValues = {};
   const navigation = useNavigation();
-  const handleState = () => {
-    setShowPassword((showState) => !showState);
-  };
-
-  const handleKeyPress = (handleSubmit: any) => {
-    Keyboard.dismiss();
-    handleSubmit();
-  };
   const {
     control,
     handleSubmit,
     setError,
     clearErrors,
+    watch,
+
     formState: { errors },
   } = useForm({ defaultValues: DValues });
+  const [formValuesContainer, setFormValuesContainer] = useState(
+    control._formValues,
+  );
   const { [passwordField]: removedPassword, ...dataWithoutPassword } =
-    control._formValues;
+    formValuesContainer;
   const onSubmit = async (data: any) => {
     // Destructure to remove confirmPassword from the sent data
     const date = new Date();
@@ -79,7 +77,7 @@ export const LoginWithLeftBackground = () => {
     const postAction =
       loginFormState.actions &&
       loginFormState.actions.find(
-        (action) => action.dashboardFormActionMethodType === "Post"
+        (action) => action.dashboardFormActionMethodType === "Post",
       );
     setLoading(true);
     const apply = await onApply(
@@ -87,32 +85,36 @@ export const LoginWithLeftBackground = () => {
       "",
       true,
       postAction,
-      loginFormState.schema.projectProxyRoute
+      loginFormState.schema.projectProxyRoute,
     );
     if (apply && apply.success === true) {
       try {
         const decodedToken = jwtDecode(apply.data.token);
-        const expiresInSeconds = decodedToken.exp;
-        const expirationDate = new Date(expiresInSeconds * 1000);
+        const expirationDate = rememberme
+          ? new Date(decodedToken.exp * 1000) // token expiration from server
+          : new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
         const user = {
           avatarUrl:
             "https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small_2x/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg",
           ...decodedToken,
         };
-        // if (rememberme) {//!must set rememberme in saveSecureValue and when open app agin if not rememberme will be dle token
         await saveSecureValue(
           "token",
-          apply.data.token
-          // expirationDate.toUTCString()
+          apply.data.token,
+          rememberme
+            ? new Date(decodedToken.exp * 1000).toUTCString()
+            : new Date(Date.now() + 24 * 60 * 60 * 1000).toUTCString(),
+          !rememberme,
         );
-        await saveSecureValue("rememberMe", rememberme ? "true" : "false");
-        // }
+
         // setUser(user);
         if (Platform.OS === "web") {
           // window.location.reload(); // Web reload
           window.location.href = "/";
         } else {
           navigation.navigate("Home");
+          RNRestart.Restart();
         }
 
         // RNRestart.Restart();
@@ -125,6 +127,13 @@ export const LoginWithLeftBackground = () => {
     }
     setLoading(false);
   };
+  useEffect(() => {
+    const subscription = watch((formValues) => {
+      setFormValuesContainer({ ...formValuesContainer, ...formValues });
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch]);
   return (
     <VStack
       className={`max-w-[440px] w-full h-full ${
@@ -139,7 +148,7 @@ export const LoginWithLeftBackground = () => {
             objectFit: "contain",
             // width: "100%",
           }}
-          source={require("../../../../assets/display/logo.webp")}
+          source={require("../../../../assets/display/logo.jpeg")}
         />
         <VStack>
           <Heading className="text-center text-accent" size="3xl">
@@ -203,11 +212,21 @@ export const LoginWithLeftBackground = () => {
             />
 
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("ForgetPassword" as never, {
-                  ...dataWithoutPassword,
-                })
-              }
+              onPress={() => {
+                if (formValuesContainer?.[phoneNumberField].length > 0) {
+                  navigation.navigate("ForgetPassword" as never, {
+                    ...dataWithoutPassword,
+                  });
+                } else {
+                  showToast(
+                    localization.Login.forgotPasswordToast.title,
+                    localization.Login.forgotPasswordToast.des,
+                    "warning",
+                    "outline",
+                    "top",
+                  );
+                }
+              }}
             >
               <LinkText className="font-medium text-sm text-primary">
                 {localization.Login.forgotPassword}
@@ -229,7 +248,8 @@ export const LoginWithLeftBackground = () => {
                 // window.location.reload(); // Web reload
                 window.location.href = "/";
               } else {
-                navigation.navigate("Home" as never);
+                navigation.navigate("Home");
+                RNRestart.Restart();
               }
             }}
           >

@@ -61,7 +61,6 @@ export default function LocationParameter({ ...props }) {
         // if (Platform.OS === "web") {
         locationInfo = await reverseGeocode(lat, lng, fields);
         // }
-
         handleLocationChange(
           {
             [latitudeField]: lat,

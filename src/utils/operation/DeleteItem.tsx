@@ -6,7 +6,7 @@ export default async function DeleteItem(
   id,
   deleteWithApi,
   action,
-  proxyRoute
+  proxyRoute,
 ) {
   if (!action || !id) return false;
 
@@ -16,12 +16,7 @@ export default async function DeleteItem(
   };
 
   try {
-    const apply = await onApply(
-      {},
-      null,
-      true,
-      modifiedDeleteAction
-    );
+    const apply = await onApply({}, null, true, modifiedDeleteAction);
 
     if (apply?.success) {
       return true;

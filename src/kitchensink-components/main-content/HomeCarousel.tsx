@@ -16,11 +16,10 @@ import { theme } from "../../Theme";
 const { width } = Dimensions.get("window");
 
 const data = [
-  { src: require("../../../assets/display/food1.jpg") },
-  { src: require("../../../assets/display/food.jpg") },
-  { src: require("../../../assets/display/food.jpg") },
-  { src: require("../../../assets/display/food.jpg") },
-  { src: require("../../../assets/display/food.jpg") },
+  { src: require("../../../assets/display/ad1.jpg") },
+  { src: require("../../../assets/display/ad2.jpg") },
+  { src: require("../../../assets/display/ad3.jpg") },
+  { src: require("../../../assets/display/ad4.jpg") },
 ];
 
 const HomeCarousel = () => {

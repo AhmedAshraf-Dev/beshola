@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createStackNavigator } from "@react-navigation/stack";
-import React from "react";
+import React, { Suspense } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import { scale } from "react-native-size-matters";
 import { useAuth } from "../../context/auth";
@@ -21,6 +21,8 @@ import { selectedRoutes } from "../utils/operation/routes";
 import { RootStackParamList } from "./RootStack";
 import DetailsScreen from "../components/company-components/DetailsScreen";
 import ErrorScreen from "../components/privacy/ErrorScreen";
+import LoadingScreen from "../kitchensink-components/loading/LoadingScreen";
+import CompareScreen from "../kitchensink-components/compare/CompareScreen";
 
 const Stack =
   Platform.OS === "web" ? createStackNavigator() : createNativeStackNavigator();
@@ -51,10 +53,6 @@ export const MargeStackWithTabs = (tabItem) => {
         ))}
 
       {/* Shared Screens */}
-      <Stack.Screen
-        name="Cart"
-        component={() => SetResponsiveContainer(<CartPage />, true)}
-      />
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="ForgetPassword" component={ForgotPassword} />

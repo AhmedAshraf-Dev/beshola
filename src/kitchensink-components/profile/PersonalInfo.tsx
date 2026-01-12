@@ -23,7 +23,7 @@ export default function PersonalInfo() {
   const [loading, setLoading] = useState(null);
   const localization = useSelector((state) => state.localization.localization);
   const voucherLocale = localization.Hum_screens.profile.collapses.find(
-    (collapse) => collapse.type === "vouchers"
+    (collapse) => collapse.type === "vouchers",
   ).childrenText;
   const DValues = {};
   const {
@@ -52,7 +52,7 @@ export default function PersonalInfo() {
   const sanitizedParams = allParams.filter(
     (param) =>
       param.parameterField !== phoneNumberField &&
-      param.parameterField !== passwordField.parameterField
+      param.parameterField !== passwordField.parameterField,
   );
 
   // Create schema with filtered parameters
@@ -69,7 +69,7 @@ export default function PersonalInfo() {
   const putAction =
     PersonInfoSchemaActions &&
     PersonInfoSchemaActions.find(
-      (action) => action.dashboardFormActionMethodType === "Put"
+      (action) => action.dashboardFormActionMethodType === "Put",
     );
 
   const onSubmit = async (data: any) => {
@@ -85,7 +85,7 @@ export default function PersonalInfo() {
         signupState.schema.idField,
         false,
         putAction,
-        signupState.schema.projectProxyRoute
+        signupState.schema.projectProxyRoute,
       );
       setResult(request);
       if (request && request.success === true) {

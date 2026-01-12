@@ -46,13 +46,9 @@ const PropertyCardDetails: React.FC<PropertyCardDetailsProps> = ({
   const localization = useSelector(
     (state: any) => state.localization.localization
   );
-
-  const discountPercentage = item.discount
-    ? parseFloat(item.discount.replace("%", ""))
-    : 0;
-  const discountedPrice =
-    item[fieldsType.price] -
-    (item[fieldsType.price] * discountPercentage) / 100;
+  const price = item?.[fieldsType.price];
+  const priceAfterDiscount = item?.[fieldsType.priceAfterDiscount];
+  const hasDiscount = item?.[fieldsType.discount] > 0;
 
   return (
     <Box className="flex-1 bg-body">
@@ -134,7 +130,7 @@ const PropertyCardDetails: React.FC<PropertyCardDetailsProps> = ({
           {/* Map & Location */}
           {item && (
             <View className="w-full my-4">
-              <LocationMap
+              {/* <LocationMap
                 location={item}
                 fields={[
                   {
@@ -149,7 +145,7 @@ const PropertyCardDetails: React.FC<PropertyCardDetailsProps> = ({
                 onLocationChange={() => {}}
                 clickable={false}
                 haveRadius={false}
-              />
+              /> */}
             </View>
           )}
 
@@ -183,7 +179,7 @@ const PropertyCardDetails: React.FC<PropertyCardDetailsProps> = ({
       <View className="flex-row items-center justify-between bg-body py-4 px-4 border-t border-card">
         {item[fieldsType.price] && (
           <Text className="text-2xl font-bold text-text">
-            {localization.menu.currency} {discountedPrice.toFixed(2)}
+            {priceAfterDiscount.toFixed(2)} {localization.menu.currency}
           </Text>
         )}
 

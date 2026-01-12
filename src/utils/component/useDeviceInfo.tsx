@@ -29,7 +29,7 @@ export const useDeviceInfo = () => {
     // Listen for screen orientation changes
     const subscription = Dimensions.addEventListener(
       "change",
-      updateDimensions
+      updateDimensions,
     );
 
     return () => {

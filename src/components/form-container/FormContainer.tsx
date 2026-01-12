@@ -51,7 +51,7 @@ function FormContainer({
   // Get expected field names from schema
   const expectedFields =
     tableSchema?.dashboardFormSchemaParameters?.map((param: any) =>
-      param.parameterField?.toLowerCase()
+      param.parameterField?.toLowerCase(),
     ) || [];
   const scrollViewRef = useRef<ScrollView>(null);
   const errorRef = useRef<View>(null);
@@ -61,7 +61,7 @@ function FormContainer({
     .filter(([key]) => !expectedFields.includes(key)) // key not found in schema
     .map(([_, message]) => message); // get message(s)
   const actionField = tableSchema?.dashboardFormSchemaParameters?.find(
-    (e: any) => e.isEnable
+    (e: any) => e.isEnable,
   ).parameterField;
   // Show toast on global errors
   // Show the first global error as toast
@@ -80,7 +80,7 @@ function FormContainer({
           currentError,
           "error",
           "outline",
-          "top"
+          "top",
         );
       }, 0);
     }

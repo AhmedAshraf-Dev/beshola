@@ -60,7 +60,7 @@ const PopupModal = ({
         "change",
         ({ window, screen }) => {
           console.log("Window changed", window, screen);
-        }
+        },
       );
 
       return () => {

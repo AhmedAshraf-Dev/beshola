@@ -43,7 +43,7 @@ const CreatePasswordScreen = ({ route }) => {
     const postAction =
       ForgetSchemaActions &&
       ForgetSchemaActions.find(
-        (action) => action.dashboardFormActionMethodType === "Post"
+        (action) => action.dashboardFormActionMethodType === "Post",
       );
     await handleSubmitWithCallback({
       data: { ...data, ...route.params },

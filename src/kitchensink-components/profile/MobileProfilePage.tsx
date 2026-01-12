@@ -27,7 +27,7 @@ const MobileProfilePage = () => {
 
   const getCollapse = (type) =>
     localization.Hum_screens.profile.collapses.find(
-      (collapse) => collapse.type === type
+      (collapse) => collapse.type === type,
     );
 
   return (

@@ -16,7 +16,7 @@ function DatepickerComponent({
   ...props
 }) {
   const [selectedDate, setSelectedDate] = useState(
-    value !== null ? value : maxDate
+    value !== null ? value : maxDate,
   );
   const languageRow = useSelector((state) => state.localization.languageRow);
   const localization = useSelector((state) => state.localization.localization);
@@ -24,7 +24,7 @@ function DatepickerComponent({
   const customArabicLocale = {
     localize: {
       month: (n) => dateTime.localize.months[n],
-      day: (n) => dateTime.localize.days[n],
+      day: (n) => dateTime.localize.days[n].slice(0, 3),
       dayPeriod: (period) =>
         period === "am" ? dateTime.localize.am : dateTime.localize.pm,
     },
@@ -79,7 +79,9 @@ function DatepickerComponent({
         popperClassName="z-[9999]"
         portalId="root-portal" // 👈 This makes the calendar render in a portal
         popperContainer={({ children }) => (
-          <div style={{ zIndex: 9999, position: "relative" }}>{children}</div>
+          <div style={{ zIndex: 9999, position: "relative", minWidth: 1000 }}>
+            {children}
+          </div>
         )}
       />
     </>

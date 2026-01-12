@@ -1,7 +1,7 @@
 export function areArraysEqualByKey<T extends Record<string, any>>(
   arr1: T[],
   arr2: T[],
-  key: keyof T
+  key: keyof T,
 ): boolean {
   if (arr1.length !== arr2.length) return false;
 

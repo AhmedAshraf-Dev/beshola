@@ -19,7 +19,7 @@ export const handleSubmitWithCallback = async ({
       isNew,
       action,
       proxyRoute,
-      false
+      false,
     );
     setReq(request);
     if (request?.success === true) {

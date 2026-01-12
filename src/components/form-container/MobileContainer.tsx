@@ -17,14 +17,15 @@ export const MobileContainer = ({
       {({ state, setState }: any) => (
         <Row>
           {tableSchema?.dashboardFormSchemaParameters
-            ?.filter((column) => {
-              return (
-                (!column.isIDField || column.lookupID) &&
+            ?.filter(
+              (column: any) =>
+                !column.isIDField &&
+                column.isEnable &&
                 !avoidColsTypes.find(
-                  (columnType) => column.parameterType === columnType
-                )
-              );
-            })
+                  (columnType) => column.parameterType === columnType,
+                ) &&
+                !column.parameterType.startsWith("hidden"),
+            )
             .map((param: any) => (
               <Column
                 size={SmMobile(param)}

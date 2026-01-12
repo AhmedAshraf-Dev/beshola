@@ -37,13 +37,13 @@ export default function PurchaseCardDetails({
 
   const usingCredits =
     parseFloat(
-      purchaseCardItem?.[ordersFieldsType?.creditField?.parameterField]
+      purchaseCardItem?.[ordersFieldsType?.creditField?.parameterField],
     ) || 0;
   const usingPoints =
     covertPointsToCredits(
       parseFloat(
-        purchaseCardItem?.[ordersFieldsType?.pointsField?.parameterField]
-      )
+        purchaseCardItem?.[ordersFieldsType?.pointsField?.parameterField],
+      ),
     ) || 0;
   const requiredAmount =
     purchaseCardItem[ordersFieldsType.netPayAmount.parameterField];
@@ -53,12 +53,12 @@ export default function PurchaseCardDetails({
   };
   const [state, reducerDispatch] = useReducer(
     reducer,
-    initialState(VIRTUAL_PAGE_SIZE, saleInvoiceItemTypes.idField)
+    initialState(VIRTUAL_PAGE_SIZE, saleInvoiceItemTypes.idField),
   );
   const [currentSkip, setCurrentSkip] = useState(1);
   const dataSourceAPI = (query, skip, take) => {
     return buildApiUrl(query, {
-      pageIndex: skip + 1,
+      pageIndex: Math.floor(skip / take) + 1,
       pageSize: take,
       [ordersFieldsType.idField]: purchaseCardItem[ordersFieldsType.idField],
 
@@ -69,7 +69,7 @@ export default function PurchaseCardDetails({
   const getAction =
     CustomerSaleInvoicesItemsActions &&
     CustomerSaleInvoicesItemsActions.find(
-      (action) => action.dashboardFormActionMethodType === "Get"
+      (action) => action.dashboardFormActionMethodType === "Get",
     );
 
   const { rows, skip, totalCount, loading } = state;
