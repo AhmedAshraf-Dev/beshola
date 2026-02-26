@@ -30,6 +30,7 @@ import Checkout from "./Checkout";
 import InvoiceSummary from "./InvoiceSummary";
 import PaymentMethods from "./PaymentMethods";
 import PaymentOptions from "./PaymentOptions";
+import { useShopNode } from "../../../context/ShopNodeProvider";
 const ITEM_HEIGHT = 330;
 const CartPage = () => {
   const [shownNodeMenuItemIDs, setShownNodeMenuItemIDs] = useState([]);
@@ -59,21 +60,22 @@ const CartPage = () => {
   const getAction =
     paymentMethodsState.actions &&
     paymentMethodsState.actions?.find(
-      (action) => action?.dashboardFormActionMethodType?.toLowerCase() === "get"
+      (action) =>
+        action?.dashboardFormActionMethodType?.toLowerCase() === "get",
     );
   const paymentMethodsUrl = useMemo(
     () => (getAction ? dataSourceAPI(getAction) : null),
-    [getAction]
+    [getAction],
   );
   const { data: paymentMethods, isLoading } =
     useFetchWithoutBaseUrl(paymentMethodsUrl);
 
   const getCustomerCartAction = cartInfoState?.actions?.find(
-    (action) => action.dashboardFormActionMethodType === "Get"
+    (action) => action.dashboardFormActionMethodType === "Get",
   );
   const cartInfoUrl = useMemo(
     () => buildApiUrl(getCustomerCartAction, {}),
-    [getCustomerCartAction]
+    [getCustomerCartAction],
   );
 
   const { data: GetCustomerCartInfo, isLoading: cartInfoLoading } =
@@ -88,7 +90,7 @@ const CartPage = () => {
   } = cartState;
 
   const params = cartInfoState.schema?.dashboardFormSchemaParameters ?? [];
-
+  const { selectedNode } = useShopNode();
   const cartInfoFieldsType = {
     idField: cartInfoState.schema.idField,
     dataSourceName: cartInfoState.schema.dataSourceName,
@@ -103,7 +105,7 @@ const CartPage = () => {
     invoiceItemsDiscountAmount: getField(
       params,
       "invoiceItemsDiscountAmount",
-      false
+      false,
     ),
     invoiceDiscountAmount: getField(params, "invoiceDiscountAmount", false),
     totalDiscountAmount: getField(params, "totalDiscountAmount", false),
@@ -124,12 +126,15 @@ const CartPage = () => {
   } = useNetwork();
   // 🌐 WebSocket connect effect
   useEffect(() => {
+    setCartInfoWS_Connected(false);
+  }, [selectedNode]);
+  useEffect(() => {
     if (cartInfo_WS_Connected) return;
     let cleanup;
     ConnectToWS(
       setWSMessageCartInfo,
       setCartInfoWS_Connected,
-      cartFieldsType.dataSourceName
+      cartFieldsType.dataSourceName,
     )
       .then(() => console.log("🔌 Cart WebSocket connected"))
       .catch((e) => console.error("❌ Cart WebSocket error", e));
@@ -142,9 +147,9 @@ const CartPage = () => {
   // ✅ Callback to update reducer
   const cartCallbackReducerUpdate = async (cartInfo_ws_updatedRows) => {
     setCartInfo(() =>
-      cartInfo_ws_updatedRows.rows.length > 0
-        ? cartInfo_ws_updatedRows.rows[0]
-        : {}
+      cartInfo_ws_updatedRows?.rows.length > 0
+        ? cartInfo_ws_updatedRows?.rows[0]
+        : {},
     );
   };
 
@@ -203,7 +208,7 @@ const CartPage = () => {
   const postCheckoutAction =
     cartInfoState?.actions &&
     cartInfoState?.actions?.find(
-      (action) => action.dashboardFormActionMethodType === "Post"
+      (action) => action.dashboardFormActionMethodType === "Post",
     );
   const BottomButtons = () => {
     return (
@@ -241,20 +246,18 @@ const CartPage = () => {
     const startIndex = Math.floor(offsetY / ITEM_HEIGHT);
     const endIndex = Math.min(
       cartRows.length - 1,
-      Math.floor((offsetY + visibleHeight) / ITEM_HEIGHT)
+      Math.floor((offsetY + visibleHeight) / ITEM_HEIGHT),
     );
 
     const currentlyVisible = cartRows.slice(startIndex, endIndex + 1);
 
     setShownNodeMenuItemIDs(
-      currentlyVisible.map((item) => item[cartFieldsType.nodeMenuItemID])
+      currentlyVisible.map((item) => item[cartFieldsType.nodeMenuItemID]),
     );
   };
   useEffect(() => {
-    if (shownNodeMenuItemIDs.length === 0 && cartRows.length > 0) {
-      setShownNodeMenuItemIDs([cartRows[0][cartFieldsType.nodeMenuItemID]]);
-    }
-  }, [cartRows, cartLoading]);
+    console.log("cartRows", cartRows, cartLoading);
+  }, [cartLoading]);
   return (
     <View className="flex-1 bg-body">
       <Checkout
@@ -315,7 +318,7 @@ const CartPage = () => {
                   </View>
                 )}
               </View>
-              {cartLoading && cartRows.length === 0 && (
+              {cartLoading && (
                 <View className="p-8 flex-row justify-center items-center">
                   <LoadingScreen LoadingComponent={<Chase size={40} />} />
                 </View>
@@ -336,6 +339,7 @@ const CartPage = () => {
                   schema={{}}
                   schemaActions={recommendedState.actions}
                   shownNodeMenuItemIDs={shownNodeMenuItemIDs}
+                  header=""
                   // key={shownNodeMenuItemIDs}
                 />
               </View>

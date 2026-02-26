@@ -41,12 +41,12 @@ function App() {
 
   return (
     <div>
-      {/* <DrawPolygonMap
+      <DrawPolygonMap
         apiKey={"AIzaSyAQI0XOqGuGc_3CF_uASbtFpy2OJtWzi6Q"}
         properties={sampleProps}
         onAreaSelect={handleAreaSelect}
         onFinish={() => {}}
-      /> */}
+      />
     </div>
   );
 }

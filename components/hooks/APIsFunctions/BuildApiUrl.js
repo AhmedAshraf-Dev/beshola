@@ -1,22 +1,25 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GetProjectUrl } from "../../../request";
 import { selectSelectedNode } from "../../../src/reducers/LocationReducer";
 import { store } from "../../../src/store/reduxStore";
+import { clientID } from "../../../request";
 //import store from "./store";
 
 export function buildApiUrl(
   apiRequest,
   baseConstants,
-  getProjectUrl = GetProjectUrl(apiRequest.projectProxyRoute)
+  getProjectUrl = GetProjectUrl(apiRequest.projectProxyRoute),
 ) {
   const selectedNode = selectSelectedNode(store.getState());
   const selectedLocation = store.getState().location.selectedLocation;
+  const serviceIndex = store.getState().location.selectedTab;
   const languageRow = store.getState().localization.languageRow;
   const constants = {
     ...baseConstants,
     ...languageRow,
     ...selectedNode,
     ...selectedLocation,
+    clientID: clientID,
+    serviceIndex: serviceIndex,
   };
   if (!apiRequest || !apiRequest.dashboardFormSchemaActionQueryParams) {
     // Handle the case where apiRequest is null or does not have dashboardFormSchemaActionQueryParams
@@ -26,17 +29,18 @@ export function buildApiUrl(
   const queryParam = apiRequest.dashboardFormSchemaActionQueryParams
     .filter(
       (param) =>
-        param.IsRequired || constants[param.dashboardFormParameterField]
+        param.IsRequired || constants[param.dashboardFormParameterField],
     )
     .map(
       (param) =>
-        `${param.parameterName}=${constants[param.dashboardFormParameterField]}`
+        `${param.parameterName}=${constants[param.dashboardFormParameterField]}`,
     )
     .join("&");
 
   const apiUrl = `${getProjectUrl}/${routeAddress}${
     routeAddress.includes("?") ? "&" : "?"
   }${queryParam}`;
+
   //const apiUrl = `${getProjectUrl}/${apiRequest.routeAdderss}?${queryParam}`;
   return apiUrl;
 }

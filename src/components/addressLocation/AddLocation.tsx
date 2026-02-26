@@ -13,6 +13,7 @@ import { handleSubmitWithCallback } from "../../utils/operation/handleSubmitWith
 import { getField } from "../../utils/operation/getField";
 import { useSchemas } from "../../../context/SchemaProvider";
 import { onApply } from "../form-container/OnApply";
+import { useShopNode } from "../../../context/ShopNodeProvider";
 
 export default function AddLocation({
   rows,
@@ -25,18 +26,16 @@ export default function AddLocation({
   const idField = addressLocationState.schema.idField;
   const displayLookupParam =
     addressLocationState.schema.dashboardFormSchemaParameters.find(
-      (pram) => pram.parameterType == "displayLookup"
+      (pram) => pram.parameterType == "displayLookup",
     );
   const tag = getField(
     addressLocationState.schema.dashboardFormSchemaParameters,
-    "addressLocationTag"
+    "addressLocationTag",
   );
   const [location, setLocation] = useState(null);
   const [reqError, setReqError] = useState(null);
   const [disable, setDisable] = useState(false);
-  const selectedLocation = useSelector(
-    (state) => state.location.selectedLocation
-  );
+  const { selectedLocation, setSelectedLocation } = useShopNode();
   const localization = useSelector((state) => state.localization.localization);
   const locations = useSelector((state) => state.location.locations);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -51,7 +50,7 @@ export default function AddLocation({
   const postAction =
     addressLocationState.actions &&
     addressLocationState.actions.find(
-      (action) => action.dashboardFormActionMethodType === "Post"
+      (action) => action.dashboardFormActionMethodType === "Post",
     );
   const onSubmit = async (data: any) => {
     await handleSubmitWithCallback({
@@ -63,20 +62,22 @@ export default function AddLocation({
       onSuccess: (resultData) => {
         AddAddressLocation(resultData);
         setIsModalVisible(false);
+
         dispatch(updateSelectedLocation(resultData));
+        setSelectedLocation(resultData);
       },
     });
   };
   useEffect(() => {
-    if (!loading && rows.length > 0 && !rows.includes(selectedLocation)) {
+    if (!loading && rows.length > 0) {
       //!send here the req
-      if (Object.keys(selectedLocation).length > 0) {
-        const selectedRow = rows.find(
-          (row) => row[idField] === selectedLocation[idField]
-        );
-        dispatch(updateSelectedLocation(selectedRow));
-      } else {
+      const selectedRow = rows.find(
+        (row) => row[idField] === selectedLocation[idField],
+      );
+
+      if (!selectedRow) {
         dispatch(updateSelectedLocation(rows[0]));
+        setSelectedLocation(rows[0]);
       }
     }
   }, [loading]);
@@ -116,20 +117,11 @@ export default function AddLocation({
           mapData={rows}
           onValueChange={async (selectedID) => {
             const selectedValue = rows.find(
-              (row) => row[idField] === selectedID
+              (row) => row[idField] === selectedID,
             );
-            // const theNearestBranch = await onApply(
-            //   { ...selectedValue },
-            //   null,
-            //   true,
-            //   postAction
-            // );
-            // if(theNearestBranch.success){
-            //   setSelectedNode(theNearestBranch);
-            //             dispatch(updateSelectedNode(theNearestBranch));
-            // }
-            //!send here the req
+
             dispatch(updateSelectedLocation(selectedValue)); // store full object
+            setSelectedLocation(selectedValue);
           }}
           subtitle={selectedLocation[tag]}
           selectedValue={

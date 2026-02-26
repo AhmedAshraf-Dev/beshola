@@ -23,7 +23,7 @@ const MobileProfilePage = () => {
   const { userGust } = useAuth();
   const { signupState, scratchVoucherCardState } = useSchemas();
   const localization = useSelector((state) => state.localization.localization);
-  const masterBranch = useSelector((state) => state.location.workingHours);
+  const contacts = useSelector((state) => state.location.contacts);
 
   const getCollapse = (type) =>
     localization.Hum_screens.profile.collapses.find(
@@ -86,7 +86,7 @@ const MobileProfilePage = () => {
                 setheader
               >
                 <View className="flex-row flex-wrap justify-center items-center gap-3">
-                  {masterBranch?.companyBranchContacts?.map((contact) => (
+                  {contacts?.map((contact) => (
                     <View key={contact.contactTypeID}>
                       {GetIconContact(contact.codeNumber, 22, contact.contact)}
                     </View>

@@ -23,6 +23,7 @@ import { buildApiUrl } from "../components/hooks/APIsFunctions/BuildApiUrl";
 import { createRowCache } from "../src/components/Pagination/createRowCache";
 import reducer from "../src/components/Pagination/reducer";
 import {
+  updateContacts,
   updateOrderStatus,
   updateSelectedLocation,
   updateSelectedNode,
@@ -32,7 +33,7 @@ import { WSMessageHandler } from "../src/utils/WS/handleWSMessage";
 import { ConnectToWS } from "../src/utils/WS/ConnectToWS";
 import { initializeLocalization } from "../src/reducers/localizationReducer";
 import { useNetwork } from "./NetworkContext";
-import { useShopNode } from "./ShopNodeProvider";
+import { ShopNodeProvider, useShopNode } from "./ShopNodeProvider";
 import { Chase } from "react-native-animated-spinkit";
 import LoadingScreen from "../src/kitchensink-components/loading/LoadingScreen";
 import useLocalizationPolling from "../src/components/language/useLocalizationPolling";
@@ -41,14 +42,13 @@ import {
   convertUTCToLocalTime,
   getMinutesFromTime,
 } from "../src/utils/operation/handleLocalTime";
-import BotChatIndicator from "../src/utils/component/BotChatIndicator";
+import ShopStatusIndicator from "../src/utils/component/ShopStatusIndicator";
 import { View } from "react-native";
 import { useVideoPlayer, VideoView } from "expo-video";
 import { useAuth } from "./auth";
 import AddMediaCard from "../src/components/cards/AddMediaCard";
 import { useSchemas } from "./SchemaProvider";
 import { LocalizationContext } from "./LocalizationContext";
-import BotChat from "../src/components/bot-chat/BotChat";
 
 // Define the shape of the WebSocket context
 interface WSContextType {
@@ -84,23 +84,21 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
   // Address Location state with reducer
   const [addressLocationState, addressLocationReducerDispatch] = useReducer(
     reducer,
-    initialState(10, AddressLocationSchema.idField)
+    initialState(10, AddressLocationSchema.idField),
   );
 
   // Redux selectors
   const rows = useSelector((state: any) => state.menuItem.rows);
   const totalCount = useSelector((state: any) => state.menuItem.totalCount);
   const fieldsType = useSelector((state: any) => state.menuItem.fieldsType);
-  const reduxSelectedLocation = useSelector(
-    (state: any) => state.location?.selectedLocation
-  );
+
   const selectedTab = useSelector((state: any) => state.location?.selectedTab);
 
   // Address location API
   const addressLocationDataSourceAPI = (
     query: any,
     skip: number,
-    take: number
+    take: number,
   ) => {
     return buildApiUrl(query, {
       pageIndex: skip + 1,
@@ -110,19 +108,19 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
 
   const addressLocationCache = createRowCache(VIRTUAL_PAGE_SIZE);
   const addressLocationGetAction = AddressLocationAction?.find(
-    (action) => action.dashboardFormActionMethodType === "Get"
+    (action) => action.dashboardFormActionMethodType === "Get",
   );
 
   // Local state for selected location
-  const [selectedLocation, setSelectedLocation] = useState(
-    reduxSelectedLocation || null
-  );
+  // const [selectedLocation, setSelectedLocation] = useState(
+  //   reduxSelectedLocation || null
+  // );
+  const { selectedLocation, setSelectedLocation } = useShopNode();
 
   // Load Address Location on getAction ready
   useEffect(() => {
     if (!addressLocationGetAction || userGust) return;
-    if (Object.keys(reduxSelectedLocation).length > 0 || selectedTab !== 1)
-      return;
+    if (Object.keys(selectedLocation).length > 0 || selectedTab !== 1) return;
     prepareLoad({
       state: addressLocationState,
       dataSourceAPI: addressLocationDataSourceAPI,
@@ -146,11 +144,11 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
   // Nearest Branches state with reducer
   const [nodeState, nodeReducerDispatch] = useReducer(
     reducer,
-    initialState(10, NearestBranchesSchema.idField)
+    initialState(10, NearestBranchesSchema.idField),
   );
   const [nodeMenuItemState, nodeMenuItemReducerDispatch] = useReducer(
     reducer,
-    initialState(10, NodeMenuItemsSchema.idField)
+    initialState(10, NodeMenuItemsSchema.idField),
   );
   const nodeDataSourceAPI = (query: any, skip: number, take: number) => {
     return buildApiUrl(query, {
@@ -162,7 +160,7 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
 
   const nodeCache = createRowCache(VIRTUAL_PAGE_SIZE);
   const nodeGetAction = NearestBranchesActions?.find(
-    (action) => action.dashboardFormActionMethodType === "Get"
+    (action) => action.dashboardFormActionMethodType === "Get",
   );
   // Load Nearest Branches when location is selected and nodeGetAction is ready
   useEffect(() => {
@@ -203,14 +201,14 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
       setSelectedNode(firstNode);
       setIsPrepared((prev) => ({ ...prev, setNode: true }));
     }
-  }, [nodeState, selectedLocation]);
+  }, [nodeState]);
   useEffect(() => {
     const fetchData = async () => {
       const getAction =
         WorkingHoursSchemaActions &&
         WorkingHoursSchemaActions.find(
           (action) =>
-            action.dashboardFormActionMethodType.toLowerCase() === "get"
+            action.dashboardFormActionMethodType.toLowerCase() === "get",
         );
       try {
         const dataSourceAPIToGetWorkingHours = (query) => {
@@ -223,34 +221,29 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
           getAction,
           "",
           false,
-          dataSourceAPIToGetWorkingHours(getAction)
+          dataSourceAPIToGetWorkingHours(getAction),
         );
-        console.log("====================================");
-        console.log(
-          getOpenCustomerRequestByContact,
-          "getOpenCustomerRequestByContact"
-        );
-        console.log("====================================");
 
-        const workingHours = getOpenCustomerRequestByContact.data[0];
-
+        const workingHours =
+          getOpenCustomerRequestByContact.data.daysWorkingHours;
+        const contacts = getOpenCustomerRequestByContact.data.contacts;
         if (workingHours) {
           // ✅ Save working hours in redux
           dispatch(updateWorkingHours(workingHours));
-
+          dispatch(updateContacts(contacts));
           // ✅ Determine order availability
           const todayIndex = new Date().getDay();
           const currentTime = new Date();
 
-          const todayWorkHour = workingHours.companyBranchWorkHours.find(
-            (w) => w.dayIndex === todayIndex
+          const todayWorkHour = workingHours.find(
+            (w) => w.dayIndex === todayIndex,
           );
 
           let orderStatus = "closed"; // "open", "nearClosed", "closed"
 
           if (todayWorkHour) {
             const localStartTime = convertUTCToLocalTime(
-              todayWorkHour.startTime
+              todayWorkHour.startTime,
             );
             const localEndTime = convertUTCToLocalTime(todayWorkHour.endTime);
 
@@ -280,8 +273,10 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
     };
 
     fetchData();
-  }, []); //!set nodeID and schemaActions
-
+  }, [selectedNode]); //!set nodeID and schemaActions
+  useEffect(() => {
+    setWS_Connected(false);
+  }, [selectedNode]);
   // 🔌 WebSocket handler effect on selectedNode change
   useEffect(() => {
     if (!selectedNode || WS_Connected) return;
@@ -346,14 +341,13 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
     <WSContext.Provider
       value={{ notifications: [], setNotifications: () => {} }}
     >
-      {/* {isEndFinishing && ( */}
-      {/* // <LoadingScreen /> */}
-      <>
-        {/* <BotChatIndicator /> */}
-        <BotChat />
-        {children}
-      </>
-      {/* )} */}
+      {isEndFinishing && (
+        // <LoadingScreen />
+        <>
+          <ShopStatusIndicator />
+          {children}
+        </>
+      )}
     </WSContext.Provider>
   );
 };

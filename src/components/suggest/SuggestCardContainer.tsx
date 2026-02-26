@@ -4,6 +4,7 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useRef,
   useState,
 } from "react";
 import { ScrollView, View } from "react-native";
@@ -38,6 +39,7 @@ export default function SuggestCardContainer({
   const { status, isOnline } = useNetwork();
   const [WS_Connected, setWS_Connected] = useState(false);
   const [currentSkip, setCurrentSkip] = useState(1);
+  const [newItems, setNewItems] = useState(1);
   const { _wsMessageSuggest, setWSMessageSuggest } = useWS();
   const { suggestCardState } = useSchemas();
   const [suggestState, suggestReducerDispatch] = useReducer(
@@ -112,7 +114,7 @@ export default function SuggestCardContainer({
   };
 
   useEffect(() => {
-    if (!selectedNode) return;
+    //if (!selectedNode) return;
     setWS_Connected(false);
   }, [selectedNode, isOnline]);
   // 🌐 Setup WebSocket connection on mount or WS_Connected change
@@ -145,9 +147,6 @@ export default function SuggestCardContainer({
 
   // 📨 React to WebSocket messages only when valid
   useEffect(() => {
-    console.log("====================================");
-    console.log(_wsMessageSuggest, "_wsMessageSuggest");
-    console.log("====================================");
     if (!_wsMessageSuggest) return;
     const _handleWSMessage = new WSMessageHandler({
       _WSsetMessage: _wsMessageSuggest,
@@ -158,12 +157,31 @@ export default function SuggestCardContainer({
     });
 
     _handleWSMessage.process();
-    console.log("====================================");
-    console.log(suggestRows, "suggestRows");
-    console.log("====================================");
+
     //setWSMessageMenuItem(_wsMessageMenuItem);
   }, [_wsMessageSuggest]);
-  const loadData = useCallback(() => {
+
+  const selectedNodeRef = useRef(selectedNode);
+  useEffect(() => {
+    console.log("suggestReducerDispatch");
+    if (selectedNodeRef.current !== selectedNode) {
+      selectedNodeRef.current = selectedNode;
+      suggestReducerDispatch({
+        type: "RESET_SERVICE_LIST",
+        payload: { lastQuery: "" },
+      });
+      setNewItems(newItems + 1);
+    }
+  }, [
+    selectedNode,
+    shownNodeMenuItemIDs,
+    suggestDataSourceAPI,
+    getSuggestAction,
+    suggestReducerDispatch,
+    suggestState,
+  ]);
+
+  useEffect(() => {
     prepareLoad({
       state: suggestState,
       dataSourceAPI: suggestDataSourceAPI,
@@ -173,29 +191,7 @@ export default function SuggestCardContainer({
       abortController: false,
       reRequest: true,
     });
-  }, [
-    suggestDataSourceAPI,
-    getSuggestAction,
-    suggestReducerDispatch,
-    suggestState,
-    selectedNode,
-    ,
-  ]);
-  useEffect(() => {
-    if (isOnline) {
-      resetAndReload(); // Reload only when back online
-    }
-  }, [isOnline]);
-
-  const resetAndReload = useCallback(() => {
-    suggestReducerDispatch({
-      type: "RESET_SERVICE_LIST",
-      payload: { lastQuery: "" },
-    });
-    setTimeout(() => {
-      loadData();
-    }, 0);
-  }, [loadData, shownNodeMenuItemIDs]);
+  }, [newItems]);
   return suggestTotalCount > 0 ? (
     <View className="flex-col">
       <Heading className="text-text font-bold text-xl">{header}</Heading>

@@ -19,7 +19,7 @@ function ImageCardActions({
   const localization = useSelector((state) => state.localization.localization);
 
   return (
-    <View className="items-center">
+    <View className="w-full items-center">
       {item[fieldsType.imageView] && (
         <Box
           key={`${fieldsType.imageView}-${item[fieldsType.imageView]}`}
@@ -43,9 +43,9 @@ function ImageCardActions({
           <ImageRoute item={item} />
 
           {/* Floating Heart Icon */}
-          {showFaovertIcon && (
+          {/* {showFaovertIcon && (
             <FaovertCardIcon fieldsType={fieldsType} item={item} />
-          )}
+          )} */}
 
           {/* Discount Badge */}
           {item[fieldsType.discount] > 0 && (

@@ -43,6 +43,7 @@ const linking = {
       SignUp: "signup",
       Verify: "Verify",
       Requests: "requests",
+      MenuFilter: "filters",
       ForgetPassword: "forget-password",
       CompareScreen: "compare",
       NotificationScreen: "notifications",
@@ -64,7 +65,7 @@ const RequiredScreens = () => {
   const { user, hasOnboarded, loading } = useAuth();
   const { os } = useDeviceInfo();
   if (loading) {
-    return <LoadingScreen LoadingComponent={<Chase size={40} />} />;
+    return <LoadingScreen />;
   }
   const mobileScreens = () => {
     if (!hasOnboarded) {

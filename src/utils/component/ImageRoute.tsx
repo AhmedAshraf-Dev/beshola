@@ -33,13 +33,12 @@ export default function ImageRoute({ item }) {
   if (!imageSrc) {
     return <View style={styles.placeholder} />;
   }
-
   return (
     <View style={styles.container}>
       <Image
         key={key}
         source={
-          hasError ? require("../../../assets/display/Default.webp") : imageSrc
+          hasError ? require("../../../assets/display/Default.webp") : route
         }
         style={styles.image}
         contentFit="cover"

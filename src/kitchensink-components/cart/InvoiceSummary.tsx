@@ -17,6 +17,7 @@ import { useSchemas } from "../../../context/SchemaProvider";
 import Invoice from "./InvoiceProvider";
 import { getField } from "../../utils/operation/getField";
 import { covertPointsToCredits } from "../../utils/operation/covertPointsToCredits";
+import { useShopNode } from "../../../context/ShopNodeProvider";
 // Enable LayoutAnimation on Android
 if (
   Platform.OS === "android" &&
@@ -55,6 +56,10 @@ export default function InvoiceSummary({
   const {
     status: { isConnected: isOnline },
   } = useNetwork();
+  const { selectedNode } = useShopNode();
+  useEffect(() => {
+    setCartInfoWS_Connected(false);
+  }, [selectedNode]);
   // 🌐 WebSocket connect effect
   useEffect(() => {
     if (cartInfo_WS_Connected) return;
@@ -62,7 +67,7 @@ export default function InvoiceSummary({
     ConnectToWS(
       setWSMessageCartInfo,
       setCartInfoWS_Connected,
-      schemaFieldsTypes.dataSourceName
+      schemaFieldsTypes.dataSourceName,
     )
       .then(() => console.log("🔌 Cart WebSocket connected"))
       .catch((e) => console.error("❌ Cart WebSocket error", e));
@@ -75,9 +80,9 @@ export default function InvoiceSummary({
   // ✅ Callback to update reducer
   const cartCallbackReducerUpdate = async (cartInfo_ws_updatedRows) => {
     setCartInfo(() =>
-      cartInfo_ws_updatedRows.rows.length > 0
-        ? cartInfo_ws_updatedRows.rows[0]
-        : {}
+      cartInfo_ws_updatedRows?.rows.length > 0
+        ? cartInfo_ws_updatedRows?.rows[0]
+        : {},
     );
   };
 
@@ -100,10 +105,17 @@ export default function InvoiceSummary({
     setExpanded(!expanded);
   };
 
+  // const getValue = (field) => {
+  //   const key = field?.parameterField;
+  //   const value = key && cartInfo ? cartInfo[key] : null;
+  //   return typeof value !== "undefined" && value !== null ? value : -1;
+  // };
   const getValue = (field) => {
     const key = field?.parameterField;
     const value = key && cartInfo ? cartInfo[key] : null;
-    return typeof value !== "undefined" && value !== null ? value : -1;
+    return typeof value !== "undefined" && value !== null
+      ? value.toFixed(2)
+      : -1;
   };
 
   const isPositive = (value) => (value > 0 ? true : false);
@@ -156,7 +168,7 @@ export default function InvoiceSummary({
                     }
                     setDash={true}
                     value={getValue(
-                      schemaFieldsTypes.invoiceItemsDiscountAmount
+                      schemaFieldsTypes.invoiceItemsDiscountAmount,
                     )}
                   />
                 )}
@@ -306,7 +318,7 @@ export default function InvoiceSummary({
             <Text
               className="text-lg font-bold text-body"
               key={`${schemaFieldsTypes.netPayAmount.parameterField}-${getValue(
-                schemaFieldsTypes.netPayAmount
+                schemaFieldsTypes.netPayAmount,
               )}`}
             >
               {Number(getValue(schemaFieldsTypes.netPayAmount)).toFixed(2) ||

@@ -33,9 +33,10 @@ export const CartProvider = ({ children }) => {
   const { cartSchemaState, nearestBranchesState } = useSchemas();
   const [cartState, cartReducerDispatch] = useReducer(
     reducer,
-    initialState(4000, cartSchemaState?.schema?.idField) //!make pagination
+    initialState(4000, cartSchemaState?.schema?.idField), //!make pagination
   );
   const { userGust } = useAuth();
+  const [reRequest, setReRequest] = useState(false);
 
   const [row, setRow] = useState({});
 
@@ -51,19 +52,19 @@ export const CartProvider = ({ children }) => {
   const getCustomerCartAction =
     cartSchemaState.actions &&
     cartSchemaState.actions?.find(
-      (action) => action.dashboardFormActionMethodType === "Get"
+      (action) => action.dashboardFormActionMethodType === "Get",
     );
   const reduxSelectedLocation = useSelector(
-    (state: any) => state.location?.selectedLocation
+    (state: any) => state.location?.selectedLocation,
   );
   const paymentRow = useSelector((state) => state.payment.paymentRow);
 
   const reduxSelectedNode = useSelector(
-    (state: any) => state.location?.selectedNode
+    (state: any) => state.location?.selectedNode,
   );
 
   const [selectedLocation, setSelectedLocation] = useState(
-    reduxSelectedLocation || null
+    reduxSelectedLocation || null,
   );
   const { cartInfoState, fastWayState } = useSchemas();
   const { selectedNode } = useShopNode();
@@ -91,7 +92,7 @@ export const CartProvider = ({ children }) => {
   const postAction =
     fastWayState.actions &&
     fastWayState.actions.find(
-      (action) => action.dashboardFormActionMethodType === "Post"
+      (action) => action.dashboardFormActionMethodType === "Post",
     );
   const isInitial = useRef(true);
   useEffect(() => {
@@ -106,7 +107,7 @@ export const CartProvider = ({ children }) => {
           { ...row, ...paymentRow, ...reduxSelectedLocation },
           null,
           true,
-          postAction
+          postAction,
         );
         // You can use `req` if needed
         // console.log("API response:", req);
@@ -116,9 +117,29 @@ export const CartProvider = ({ children }) => {
     };
 
     runEffect();
-  }, [row, paymentRow, reduxSelectedLocation]);
+  }, [row, paymentRow, reduxSelectedLocation, selectedNode]);
+  const selectedNodeRef = useRef(selectedNode);
   useEffect(() => {
-    if (!selectedNode) return;
+    // if (!selectedNode) return;
+    // if (selectedNodeRef.current !== selectedNode) {
+    //   selectedNodeRef.current = selectedNode;
+    //   cartReducerDispatch({
+    //     type: "RESET_SERVICE_LIST",
+    //     payload: { lastQuery: "" },
+    //   });
+    // }
+    prepareLoad({
+      state: cartState,
+      dataSourceAPI: cartDataSourceAPI,
+      getAction: getCustomerCartAction,
+      cache: createRowCache(4000),
+      reducerDispatch: cartReducerDispatch,
+      abortController: false,
+      reRequest: true,
+    });
+    setReRequest(false);
+  }, [selectedNode]);
+  useEffect(() => {
     setCartWS_Connected(false);
   }, [selectedNode, isOnline]);
   useEffect(() => {
@@ -129,7 +150,7 @@ export const CartProvider = ({ children }) => {
     ConnectToWS(
       setWSMessageCart,
       setCartWS_Connected,
-      cartFieldsType.dataSourceName
+      cartFieldsType.dataSourceName,
     )
       .then(() => {})
       .catch((e) => {
@@ -172,39 +193,42 @@ export const CartProvider = ({ children }) => {
       // ...row,
     });
   };
-  const loadData = useCallback(() => {
-    prepareLoad({
-      state: cartState,
-      dataSourceAPI: cartDataSourceAPI,
-      getAction: getCustomerCartAction,
-      cache: createRowCache(4000),
-      reducerDispatch: cartReducerDispatch,
-      abortController: false,
-      reRequest: true,
-    });
-  }, [
-    cartDataSourceAPI,
-    getCustomerCartAction,
-    cartReducerDispatch,
-    cartState,
-    selectedNode,
-  ]);
-  useEffect(() => {
-    if (userGust) return;
-    if (isOnline) {
-      resetAndReload(); // Reload only when back online
-    }
-  }, [selectedNode[nodeIdField], isOnline]);
+  // const loadData = useCallback(() => {
+  //   prepareLoad({
+  // state: cartState,
+  // dataSourceAPI: cartDataSourceAPI,
+  // getAction: getCustomerCartAction,
+  // cache: createRowCache(4000),
+  // reducerDispatch: cartReducerDispatch,
+  // abortController: false,
+  // reRequest: true,
+  //   });
+  // }, [
+  //   cartDataSourceAPI,
+  //   getCustomerCartAction,
+  //   cartReducerDispatch,
+  //   cartState,
+  //   selectedNode,
+  // ]);
+  // useEffect(() => {
+  //   if (userGust) return;
+  //   if (isOnline) {
+  //     resetAndReload(); // Reload only when back online
+  //   }
+  // }, [selectedNode[nodeIdField], isOnline]);
 
-  const resetAndReload = useCallback(() => {
-    cartReducerDispatch({
-      type: "RESET_SERVICE_LIST",
-      payload: { lastQuery: "" },
-    });
-    setTimeout(() => {
-      loadData();
-    }, 0);
-  }, [loadData]);
+  // const resetAndReload = useCallback(() => {
+  //   cartReducerDispatch({
+  //     type: "RESET_SERVICE_LIST",
+  //     payload: { lastQuery: "" },
+  //   });
+  //   setTimeout(() => {
+  //     console.log("====================================");
+  //     console.log("run loadData");
+  //     console.log("====================================");
+  //     loadData();
+  //   }, 0);
+  // }, [loadData]);
   return (
     <CartContext.Provider
       value={{

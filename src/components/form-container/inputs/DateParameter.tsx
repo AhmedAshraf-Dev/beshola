@@ -68,9 +68,6 @@ export default function DateParameter({
     const time = `${displayHours}:${minutes} ${
       isPM ? dateTime?.dxDateBox?.pm : dateTime?.dxDateBox?.am
     }`;
-    console.log("====================================");
-    console.log(dateTime, "monthName");
-    console.log("====================================");
 
     if (isPushTime) return time;
     if (isDateTime) return `${monthName} ${day}, ${year} - ${time}`;
@@ -103,7 +100,6 @@ export default function DateParameter({
       render={({ field: { onChange, value } }) =>
         Platform.OS === "web" ? (
           <DatepickerComponent
-            {...props}
             name={name}
             value={value}
             onChange={onChange}

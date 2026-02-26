@@ -6,7 +6,7 @@ export const updateOrderStatusLive = (
   dispatch,
   setMinutesToClose,
 ) => {
-  if (!workingHours?.companyBranchWorkHours) {
+  if (!workingHours) {
     console.log("No working hours available");
     dispatch(updateOrderStatus("closed"));
     return;
@@ -22,14 +22,10 @@ export const updateOrderStatusLive = (
     return hh * 60 + mm;
   };
 
-  let activeShift = workingHours.companyBranchWorkHours.find(
-    (w) => w.dayIndex === todayIndex,
-  );
+  let activeShift = workingHours.find((w) => w.dayIndex === todayIndex);
 
   // 🔹 Check previous day's overnight shift
-  const prevWorkHour = workingHours.companyBranchWorkHours.find(
-    (w) => w.dayIndex === prevIndex,
-  );
+  const prevWorkHour = workingHours.find((w) => w.dayIndex === prevIndex);
 
   if (prevWorkHour) {
     const prevStart = getLocalMinutes(prevWorkHour.startTime);

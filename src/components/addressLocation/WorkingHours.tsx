@@ -1,49 +1,34 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
 import { theme } from "../../Theme";
-import {
-  convertUTCToLocalTime,
-  getMinutesFromTime,
-} from "../../utils/operation/handleLocalTime";
+import { convertUTCToLocalTime } from "../../utils/operation/handleLocalTime";
 
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { toAmPm } from "../../utils/operation/toAmPm";
 import { isRTL } from "../../utils/operation/isRTL";
-export default function WorkingHours({}) {
+import { toAmPm } from "../../utils/operation/toAmPm";
+export default function WorkingHours() {
   const localization = useSelector((state) => state.localization.localization);
-  const [expanded, setExpanded] = useState(false);
-  const masterBranch = useSelector((state) => state.location.workingHours);
 
-  if (!masterBranch || !Array.isArray(masterBranch.companyBranchWorkHours)) {
+  const workingHours = useSelector((state) => state.location.workingHours);
+
+  const [expanded, setExpanded] = useState(false);
+
+  if (!workingHours || !Array.isArray(workingHours)) {
     return null;
   }
 
   const todayIndex = new Date().getDay(); // Sunday = 0
-  const currentTime = new Date();
 
-  const renderWorkHour = (workHour, isTodayHighlight = false) => {
+  const todayWorkHour = workingHours.find((w) => w.dayIndex === todayIndex);
+
+  // ✅ Component (hooks allowed)
+  const WorkHourItem = ({ workHour, isTodayHighlight }) => {
+    const status = useSelector((state) => state.location.orderStatus);
+
     const localStartTime = convertUTCToLocalTime(workHour.startTime);
     const localEndTime = convertUTCToLocalTime(workHour.endTime);
 
-    const nowMinutes = currentTime.getHours() * 60 + currentTime.getMinutes();
-    const startMinutes = getMinutesFromTime(localStartTime);
-    const endMinutes = getMinutesFromTime(localEndTime);
-
-    let status = "closed"; // "open" | "nearClosed" | "closed"
-
-    if (todayIndex === workHour.dayIndex) {
-      if (nowMinutes >= startMinutes && nowMinutes <= endMinutes) {
-        const minutesToClose = endMinutes - nowMinutes;
-        if (minutesToClose <= 30) {
-          status = "nearClosed"; // ⚠️
-        } else {
-          status = "open"; // ✅
-        }
-      }
-    }
-
-    // Choose icon based on status
     const renderStatusIcon = () => {
       switch (status) {
         case "open":
@@ -57,7 +42,6 @@ export default function WorkingHours({}) {
 
     return (
       <View
-        key={workHour.companyBranchDayWorkHoursID}
         style={{
           paddingVertical: 6,
           marginBottom: 2,
@@ -65,25 +49,30 @@ export default function WorkingHours({}) {
           backgroundColor: isTodayHighlight ? theme.dark_card : theme.primary,
           borderRadius: 8,
           alignItems: "center",
-          // justifyItems:'center'
+          flexDirection: "row",
+          justifyContent: "space-between",
         }}
-        className="grid grid-cols-5 justify-items-center"
       >
-        <Text
-          style={{
-            color: theme.body,
-            fontWeight: isTodayHighlight ? "bold" : "normal",
-          }}
-        >
-          {workHour.dayName}
-        </Text>
+        {/* Day */}
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <Text
+            style={{
+              color: theme.body,
+              fontWeight: isTodayHighlight ? "bold" : "normal",
+            }}
+          >
+            {workHour.dayName}
+          </Text>
+        </View>
 
+        {/* Time */}
         <View
           style={{
+            flex: 3,
             flexDirection: isRTL() ? "row-reverse" : "row",
             alignItems: "center",
+            justifyContent: "center",
           }}
-          className="col-span-3"
         >
           <Ionicons name="checkmark-circle" size={18} color="green" />
           <Text style={{ color: theme.body, marginLeft: 4 }}>
@@ -101,10 +90,10 @@ export default function WorkingHours({}) {
           </Text>
         </View>
 
-        {/* Status icon */}
-        <View style={{ marginLeft: 8, color: theme.body, fontWeight: "bold" }}>
+        {/* Status */}
+        <View style={{ flex: 1, alignItems: "center" }}>
           {isTodayHighlight ? (
-            <>{renderStatusIcon()}</>
+            renderStatusIcon()
           ) : (
             <MaterialIcons name="access-time" size={20} color={theme.body} />
           )}
@@ -113,16 +102,12 @@ export default function WorkingHours({}) {
     );
   };
 
-  const todayWorkHour = masterBranch.companyBranchWorkHours.find(
-    (w) => w.dayIndex === todayIndex
-  );
-
   return (
     <View style={{ marginVertical: 10 }}>
-      {/* Show only today */}
+      {/* Today */}
       <TouchableOpacity onPress={() => setExpanded(!expanded)}>
         {todayWorkHour ? (
-          renderWorkHour(todayWorkHour, true)
+          <WorkHourItem workHour={todayWorkHour} isTodayHighlight={true} />
         ) : (
           <View
             style={{
@@ -132,7 +117,6 @@ export default function WorkingHours({}) {
               backgroundColor: theme.dark_card,
               borderRadius: 8,
               alignItems: "center",
-              // justifyItems:'center'
             }}
           >
             <Text style={{ color: theme.body }}>
@@ -142,14 +126,14 @@ export default function WorkingHours({}) {
         )}
       </TouchableOpacity>
 
-      {/* Show rest of days if expanded */}
+      {/* Other days */}
       {expanded && (
         <FlatList
-          data={masterBranch.companyBranchWorkHours.filter(
-            (w) => w.dayIndex !== todayIndex
-          )}
+          data={workingHours.filter((w) => w.dayIndex !== todayIndex)}
           keyExtractor={(item) => item.companyBranchDayWorkHoursID.toString()}
-          renderItem={({ item }) => renderWorkHour(item)}
+          renderItem={({ item }) => (
+            <WorkHourItem workHour={item} isTodayHighlight={false} />
+          )}
         />
       )}
     </View>

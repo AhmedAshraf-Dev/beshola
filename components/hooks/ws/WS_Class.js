@@ -63,7 +63,7 @@ export class WSclass {
 
   removeMessageHandler(callback) {
     this.messageCallbacks = this.messageCallbacks.filter(
-      (cb) => cb !== callback
+      (cb) => cb !== callback,
     );
   }
 
@@ -79,7 +79,7 @@ export class WSclass {
 
   removeConnectionHandler(callback) {
     this.connectionCallbacks = this.connectionCallbacks.filter(
-      (cb) => cb !== callback
+      (cb) => cb !== callback,
     );
   }
 
@@ -88,7 +88,7 @@ export class WSclass {
       clearTimeout(this.reconnectTimeout);
       this.reconnectTimeout = null;
     }
-
+    this.shouldReconnect = false;
     if (this.socket) {
       this.socket.close();
       this.socket = null;

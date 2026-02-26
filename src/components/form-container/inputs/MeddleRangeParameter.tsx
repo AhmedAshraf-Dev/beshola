@@ -1,86 +1,114 @@
-import { View } from "react-native";
-import React, { useState } from "react";
+import { View, useWindowDimensions } from "react-native";
+import React from "react";
 import { Controller } from "react-hook-form";
 import { Input, InputField } from "../../../../components/ui";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import RangeSlider from "./CustomInputs/RangeSlider";
-import { scale } from "react-native-size-matters";
 
 export default function MeddleRangeParameter({
   fieldName,
-  step = 10,
   control,
   placeholder,
   invalidInput,
-  value = { min: 10, max: 500 }, // Default value for the `value` prop
+  value: range = { min: 0, max: 500 },
 }) {
-  const MIN_DEFAULT = 10;
-  const MAX_DEFAULT = 500;
+  const { width } = useWindowDimensions();
 
-  const [minValue, setMinValue] = useState(value.min || MIN_DEFAULT);
-  const [maxValue, setMaxValue] = useState(value.max || MAX_DEFAULT);
+  // ✅ Responsive slider width
+  const sliderWidth = width > 768 ? width * 0.5 : width * 0.9;
+
+  const min = range.min;
+  const max = range.max;
+
+  // ✅ Smart Dynamic Step
+  const rangeSize = max - min;
+  let step = 1;
+
+  if (rangeSize <= 20) step = 1;
+  else if (rangeSize <= 100) step = 5;
+  else if (rangeSize <= 500) step = 10;
+  else step = 50;
 
   return (
-    <View style={{ height: scale(100) }}>
-      <GestureHandlerRootView>
-        <View className="px-2 py-4">
-          <Controller
-            control={control}
-            name={fieldName}
-            defaultValue={{ min: minValue, max: maxValue }} // Default range values
-            render={({ field: { onChange, value } }) => (
-              <RangeSlider
-                max={MAX_DEFAULT}
-                min={MIN_DEFAULT}
-                sliderWidth={300}
-                step={step}
-                onValueChange={(range) => {
-                  setMinValue(range.min);
-                  setMaxValue(range.max);
-                  onChange(range); // Save the range to the form state
-                }}
-                value={value}
-              />
-            )}
-          />
-        </View>
-        <View className="my-4 flex flex-row justify-between">
-          <Input
-            variant="outline"
-            size="xl"
-            className="w-1/3 text-center"
-            isDisabled={false}
-            isReadOnly={true}
-            isInvalid={invalidInput}
-          >
-            <InputField
-              value={`${minValue}`}
-              onChangeText={(value) => {
-                const newValue = Number(value);
-                setMinValue(newValue);
-              }}
-              placeholder={placeholder}
-            />
-          </Input>
-          <Input
-            variant="outline"
-            size="xl"
-            className="w-1/3"
-            isDisabled={false}
-            isInvalid={invalidInput}
-            isReadOnly={true}
-          >
-            <InputField
-              value={`${maxValue}`}
-              onChangeText={(value) => {
-                const newValue = Number(value);
-                setMaxValue(newValue);
-              }}
-              placeholder={placeholder}
-            />
-          </Input>
-        </View>
-      </GestureHandlerRootView>
-    </View>
+    <GestureHandlerRootView>
+      <View className="px-4 py-6 w-full">
+        <Controller
+          control={control}
+          name={fieldName}
+          defaultValue={{ min, max }}
+          render={({ field: { onChange, value } }) => {
+            const currentMin = value?.min ?? min;
+            const currentMax = value?.max ?? max;
+
+            return (
+              <>
+                {/* Slider */}
+                <RangeSlider
+                  min={min}
+                  max={max}
+                  sliderWidth={sliderWidth}
+                  step={step}
+                  value={{ min: currentMin, max: currentMax }}
+                  onValueChange={(val) => onChange(val)}
+                />
+
+                {/* Dynamic Width Inputs */}
+                <View className="flex flex-row justify-between mt-6 items-center">
+                  {/* Min Input */}
+                  <Input
+                    variant="outline"
+                    size="lg"
+                    isInvalid={invalidInput}
+                    isReadOnly
+                    style={{
+                      minWidth: 60,
+                      width: Math.max(60, String(currentMin).length * 14),
+                    }}
+                  >
+                    <InputField
+                      keyboardType="numeric"
+                      value={`${currentMin}`}
+                      onChangeText={(text) => {
+                        const newMin = Number(text) || min;
+                        onChange({
+                          min: newMin,
+                          max: currentMax,
+                        });
+                      }}
+                      placeholder="Min"
+                    />
+                  </Input>
+
+                  {/* Max Input */}
+                  <Input
+                    variant="outline"
+                    size="lg"
+                    isInvalid={invalidInput}
+                    isReadOnly
+                    style={{
+                      minWidth: 60,
+                      width: Math.max(60, String(currentMax).length * 14),
+                    }}
+                  >
+                    <InputField
+                      keyboardType="numeric"
+                      value={`${currentMax}`}
+                      onChangeText={(text) => {
+                        const newMax = Number(text) || max;
+                        onChange({
+                          min: currentMin,
+                          max: newMax,
+                        });
+                      }}
+                      placeholder="Max"
+                    />
+                  </Input>
+                </View>
+              </>
+            );
+          }}
+        />
+      </View>
+    </GestureHandlerRootView>
   );
 }

@@ -20,6 +20,7 @@ import { scale } from "react-native-size-matters";
 import { useSelector } from "react-redux";
 import { useSchemas } from "../../../context/SchemaProvider";
 import { covertPointsToCredits } from "../../utils/operation/covertPointsToCredits";
+import { useShopNode } from "../../../context/ShopNodeProvider";
 
 const PaymentOptions = ({
   InvoiceSummaryInfo,
@@ -37,16 +38,16 @@ const PaymentOptions = ({
   const wsAction =
     paymentOptionsState?.actions &&
     paymentOptionsState?.actions.find(
-      (action) => action.dashboardFormActionMethodType.toLowerCase() === "ws"
+      (action) => action.dashboardFormActionMethodType.toLowerCase() === "ws",
     );
   const getAction =
     paymentOptionsState.actions &&
     paymentOptionsState.actions.find(
-      (action) => action.dashboardFormActionMethodType.toLowerCase() === "get"
+      (action) => action.dashboardFormActionMethodType.toLowerCase() === "get",
     );
   const { data, error, isLoading } = useFetch(
     `/${getAction?.routeAdderss}`,
-    paymentOptionsState.schema.projectProxyRoute
+    paymentOptionsState.schema.projectProxyRoute,
   );
   useEffect(() => {
     if (!isLoading && data) {
@@ -71,6 +72,10 @@ const PaymentOptions = ({
   const {
     status: { isConnected: isOnline },
   } = useNetwork();
+  const { selectedNode } = useShopNode();
+  useEffect(() => {
+    setWS_Connected(false);
+  }, [selectedNode]);
   // 🌐 WebSocket connect effect
   useEffect(() => {
     if (WS_Connected || !wsAction) return;
@@ -80,7 +85,7 @@ const PaymentOptions = ({
       setWS_Connected,
       paymentOptionsFieldsType.dataSourceName,
       {},
-      wsAction
+      wsAction,
     )
       .then(() => console.log("🔌 Cart WebSocket connected"))
       .catch((e) => console.error("❌ Cart WebSocket error", e));

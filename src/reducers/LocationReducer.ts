@@ -11,7 +11,8 @@ export const locationSlice = createSlice({
     selectedNodePickup: {}, //selected node in case pickup
     selectedNodeAddresses: {}, //selected node in case specific address
     favoriteLocation: { lat: "", long: "" },
-    workingHours: {},
+    workingHours: [],
+    contacts: [],
     orderStatus: "closed",
     selectedTab: 0,
   },
@@ -44,6 +45,9 @@ export const locationSlice = createSlice({
     updateWorkingHours: (state, action) => {
       state.workingHours = action.payload;
     },
+    updateContacts: (state, action) => {
+      state.contacts = action.payload;
+    },
     updateSelectedNode: (state, action) => {
       if (state.selectedTab == 0) {
         state.selectedNodePickup = action.payload;
@@ -60,9 +64,14 @@ export const locationSlice = createSlice({
   },
 });
 export const selectSelectedNode = (state) =>
-  state.location.selectedTab == 0
-    ? state.location.selectedNodePickup
-    : state.location.selectedNodeAddresses;
+  state?.location?.selectedTab == 0
+    ? state.location?.selectedNodePickup
+    : state.location?.selectedNodeAddresses;
+export const selectSelectedLocation = (state) =>
+  state?.location?.selectedTab == 0 ? {} : state.selectedLocation;
+export const selectCurrentLocation = (state) =>
+  state?.location?.currentLocation;
+export const selectOrderStatus = (state) => state?.orderStatus;
 export const {
   updateLocations,
   updateCurrentLocation,
@@ -72,6 +81,7 @@ export const {
   updateFavoriteLocation,
   updateWorkingHours,
   updateOrderStatus,
+  updateContacts,
 } = locationSlice.actions;
 
 export default locationSlice.reducer;

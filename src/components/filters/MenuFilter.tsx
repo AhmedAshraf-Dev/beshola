@@ -8,6 +8,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { updateFilters } from "../../reducers/FilterReducer";
 import { tabsData } from "../company-components/tabsData";
+import { buildFilterRow } from "../../utils/operation/buildFilterRow";
 
 export default function MenuFilter({ onFilterDone }) {
   const [updateKey, setUpdateKey] = useState(1);
@@ -62,8 +63,12 @@ export default function MenuFilter({ onFilterDone }) {
   };
   // Handle form submission
   const onSubmit = (data) => {
-    onFilterDone({ ...filterRow, ...data });
-    dispatch(updateFilters({ ...filterRow, ...data })); // Update Redux state with submitted data
+    const formattedFilters = buildFilterRow(data);
+    console.log("====================================");
+    console.log(data, formattedFilters, "data");
+    console.log("====================================");
+    onFilterDone({ ...filterRow, ...formattedFilters });
+    dispatch(updateFilters({ ...filterRow, ...formattedFilters })); // Update Redux state with submitted data
   };
   // Update filtered data when filters change
   useEffect(() => {}, [filterRow]);

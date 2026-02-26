@@ -1,5 +1,6 @@
 import React, { FC, ReactNode } from "react";
 import { View, Image } from "react-native";
+import { Chase } from "react-native-animated-spinkit";
 import { moderateScale, scale } from "react-native-size-matters";
 
 type LoadingScreenProps = {
@@ -12,16 +13,28 @@ const LoadingScreen: FC<LoadingScreenProps> = ({
   showLogo = true,
 }) => {
   return (
-    <View className="flex-1 bg-body justify-center items-center">
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "#fff",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       {!LoadingComponent && showLogo ? (
-        <Image
-          source={require("../../../assets/display/logo.webp")}
-          style={{
-            width: scale(160), // Responsive logo width
-            height: moderateScale(140), // Responsive logo height
-            resizeMode: "cover",
-          }}
-        />
+        <Chase
+          size={40}
+          style={{ alignItems: "center", justifyContent: "center" }}
+        >
+          <Image
+            source={require("../../../assets/display/logo.jpeg")}
+            style={{
+              width: scale(160),
+              height: moderateScale(140),
+              resizeMode: "contain",
+            }}
+          />
+        </Chase>
       ) : (
         LoadingComponent
       )}

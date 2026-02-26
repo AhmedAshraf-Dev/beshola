@@ -46,7 +46,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
 
   const imageSize = getResponsiveImageSize(0.3, { min: 80, max: 100 });
   const localization = useSelector(
-    (state: any) => state.localization.localization
+    (state: any) => state.localization.localization,
   );
 
   const handlePress = () => {
@@ -227,7 +227,7 @@ export const MemoizedImageCard = React.memo(
   (prevProps, nextProps) =>
     prevProps.item === nextProps.item &&
     prevProps.fieldsType === nextProps.fieldsType &&
-    prevProps.imageSize === nextProps.imageSize
+    prevProps.imageSize === nextProps.imageSize,
 );
 
 export default CompanyCard;
