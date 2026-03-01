@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import MapWithArea from "./TestMap";
-import DrawPolygonMap from "./TestMapPolgen";
+import MapWithArea from "./PolygonForm";
+import DrawPolygonMap from "./DrawSmoothPolygon";
 
 const sampleProps = [
   {

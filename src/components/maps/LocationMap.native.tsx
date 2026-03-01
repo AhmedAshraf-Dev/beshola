@@ -318,7 +318,8 @@ const LocationMapEmbed = ({
   ///webView
   const webRef = useRef(null);
   // const host = Constants.manifest.debuggerHost.split(":")[0]; // your IP
-  const url = `https://ihs-solutions.com:7552/maps?lat=${lat}&lng=${lng}&radius=${radius}&clickable=${clickable}`;
+  const url = `http://localhost:3000/displayMap?lat=${lat}&lng=${lng}&radius=${radius}&clickable=${clickable}`;
+  // const url = `https://ihs-solutions.com:7552/maps?lat=${lat}&lng=${lng}&radius=${radius}&clickable=${clickable}`;
   const sendMessageToWebView = (data) => {
     webRef.current?.postMessage(JSON.stringify(data));
   };
@@ -376,19 +377,12 @@ const LocationMapEmbed = ({
           domStorageEnabled
           onMessage={async (event) => {
             const data = JSON.parse(event.nativeEvent.data);
-            console.log("New coordinates from map:", data);
-            const newLat = data.lat;
-            const newLng = data.lng;
-            const locationInfo = await reverseGeocode(newLat, newLng, fields);
 
-            onLocationChange?.(
-              {
-                [latitudeField]: newLat,
-                [longitudeField]: newLng,
-                ...(radiusField && { [radiusField]: radius }),
-              },
-              locationInfo,
-            );
+            if (data.type === "locationChange") {
+              const { lat, lng } = data.payload;
+              console.log("Received new coordinates from WebView:", lat, lng);
+              onLocationChange({ latitude: lat, longitude: lng });
+            }
             // onLocationChange?.({
             //   latitude: data.lat,
             //   longitude: data.lng,

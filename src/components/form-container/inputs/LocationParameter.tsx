@@ -8,6 +8,7 @@ import { Text } from "react-native";
 import LocationMap from "../../maps/LocationMap";
 import { updateFavoriteLocation } from "../../../reducers/LocationReducer";
 import { reverseGeocode } from "../../../utils/operation/getlocationInfo";
+import PolygonMapEmbed from "../../maps/DrawSmoothPolygon";
 // Lazy import only the correct component
 export default function LocationParameter({ ...props }) {
   // const LocationMap = React.lazy(() =>
@@ -19,25 +20,27 @@ export default function LocationParameter({ ...props }) {
   const dispatch = useDispatch();
 
   const currentLocation = useSelector(
-    (state) => state.location.currentLocation
+    (state) => state.location.currentLocation,
   );
   const fields = props.formSchemaParameters;
+  const [clickAction, setClickAction] = useState("pin");
+  const [newPolygon, setNewPolygon] = useState([]);
   const haveRadius = props.type === "areaMapLongitudePoint";
   const latitudeField = fields.find(
     (param) =>
       param.parameterType ===
-      (haveRadius ? "areaMapLatitudePoint" : "mapLatitudePoint")
+      (haveRadius ? "areaMapLatitudePoint" : "mapLatitudePoint"),
   )?.parameterField;
 
   const longitudeField = fields.find(
     (param) =>
       param.parameterType ===
-      (haveRadius ? "areaMapLongitudePoint" : "mapLongitudePoint")
+      (haveRadius ? "areaMapLongitudePoint" : "mapLongitudePoint"),
   )?.parameterField;
   const localization = useSelector((state) => state.localization.localization);
 
   const [location, setLocation] = useState(
-    Object.keys(props.value).length > 0 || currentLocation || {}
+    Object.keys(props.value).length > 0 || currentLocation || {},
   );
   const handleLocationChange = (newLocation, locationInfo) => {
     setLocation({ ...newLocation, ...locationInfo });
@@ -46,7 +49,7 @@ export default function LocationParameter({ ...props }) {
         updateFavoriteLocation({
           lat: newLocation[latitudeField],
           long: newLocation[longitudeField],
-        })
+        }),
       );
     }
   };
@@ -66,7 +69,7 @@ export default function LocationParameter({ ...props }) {
             [latitudeField]: lat,
             [longitudeField]: lng,
           },
-          locationInfo
+          locationInfo,
         );
       } catch (error) {
         console.error("Error fetching location info:", error);
@@ -92,12 +95,24 @@ export default function LocationParameter({ ...props }) {
             haveRadius={props.type === "areaMapLongitudePoint"}
           />
         ) : ( */}
-        <LocationMap
+        {/* <LocationMap
           location={location}
           onLocationChange={handleLocationChange}
           clickable={true}
           fields={props.formSchemaParameters}
           haveRadius={props.type === "areaMapLongitudePoint"}
+        /> */}
+        <PolygonMapEmbed
+          location={location}
+          onLocationChange={handleLocationChange}
+          clickable={true}
+          fields={props.formSchemaParameters}
+          haveRadius={props.type === "areaMapLongitudePoint"}
+          // subSchemas={props.subSchemas}
+          // findServerContainer={findServerContainer}
+          clickAction={clickAction}
+          setClickAction={setClickAction}
+          setNewPolygon={setNewPolygon}
         />
         {/* )} */}
         {/* <Suspense fallback={<Text>Loading Map...</Text>}>
@@ -115,7 +130,7 @@ export default function LocationParameter({ ...props }) {
           (i) =>
             i.parameterType.startsWith("areaMap") ||
             i.parameterType.startsWith("map") ||
-            location[i.parameterField]
+            location[i.parameterField],
         )
         .map((pram) => (
           <Controller

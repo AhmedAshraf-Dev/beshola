@@ -39,7 +39,7 @@ export function SetIsOnline(state) {
 // Add other methods as needed
 
 export var baseURLWithoutApi = `${baseURL}`;
-export const clientID = "d3804355-a09c-46ec-910c-dc024a4bae2b";
+export const clientID = "d3804355-a09c-46ec-910c-dc024a4bae1b";
 //"proxy": "http://ihs.ddnsking.com:8000",
 
 export function GetProjectUrl(projectProxyRoute) {
