@@ -2,7 +2,7 @@ export const theme = {
   body: "#F9FAFB", // app background
   text: "#1F2937", // default text color
   primary: "#1A1A1A", // secondary action buttons
-  secondary: "#D4AF37",
+  secondary: "#ff5722",
   dark_card: "rgb(10 50 60 )", // card and panel background
   card: "#FFFFFF",
   surface: "#FFFFFF", // for inputs, modals, inner surfaces

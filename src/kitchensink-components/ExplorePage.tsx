@@ -11,6 +11,7 @@ import SuggestCardContainer from "../components/suggest/SuggestCardContainer";
 import SuggestCardSchemaActions from "../Schemas/MenuSchema/SuggestCardSchemaActions.json";
 import { useSchemas } from "../../context/SchemaProvider";
 import { useSelector } from "react-redux";
+import { PolygonForm } from "../components/maps/PolygonForm";
 
 const Explorepage = () => {
   const { os } = useDeviceInfo();
@@ -22,20 +23,9 @@ const Explorepage = () => {
       <ScrollView>
         <Box>
           <VStack space="sm">
-            {/* <AddressLocationCollapsible /> */}
-            <View
-              style={{
-                // backgroundColor: theme.card,
-                // padding: 16,
-                marginTop: 0,
-                borderBottomWidth: 1,
-                borderBottomColor: theme.border,
-              }}
-            >
-              <AddressLocationCollapsible />
-            </View>
             {os === "web" && <HomeCarouselWeb />}
             {os !== "web" && <HomeCarousel />}
+            <PolygonForm enable={false} setNewPolygon={() => {}} />
             <View className="flex-col">
               <SuggestCardContainer
                 row={{ onlyDiscountItems: true }}

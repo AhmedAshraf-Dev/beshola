@@ -24,9 +24,9 @@ import { buildApiUrl } from "../components/hooks/APIsFunctions/BuildApiUrl";
 import { useSelector } from "react-redux";
 import { prepareLoad } from "../src/utils/operation/loadHelpers";
 import { createRowCache } from "../src/components/Pagination/createRowCache";
-import NodeMenuItemsSchema from "../src/Schemas/MenuSchema/NodeMenuItemsSchema.json";
+import AssetsSchema from "../src/Schemas/MenuSchema/AssetsSchema.json";
 import FavoriteMenuItemsSchema from "../src/Schemas/MenuSchema/FavoriteMenuItemsSchema.json";
-import NodeMenuItemsSchemaActions from "../src/Schemas/MenuSchema/NodeMenuItemsSchemaActions.json";
+import AssetsSchemaActions from "../src/Schemas/MenuSchema/AssetsSchemaActions.json";
 import { useNavigation } from "@react-navigation/native";
 import { getRemoteRows } from "../src/components/Pagination/getRemoteRows";
 import ActionBar from "../src/components/cards/ActionBar";
@@ -47,14 +47,14 @@ export const SearchProvider = ({ children }) => {
 
   const fieldsType = useSelector((state: any) => state.menuItem.fieldsType);
   const reduxSelectedLocation = useSelector(
-    (state: any) => state.location?.selectedLocation
+    (state: any) => state.location?.selectedLocation,
   );
   const reduxSelectedNode = useSelector(
-    (state: any) => state.location?.selectedNode
+    (state: any) => state.location?.selectedNode,
   );
 
   const [selectedLocation, setSelectedLocation] = useState(
-    reduxSelectedLocation || null
+    reduxSelectedLocation || null,
   );
   //const [selectedNode, setSelectedNode] = useState(reduxSelectedNode || null);
   // const selectedNode = selectSelectedNode(store.getState());
@@ -62,7 +62,7 @@ export const SearchProvider = ({ children }) => {
   const previousControllerRef = useRef(null);
   const [state, reducerDispatch] = useReducer(
     reducer,
-    initialState(VIRTUAL_PAGE_SIZE, NodeMenuItemsSchema.idField)
+    initialState(VIRTUAL_PAGE_SIZE, AssetsSchema.idField),
   );
   const [currentSkip, setCurrentSkip] = useState(1);
   const dataSourceAPI = (query, skip, take) => {
@@ -74,9 +74,9 @@ export const SearchProvider = ({ children }) => {
   };
   const cache = createRowCache(VIRTUAL_PAGE_SIZE);
   const getAction =
-    NodeMenuItemsSchemaActions &&
-    NodeMenuItemsSchemaActions.find(
-      (action) => action.dashboardFormActionMethodType === "Get"
+    AssetsSchemaActions &&
+    AssetsSchemaActions.find(
+      (action) => action.dashboardFormActionMethodType === "Get",
     );
 
   const { rows, skip, totalCount, loading } = state;
@@ -121,7 +121,7 @@ export const SearchProvider = ({ children }) => {
     ConnectToWS(
       setWSMessageMenuItem,
       setWS_Connected,
-      fieldsType.dataSourceName
+      fieldsType.dataSourceName,
     )
       .then(() => console.log("🔌 WebSocket setup done"))
       .catch((e) => {});
@@ -162,7 +162,7 @@ export const SearchProvider = ({ children }) => {
 
     const prevRow = previousRowRef.current || {};
     const changedProps = Object.keys(menuItemRow).filter(
-      (key) => menuItemRow[key] !== prevRow[key]
+      (key) => menuItemRow[key] !== prevRow[key],
     );
 
     const changedKey = changedProps.length === 1 ? changedProps[0] : null;

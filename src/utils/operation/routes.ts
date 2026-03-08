@@ -9,7 +9,9 @@ export function selectedRoutes(userGust) {
     { routePath: "Requests" },
     { routePath: "Profile" },
   ];
-
+  console.log("====================================");
+  console.log(localization.tabs);
+  console.log("====================================");
   // Create new mapped tabs with routePath added
   const tabs =
     localization.tabs?.map((tab) => {
@@ -26,11 +28,11 @@ export function selectedRoutes(userGust) {
     }) ?? [];
 
   const routesForGuests = routes.filter(
-    (item) => item.routePath !== "Profile" && item.routePath !== "Orders"
+    (item) => item.routePath !== "Profile" && item.routePath !== "Requests",
   );
 
   const tabsForGuests = tabs.filter(
-    (item) => item.routePath !== "Profile" && item.routePath !== "Orders"
+    (item) => item.routePath !== "Profile" && item.routePath !== "Requests",
   );
 
   return userGust

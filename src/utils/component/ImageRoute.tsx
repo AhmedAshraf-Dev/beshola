@@ -1,6 +1,6 @@
-import { Image } from "expo-image";
 import React, { useEffect, useRef, useState } from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
+import { Image } from "expo-image";
 import { useSelector } from "react-redux";
 import { GetMediaUrl } from "../operation/GetMediaUrl";
 
@@ -12,11 +12,12 @@ export default function ImageRoute({ item }) {
   const [hasError, setHasError] = useState(false);
   const imageUrlRef = useRef(null);
   const [key, setKey] = useState(route?.replace(/[^\w-]/g, "_") || "no_route");
+  const defaultImagePath = "../../../assets/display/adaptive-icon.png";
   //const key = ;
   // ✅ Generate valid image URL
   useEffect(() => {
     if (!route) {
-      setImageSrc(require("../../../assets/display/Default.webp"));
+      setImageSrc(require(defaultImagePath));
       return;
     }
 
@@ -33,19 +34,18 @@ export default function ImageRoute({ item }) {
   if (!imageSrc) {
     return <View style={styles.placeholder} />;
   }
+
   return (
     <View style={styles.container}>
       <Image
         key={key}
-        source={
-          hasError ? require("../../../assets/display/Default.webp") : route
-        }
+        source={hasError ? require(defaultImagePath) : imageSrc}
         style={styles.image}
         contentFit="cover"
         cachePolicy="memory-disk"
         transition={300}
         alt={item?.[fieldsType.text] ?? "image"}
-        placeholder={require("../../../assets/display/Default.webp")}
+        placeholder={require(defaultImagePath)}
         onError={() => setHasError(true)}
         {...(Platform.OS === "web" ? { fetchPriority: "high" } : {})}
       />

@@ -8,7 +8,7 @@ import React, {
   useContext,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import NodeMenuItemsSchema from "../src/Schemas/MenuSchema/NodeMenuItemsSchema.json";
+import AssetsSchema from "../src/Schemas/MenuSchema/AssetsSchema.json";
 import { prepareLoad } from "../src/utils/operation/loadHelpers";
 import AddressLocationAction from "../src/Schemas/AddressLocation/AddressLocationAction.json";
 import WorkingHoursSchemaActions from "../src/Schemas/AddressLocation/WorkingHoursSchemaActions.json";
@@ -148,7 +148,7 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
   );
   const [nodeMenuItemState, nodeMenuItemReducerDispatch] = useReducer(
     reducer,
-    initialState(10, NodeMenuItemsSchema.idField),
+    initialState(10, AssetsSchema.idField),
   );
   const nodeDataSourceAPI = (query: any, skip: number, take: number) => {
     return buildApiUrl(query, {
@@ -344,7 +344,7 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
       {isEndFinishing && (
         // <LoadingScreen />
         <>
-          <ShopStatusIndicator />
+          {/* <ShopStatusIndicator /> */}
           {children}
         </>
       )}

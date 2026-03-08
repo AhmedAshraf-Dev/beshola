@@ -42,7 +42,12 @@ export default function LocationParameter({ ...props }) {
   const [location, setLocation] = useState(
     Object.keys(props.value).length > 0 || currentLocation || {},
   );
-  const handleLocationChange = (newLocation, locationInfo) => {
+  const handleLocationChange = async (newLocation) => {
+    const locationInfo = await reverseGeocode(
+      newLocation[latitudeField],
+      newLocation[longitudeField],
+      fields,
+    );
     setLocation({ ...newLocation, ...locationInfo });
     if (newLocation[latitudeField]) {
       dispatch(
@@ -80,7 +85,7 @@ export default function LocationParameter({ ...props }) {
   }, []); // 👈 Add dependencies here if lat/lng can change
 
   return (
-    <View>
+    <View className="overflow-hidden">
       <CollapsibleSection
         title={localization.Hum_screens.home.selectLocation}
         icon={() => <Entypo name="location-pin" size={24} />}

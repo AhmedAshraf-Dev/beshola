@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { onApply } from "../../components/form-container/OnApply";
 import { addToCart, setItemQuantity } from "../../reducers/CartReducer";
-import NodeMenuItemsSchema from "../../Schemas/MenuSchema/NodeMenuItemsSchema.json";
+import AssetsSchema from "../../Schemas/MenuSchema/AssetsSchema.json";
 import DeleteItem from "../../utils/operation/DeleteItem";
 
 export const AddItemToCart = async (
@@ -9,14 +9,14 @@ export const AddItemToCart = async (
   setLoading,
   fieldsType,
   schemaActions,
-  quantity
+  quantity,
 ) => {
   setLoading(true);
   try {
     //console.log("AddItemToCart cartState",addToCart);
     if (quantity == 0) {
       const deleteAction = schemaActions?.find(
-        (action) => action.dashboardFormActionMethodType === "Delete"
+        (action) => action.dashboardFormActionMethodType === "Delete",
       );
 
       if (
@@ -25,7 +25,7 @@ export const AddItemToCart = async (
           //dispatch(addToCart({ item: item, fieldsType: fieldsType })),
           true,
           deleteAction,
-          NodeMenuItemsSchema.projectProxyRoute
+          AssetsSchema.projectProxyRoute,
         )
       ) {
         // dispatch(setItemQuantity(-1));
@@ -35,7 +35,7 @@ export const AddItemToCart = async (
       //DeleteItem();
     } else {
       const postAction = schemaActions?.find(
-        (action) => action.dashboardFormActionMethodType === "Post"
+        (action) => action.dashboardFormActionMethodType === "Post",
       );
 
       const apply = await onApply(
@@ -46,7 +46,7 @@ export const AddItemToCart = async (
         "",
         true,
         postAction,
-        NodeMenuItemsSchema.projectProxyRoute
+        AssetsSchema.projectProxyRoute,
       );
 
       if (apply?.success) {

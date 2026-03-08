@@ -380,7 +380,12 @@ const LocationMapEmbed = ({
 
             if (data.type === "locationChange") {
               const { lat, lng } = data.payload;
-              console.log("Received new coordinates from WebView:", lat, lng);
+              console.log(
+                "Received new coordinates from WebView:",
+                lat,
+                lng,
+                data.payload,
+              );
               onLocationChange({ latitude: lat, longitude: lng });
             }
             // onLocationChange?.({

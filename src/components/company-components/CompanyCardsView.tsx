@@ -66,7 +66,7 @@ const CompanyCardsView = ({}: any) => {
       )} */}
       {/*!for web*/}
       <CompanyCardsFlatList
-        rows={initCompanyRows}
+        rows={state.rows}
         fieldsType={fieldsType}
         cartState={{ rows: [] }}
         menuItemsState={menuItemsState}

@@ -20,52 +20,50 @@ function ImageCardActions({
 
   return (
     <View className="w-full items-center">
-      {item[fieldsType.imageView] && (
-        <Box
-          key={`${fieldsType.imageView}-${item[fieldsType.imageView]}`}
-          style={{
-            width: scale(135),
-            height: scale(135),
-            borderRadius: scale(16),
-            overflow: "hidden",
-            backgroundColor: theme.body || "#fff",
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 3 },
-            shadowOpacity: 0.2,
-            shadowRadius: 4,
-            elevation: 5,
-            position: "relative",
-            ...style,
-          }}
-          className={className}
-        >
-          {/* Image */}
-          <ImageRoute item={item} />
+      <Box
+        key={`${fieldsType.imageView}-${item[fieldsType.imageView]}`}
+        style={{
+          width: scale(135),
+          height: scale(135),
+          borderRadius: scale(16),
+          overflow: "hidden",
+          backgroundColor: theme.body || "#fff",
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 3 },
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
+          elevation: 5,
+          position: "relative",
+          ...style,
+        }}
+        className={className}
+      >
+        {/* Image */}
+        <ImageRoute item={item} />
 
-          {/* Floating Heart Icon */}
-          {/* {showFaovertIcon && (
+        {/* Floating Heart Icon */}
+        {/* {showFaovertIcon && (
             <FaovertCardIcon fieldsType={fieldsType} item={item} />
           )} */}
 
-          {/* Discount Badge */}
-          {item[fieldsType.discount] > 0 && (
-            <View className="absolute top-0 right-0 bg-red-500 px-2 py-1 rounded-tr-lg rounded-bl-lg w-1/2">
-              <Text
-                className="text-body font-bold text-sm"
-                style={{
-                  fontSize: scale(7),
-                }}
-                numberOfLines={1}
-              >
-                {item[fieldsType.discount]}% {localization.menu.off}
-              </Text>
-            </View>
-          )}
+        {/* Discount Badge */}
+        {item[fieldsType.discount] > 0 && (
+          <View className="absolute top-0 right-0 bg-red-500 px-2 py-1 rounded-tr-lg rounded-bl-lg w-1/2">
+            <Text
+              className="text-body font-bold text-sm"
+              style={{
+                fontSize: scale(7),
+              }}
+              numberOfLines={1}
+            >
+              {item[fieldsType.discount]}% {localization.menu.off}
+            </Text>
+          </View>
+        )}
 
-          {/* Top overlay for interaction */}
-          {children}
-        </Box>
-      )}
+        {/* Top overlay for interaction */}
+        {children}
+      </Box>
     </View>
   );
 }

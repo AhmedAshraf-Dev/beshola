@@ -13,7 +13,7 @@ import {
 
 const ExpandableText = ({
   text,
-  initLimit = 10,
+  initLimit = 100,
   className = "",
 }: {
   text: string;

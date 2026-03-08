@@ -27,7 +27,6 @@ const HomePage = () => {
           barStyle="dark-content" // or "light-content" based on your text color
         />
         <Box className="flex-1">
-          <PolygonForm enable={false} setNewPolygon={() => {}} />
           <Explorepage />
         </Box>
       </Box>

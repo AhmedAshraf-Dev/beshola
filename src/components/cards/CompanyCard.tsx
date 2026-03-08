@@ -6,6 +6,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import {
+  Image,
   Platform,
   Text,
   TouchableOpacity,
@@ -24,6 +25,7 @@ import { isRTL } from "../../utils/operation/isRTL";
 import PropertyCardButtonsActions from "./PropertyCardButtonsActions";
 import ExpandableText from "../../utils/component/ExpandableText";
 import { ScreenWidth } from "../shared";
+import { GetMediaUrl } from "../../utils/operation/GetMediaUrl";
 
 interface CompanyCardProps {
   itemPackage: any;
@@ -57,7 +59,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
     }
   };
   const attributesText = item[fieldsType.attributes]
-    ?.map((att) => att.value)
+    ?.map((att) => att)
     .join(" • "); // join with bullet or comma
   const isWeb = Platform.OS === "web";
 
@@ -114,25 +116,40 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
                 >
                   {/* Company Name + Verified + Stars */}
                   {fieldsType.companyName && item[fieldsType.companyName] && (
-                    <Text
-                      numberOfLines={2}
-                      key={`${item[fieldsType.idField]}-${
-                        fieldsType.companyName
-                      }-${item[fieldsType.companyName]}`}
-                      className="text-lg font-bold mb-1"
-                      style={{ color: theme.secondary, direction: "inherit" }}
-                    >
-                      {item.verified && (
-                        <View className="flex-row items-center">
-                          <MaterialCommunityIcons
-                            name="check-decagram"
-                            size={18}
-                            color={theme.accentHover}
+                    <View>
+                      {fieldsType.companyLogo &&
+                        item[fieldsType.companyLogo] && (
+                          <Image
+                            source={{
+                              uri: GetMediaUrl(
+                                item[fieldsType.companyLogo],
+                                "publicImage",
+                              ),
+                            }}
+                            className="w-10 h-10 rounded-full mr-2"
+                            resizeMode="cover"
                           />
-                        </View>
-                      )}{" "}
-                      {item.companyName}
-                    </Text>
+                        )}
+                      <Text
+                        numberOfLines={2}
+                        key={`${item[fieldsType.idField]}-${
+                          fieldsType.companyName
+                        }-${item[fieldsType.companyName]}`}
+                        className="text-lg font-bold mb-1"
+                        style={{ color: theme.secondary, direction: "inherit" }}
+                      >
+                        {item.verified && (
+                          <View className="flex-row items-center">
+                            <MaterialCommunityIcons
+                              name="check-decagram"
+                              size={18}
+                              color={theme.accentHover}
+                            />
+                          </View>
+                        )}{" "}
+                        {item.companyName}
+                      </Text>
+                    </View>
                   )}
 
                   {/* Stars */}
@@ -160,25 +177,27 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
           {/* Bottom Actions */}
           <View className="flex-row justify-between items-center mt-2 px-2">
             {" "}
-            {fieldsType.location && item[fieldsType.location] && (
+            {fieldsType.address && item[fieldsType.address] && (
               <TouchableOpacity
                 className="bg-accentHover px-3 py-1 rounded-full shadow flex-row items-center"
-                onPress={() => console.log("Redirect to map:", item.location)}
+                onPress={() =>
+                  console.log("Redirect to map:", item[fieldsType.address])
+                }
               >
-                {" "}
                 <MaterialCommunityIcons
                   name="map-marker-outline"
                   size={18}
                   color={theme.body}
-                />{" "}
+                />
                 <Text className="text-body text-sm font-semibold ml-1">
-                  {" "}
-                  {item.location}{" "}
-                </Text>{" "}
+                  <ExpandableText
+                    text={item[fieldsType.address]}
+                    initLimit={20}
+                  />
+                </Text>
               </TouchableOpacity>
-            )}{" "}
+            )}
             <View className="flex-row items-center">
-              {" "}
               <MaterialCommunityIcons
                 name="eye-outline"
                 size={18}
@@ -199,7 +218,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
       </Card>
 
       {/* Price Plans */}
-      <PricePlansSection pricePlans={item.pricePlans} />
+      <PricePlansSection item={item} />
     </View>
   );
 };

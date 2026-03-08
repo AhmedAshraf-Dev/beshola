@@ -10,8 +10,8 @@ import FastWaySchemaActions from "../Schemas/MenuSchema/FastWaySchemaActions.jso
 import FilterSchema from "../Schemas/MenuSchema/FilterSchema.json";
 import NodeMenuCatSchema from "../Schemas/MenuSchema/NodeMenuCatSchema.json";
 import NodeMenuCatSchemaActions from "../Schemas/MenuSchema/NodeMenuCatSchemaActions.json";
-import NodeMenuItemsSchema from "../Schemas/MenuSchema/NodeMenuItemsSchema.json";
-import NodeMenuItemsSchemaActions from "../Schemas/MenuSchema/NodeMenuItemsSchemaActions.json";
+import AssetsSchema from "../Schemas/MenuSchema/AssetsSchema.json";
+import NodeMenuItemsSchemaActions from "../Schemas/MenuSchema/AssetsSchemaActions.json";
 import FavoriteMenuItemsSchema from "../Schemas/MenuSchema/FavoriteMenuItemsSchema.json";
 import FavoriteMenuItemsSchemaActions from "../Schemas/MenuSchema/FavoriteMenuItemsSchemaActions.json";
 import PaymentMethods from "../Schemas/MenuSchema/PaymentMethods.json";
@@ -89,7 +89,7 @@ export const schemasSlice = createSlice({
       actions: NodeMenuCatSchemaActions,
     },
     menuItems: {
-      schema: NodeMenuItemsSchema,
+      schema: AssetsSchema,
       actions: NodeMenuItemsSchemaActions,
     },
     fav: {

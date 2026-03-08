@@ -26,19 +26,36 @@ import { useForm, Controller } from "react-hook-form";
 import { theme } from "../../Theme";
 import { isRTL } from "../../utils/operation/isRTL";
 import PricePlansInput from "./PricePlansInput";
+import PricePlanSchemaActions from "../../Schemas/MenuSchema/PricePlanSchemaActions.json";
+import { buildApiUrl } from "../../../components/hooks/APIsFunctions/BuildApiUrl";
+import useFetchWithoutBaseUrl from "../../../components/hooks/APIsFunctions/UseFetchWithoutBaseUrl";
 
-const PricePlansSection = ({ pricePlans }) => {
+const PricePlansSection = ({ item }) => {
   const [openModal, setOpenModal] = useState(false);
+  const getLanguageAction = PricePlanSchemaActions?.find(
+    (action) => action.dashboardFormActionMethodType === "Get",
+  );
+  const dataSourceAPI = (query) =>
+    buildApiUrl(query, {
+      pageIndex: 1,
+      pageSize: 1000,
+      activeStatus: 1,
+
+      projectRout: getLanguageAction.projectProxyRoute,
+      ...item,
+    });
+
+  const query = dataSourceAPI(getLanguageAction);
+  const { data: pricePlans } = useFetchWithoutBaseUrl(query);
   const { control, watch, setValue } = useForm({
     defaultValues: { selectedPlan: "0" },
   });
 
   const selectedPlanIndex = watch("selectedPlan");
-  const selectedPlan = pricePlans[selectedPlanIndex];
-
+  const selectedPlan = {};
   const handleOpenMap = (location) => {
     const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-      location
+      location,
     )}`;
     Linking.openURL(url);
   };
