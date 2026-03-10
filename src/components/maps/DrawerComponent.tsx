@@ -28,6 +28,7 @@ const DrawerComponent = ({polygonObj,setOpenDrawer}) => {
       left: 0,
       zIndex: 10,
       pointerEvents: "auto",
+     
     }}
   >
       <MapDrawer row={polygonObj} onClose={() => setOpenDrawer(false)} />

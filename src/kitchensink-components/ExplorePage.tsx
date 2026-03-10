@@ -9,9 +9,11 @@ import AddressLocationCollapsible from "../utils/component/AddressLocationCollap
 import { theme } from "../Theme";
 import SuggestCardContainer from "../components/suggest/SuggestCardContainer";
 import AssetsSchemaActions from "../Schemas/MenuSchema/AssetsSchemaActions.json";
+import FilterAttrubites from "../Schemas/MenuSchema/FilterAttrubites.json";
 import { useSchemas } from "../../context/SchemaProvider";
 import { useSelector } from "react-redux";
 import { PolygonForm } from "../components/maps/PolygonForm";
+import DynamicTreeSchema from "../utils/component/DynamicTreeSchema";
 
 const Explorepage = () => {
   const { os } = useDeviceInfo();
@@ -25,6 +27,7 @@ const Explorepage = () => {
           <VStack space="sm">
             {os === "web" && <HomeCarouselWeb />}
             {os !== "web" && <HomeCarousel />}
+            <DynamicTreeSchema />
             <PolygonForm enable={false} setNewPolygon={() => {}} />
             <View className="flex-col">
               <SuggestCardContainer
@@ -43,9 +46,6 @@ const Explorepage = () => {
                 header={localization.Hum_screens.home.suggestItems}
               />
             </View>
-
-            {/* <HomeContent /> */}
-            <FaovertMenuItems />
           </VStack>
         </Box>
       </ScrollView>

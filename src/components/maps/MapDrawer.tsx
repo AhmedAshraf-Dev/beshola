@@ -2,12 +2,18 @@ import React from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import SuggestCardContainer from "../suggest/SuggestCardContainer";
 import AssetsSchemaActions from '../../Schemas/MenuSchema/AssetsSchemaActions.json'
+import { addAlpha } from "../../utils/operation/addAlpha";
+import { theme } from "../../Theme";
 
 const MapDrawer = ({ row, onClose }) => {
   return (
-    <View className="bg-body rounded-t-3xl h-[80%]">
+    <View
+  className="rounded-t-3xl h-[80%]"
+  style={{ backgroundColor: addAlpha(theme.accent, 0.15) }}
+>
       {/* HEADER */}
-      <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-200">
+      <View className="flex-row items-center justify-between px-4 py-3 border-b border-gray-200"
+      style={{ backgroundColor: addAlpha(theme.accentHover, 0.15) }}>
         <Text className="text-lg font-semibold"></Text>
 
         <TouchableOpacity onPress={onClose}>

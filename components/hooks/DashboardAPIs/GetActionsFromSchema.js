@@ -1,7 +1,10 @@
-import useFetch from "../APIsFunctions/useFetch";
+import useFetch from "../../hooks/APIsFunctions/useFetch";
 import GetSchemaActionsUrl from "./GetSchemaActionsUrl";
-import { GetProjectUrl } from "../../request";
-import dashboardItemSchema from "../../Schemas/DashboardItemSchema/DashboardItemSchema.json";
+import {
+  defaultProjectProxyRoute,
+  defaultProjectProxyRouteWithoutBaseURL,
+} from "../../../request";
+
 export function GetActionsFromSchema(schema) {
   const {
     data: schemaActions,
@@ -9,7 +12,7 @@ export function GetActionsFromSchema(schema) {
     isLoading,
   } = useFetch(
     GetSchemaActionsUrl(schema.dashboardFormSchemaID),
-    dashboardItemSchema.projectProxyRoute
+    defaultProjectProxyRouteWithoutBaseURL
   );
 
   const getAction = schemaActions?.find(
@@ -21,9 +24,43 @@ export function GetActionsFromSchema(schema) {
   const putAction = schemaActions?.find(
     (action) => action.dashboardFormActionMethodType === "Put"
   );
+  const searchAction = schemaActions?.find(
+    (action) => action.dashboardFormActionMethodType === "Search"
+  );
+  const getDependenciesAction = schemaActions?.find(
+    (action) => action.dashboardFormActionMethodType === "GetDependencies"
+  );
+  const getActionByID = schemaActions?.find(
+    (action) => action.dashboardFormActionMethodType === "GetByID"
+  );
   const deleteAction = schemaActions?.find(
     (action) => action.dashboardFormActionMethodType === "Delete"
   );
+  const wsAction = schemaActions?.find(
+    (action) => action.dashboardFormActionMethodType === "ws"
+  );
+  const specialActions = schemaActions
+    ?.filter((action) =>
+      ["Get", "Put", "Post", "Delete"].some((method) =>
+        action.dashboardFormActionMethodType.startsWith(`${method}:`)
+      )
+    )
+    ?.map((action) => ({
+      ...action,
+      confirm: action.dashboardFormActionMethodType.startsWith("Put:"), // only true for Delete
+    }));
 
-  return { getAction, postAction, putAction, deleteAction, error, isLoading };
+  return {
+    getAction,
+    postAction,
+    putAction,
+    deleteAction,
+    searchAction,
+    getDependenciesAction,
+    getActionByID,
+    specialActions,
+    wsAction,
+    error,
+    isLoading,
+  };
 }

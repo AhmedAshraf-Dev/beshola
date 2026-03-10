@@ -4,6 +4,7 @@ import { theme } from "../../Theme";
 import { Feather } from "@expo/vector-icons";
 import { DOMAIN_NAME } from "../shared";
 import { CompareContext } from "../../../context/CompareProvider";
+import { addAlpha } from "../../utils/operation/addAlpha";
 
 export default function PropertyCardButtonsActions({
   widthBorder = false,
@@ -57,7 +58,7 @@ export default function PropertyCardButtonsActions({
     <View
       className={containerClassName}
       style={{
-        backgroundColor: theme.body,
+        backgroundColor: addAlpha(theme.text, 0.15),
         borderColor: theme.border,
         justifyContent: "flex-end",
       }}
@@ -69,7 +70,8 @@ export default function PropertyCardButtonsActions({
         }}
         className="px-3 py-1 flex-row justify-center items-center rounded-full shadow"
         style={{
-          backgroundColor: isCompareItem ? theme.accent : theme.surface,
+          backgroundColor: isCompareItem ? addAlpha(theme.accent,.15) 
+          : addAlpha(theme.surface,.15) ,
           borderWidth: 1,
           borderColor: isCompareItem ? theme.accent : theme.surface,
         }}
@@ -87,7 +89,7 @@ export default function PropertyCardButtonsActions({
       {/* ================= SHARE ================= */}
       <TouchableOpacity
         className="p-2 rounded-full shadow"
-        style={{ backgroundColor: theme.surface }}
+        style={{ backgroundColor: addAlpha(theme.surface,.15)}}
         onPress={handleShare}
       >
         <Feather name="share-2" size={16} color={theme.dark_card} />
@@ -96,7 +98,7 @@ export default function PropertyCardButtonsActions({
       {/* ================= FAVORITE ================= */}
       <TouchableOpacity
         className="p-2 rounded-full shadow"
-        style={{ backgroundColor: theme.surface }}
+        style={{ backgroundColor: addAlpha(theme.surface,.15) }}
       >
         <Feather name="heart" size={16} color={theme.dark_card} />
       </TouchableOpacity>

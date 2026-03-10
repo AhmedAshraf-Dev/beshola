@@ -1,0 +1,35 @@
+[
+  {
+    "dashboardFormSchemaActionID": "8000ee64-2219-4bc9-be37-bad297f6719e",
+    "dashboardFormActionMethodType": "Post",
+    "routeAdderss": "Asset/AddFullOnlineRealEstateAsset",
+    "body": "",
+    "returnPropertyName": "",
+    "projectProxyRoute": "BrandingMartAssets",
+    "dashboardFormSchemaActionQueryParams": []
+  },
+  {
+    "dashboardFormSchemaActionID": "d0f50bd5-7f6d-494d-a34c-dd1fa324124c",
+    "dashboardFormActionMethodType": "Get",
+    "routeAdderss": "Asset/GetOnlineAssets",
+    "body": "",
+    "returnPropertyName": "",
+    "projectProxyRoute": "BrandingMartAssets",
+    "dashboardFormSchemaActionQueryParams": [
+      {
+        "dashboardFormSchemaActionQueryParameterID": "424834a1-09ed-4e6c-bec9-4507224d48c6",
+        "dashboardFormSchemaActionID": "d0f50bd5-7f6d-494d-a34c-dd1fa324124c",
+        "parameterName": "PageSize",
+        "dashboardFormParameterField": "pageSize",
+        "isRequired": true
+      },
+      {
+        "dashboardFormSchemaActionQueryParameterID": "3d0dd1da-0e4e-4c1b-9138-f7037f7ea365",
+        "dashboardFormSchemaActionID": "d0f50bd5-7f6d-494d-a34c-dd1fa324124c",
+        "parameterName": "PageNumber",
+        "dashboardFormParameterField": "pageIndex",
+        "isRequired": true
+      }
+    ]
+  }
+]

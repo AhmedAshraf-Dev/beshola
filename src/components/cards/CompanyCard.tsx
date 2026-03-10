@@ -183,43 +183,45 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
             </View>
           </View>
 
-          {/* Bottom Actions */}
-          <View className="flex-row items-center mt-2 px-2 w-full">
-            {/* Address Section - 40% */}
-            <View style={{ width: "50%" }} className="pr-1">
-              {fieldsType.address && item[fieldsType.address] && (
-                /* Pass the address string to your component. 
-       The component calculates its own 'glass' width inside this 50% space.
-    */
-                <AddressComponent addressText={item[fieldsType.address]} />
-              )}
-            </View>
+         {/* Bottom Actions */}
+<View className="flex-row items-center mt-2 px-2 w-full">
+  {/* Address Section - 50% width */}
+  <View style={{ width: "50%" }} className="items-center justify-center">
+    {fieldsType.address && item[fieldsType.address] && (
+      <AddressComponent addressText={item[fieldsType.address]} />
+    )}
+  </View>
 
-            {/* Viewers Section - 40% */}
-            <View
-              style={{ width: "35%" }}
-              className="flex-row items-center justify-center px-1"
-            >
-              <MaterialCommunityIcons
-                name="eye-outline"
-                size={18}
-                color={theme.accent}
-              />
-              <Text className="text-body text-xs ml-1" numberOfLines={1}>
-                {item.viewers} viewing
-              </Text>
-            </View>
+  {/* Viewers Section - 35% width */}
+  <View
+    style={{ width: "35%" }}
+    className="flex-row items-center justify-center px-2 py-1 rounded"
+  >
+    <View
+      className="flex-row items-center justify-center px-2 py-1 rounded"
+      style={{ backgroundColor: addAlpha(theme.accentHover , .1) }}
+    >
+      <MaterialCommunityIcons
+        name="eye-outline"
+        size={18}
+        color={theme.secondary}
+      />
+      <Text className="text-body text-xs ml-1">
+        {item.viewers} viewing
+      </Text>
+    </View>
+  </View>
 
-            {/* Chat Section - 20% */}
-            <View style={{ width: "10%" }} className="items-end">
-              <TouchableOpacity
-                className="bg-body p-2 rounded-xl"
-                onPress={() => console.log("Contact icon pressed")}
-              >
-                <AntDesign name="wechat" size={22} color={theme.accent} />
-              </TouchableOpacity>
-            </View>
-          </View>
+  {/* Chat Section - 15% width */}
+  <View style={{ width: "15%" }} className="items-center justify-center">
+    <TouchableOpacity
+      className="bg-body p-2 rounded-xl items-center justify-center"
+      onPress={() => console.log("Contact icon pressed")}
+    >
+      <AntDesign name="wechat" size={22} color={theme.accent} />
+    </TouchableOpacity>
+  </View>
+</View>
         </View>
       </Card>
 

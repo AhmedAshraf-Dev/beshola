@@ -3,7 +3,9 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { TouchableOpacity, View } from "react-native";
 import AddAssetsSchema from "../../Schemas/MenuSchema/AddAssetsSchema.json";
+import AddAssetsSchemaActions from "../../Schemas/MenuSchema/AddAssetsSchemaActions.json";
 import PopupModal from "../../utils/component/PopupModal";
+import { handleSubmitWithCallback } from "../../utils/operation/handleSubmitWithCallback";
 
 export default function AddAsset({}) {
   // const { addressLocationState } = useSchemas();
@@ -32,29 +34,32 @@ export default function AddAsset({}) {
     formState: { errors },
     reset,
   } = useForm();
-  // const postAction =
-  //   addressLocationState.actions &&
-  //   addressLocationState.actions.find(
-  //     (action) => action.dashboardFormActionMethodType === "Post",
-  //   );
+  const postAction =
+    AddAssetsSchemaActions &&
+    AddAssetsSchemaActions.find(
+      (action) => action.dashboardFormActionMethodType === "Post",
+    );
   const onSubmit = async (data: any) => {
-    console.log('====================================');
-    console.log(data,'data');
-    console.log('====================================');
-    // await handleSubmitWithCallback({
-    //   data,
-    //   setDisable,
-    //   action: postAction,
-    //   proxyRoute: addressLocationState.schema.projectProxyRoute,
-    //   setReq: setReqError,
-    //   onSuccess: (resultData) => {
-    //     AddAddressLocation(resultData);
-    //     setIsModalVisible(false);
+    console.log("====================================");
+    console.log(data, "data");
+    console.log("====================================");
+    await handleSubmitWithCallback({
+      data,
+      setDisable,
+      action: postAction,
+      proxyRoute: postAction.projectProxyRoute,
+      setReq: setReqError,
+      onSuccess: (resultData) => {
+        console.log("====================================");
+        console.log(resultData, "resultData");
+        console.log("====================================");
+        // AddAddressLocation(resultData);
+        setIsModalVisible(false);
 
-    //     dispatch(updateSelectedLocation(resultData));
-    //     setSelectedLocation(resultData);
-    //   },
-    // });
+        // dispatch(updateSelectedLocation(resultData));
+        // setSelectedLocation(resultData);
+      },
+    });
   };
   // useEffect(() => {
   //   if (!loading && rows.length > 0) {
@@ -69,9 +74,6 @@ export default function AddAsset({}) {
   //     }
   //   }
   // }, [loading]);
-console.log('====================================');
-console.log(AddAssetsSchema,'AddAssetsSchema');
-console.log('====================================');
   return (
     <View>
       <PopupModal
@@ -85,9 +87,7 @@ console.log('====================================');
         // }}
         onSubmit={handleSubmit(onSubmit)}
         control={control}
-        headerTitle={
-          'addAsset'
-        }
+        headerTitle={"addAsset"}
         row={{}}
         schema={AddAssetsSchema}
         errors={reqError || errors}

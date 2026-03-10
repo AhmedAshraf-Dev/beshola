@@ -15,7 +15,7 @@ const PolygonMapEmbed = ({
   fields = [],
   haveRadius = false,
   clickAction = "pin",
-  host = "http://localhost:3001", // your web app host,
+  host = "https://ihs-solutions.com:7552", // your web app host,"https://ihs-solutions.com:7552", 
   onLocationChange,
   setNewPolygon,
 }) => {
