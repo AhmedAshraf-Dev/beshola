@@ -12,6 +12,7 @@ import {
   InputWithLabel,
   OtpParameter,
   PhoneNumberParameter,
+  ImageParameterWithPanelActions,
 } from "./index";
 export function GetInputComponent(type) {
   switch (type) {
@@ -28,6 +29,9 @@ export function GetInputComponent(type) {
     case "birthday":
     case "pushTime":
       return DateParameter;
+    case "image":
+    case "publicImage":
+      return ImageParameterWithPanelActions;
     case "boolean":
       return BooleanParameter;
     case "radio":

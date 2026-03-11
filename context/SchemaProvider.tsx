@@ -96,7 +96,7 @@ export const SchemaProvider = ({ children }) => {
     setCartSchemaState(localizedSchemas.cart);
     setFastWayState(localizedSchemas.fastWay);
     setFilterState(localizedSchemas.filter);
-    setMenuCategoriesState(localizedSchemas.menuCategories);
+    setServiceTypesState(localizedSchemas.serviceCat);
     setMenuItemsState(localizedSchemas.menuItems);
     setRecommendedState(localizedSchemas.recommended);
     setPaymentMethodsState(localizedSchemas.paymentMethods);
@@ -133,8 +133,8 @@ export const SchemaProvider = ({ children }) => {
   const [cartSchemaState, setCartSchemaState] = useState(schemas.cart);
   const [fastWayState, setFastWayState] = useState(schemas.fastWay);
   const [filterState, setFilterState] = useState(schemas.filter);
-  const [menuCategoriesState, setMenuCategoriesState] = useState(
-    schemas.menuCategories,
+  const [serviceTypesState, setServiceTypesState] = useState(
+    schemas.serviceCat,
   );
   const [menuItemsState, setMenuItemsState] = useState(schemas.menuItems);
   const [recommendedState, setRecommendedState] = useState(schemas.recommended);
@@ -335,8 +335,8 @@ export const SchemaProvider = ({ children }) => {
         setFastWayState,
         filterState,
         setFilterState,
-        menuCategoriesState,
-        setMenuCategoriesState,
+        serviceTypesState,
+        setServiceTypesState,
         menuItemsState,
         setMenuItemsState,
         paymentMethodsState,

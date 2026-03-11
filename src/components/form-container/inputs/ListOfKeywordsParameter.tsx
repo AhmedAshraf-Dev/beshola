@@ -19,89 +19,89 @@ function ListOfKeywordsParameter({
     "  lookupDisplayField,lookupReturnField",
   );
 
-  // const [keywords, setKeywords] = useState([]);
+  const [keywords, setKeywords] = useState([]);
 
-  // const [options, setOptions] = useState(
-  //   values.map((v) => v?.[lookupDisplayField]),
-  // );
+  const [options, setOptions] = useState(
+    values.map((v) => v?.[lookupDisplayField]),
+  );
 
-  // const { control, watch, reset } = useForm({});
+  const { control, watch, reset } = useForm({});
 
-  // // watch select changes
-  // useEffect(() => {
-  //   const subscription = watch((formValues) => {
-  //     const cleanedValues = cleanObject(formValues);
+  // watch select changes
+  useEffect(() => {
+    const subscription = watch((formValues) => {
+      const cleanedValues = cleanObject(formValues);
 
-  //     const selected = cleanedValues?.[lookupDisplayField];
+      const selected = cleanedValues?.[lookupDisplayField];
 
-  //     if (!selected) return;
+      if (!selected) return;
 
-  //     // add keyword
-  //     setKeywords((prev) => {
-  //       if (prev.includes(selected)) return prev;
-  //       return [...prev, selected];
-  //     });
+      // add keyword
+      setKeywords((prev) => {
+        if (prev.includes(selected)) return prev;
+        return [...prev, selected];
+      });
 
-  //     // remove from select options
-  //     setOptions((prev) => prev.filter((opt) => opt !== selected));
+      // remove from select options
+      setOptions((prev) => prev.filter((opt) => opt !== selected));
 
-  //     // reset select
-  //     reset({ attributeValue: "" });
-  //   });
+      // reset select
+      reset({ attributeValue: "" });
+    });
 
-  //   return () => subscription.unsubscribe();
-  // }, [watch]);
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
-  // const removeKeyword = (index) => {
-  //   const removed = keywords[index];
+  const removeKeyword = (index) => {
+    const removed = keywords[index];
 
-  //   // remove from keywords
-  //   setKeywords((prev) => prev.filter((_, i) => i !== index));
+    // remove from keywords
+    setKeywords((prev) => prev.filter((_, i) => i !== index));
 
-  //   // return to select options
-  //   setOptions((prev) => [...prev, removed]);
-  // };
+    // return to select options
+    setOptions((prev) => [...prev, removed]);
+  };
 
-  // return (
-  //   <View>
-  //     <SelectParameter
-  //       values={options}
-  //       fieldName={lookupReturnField}
-  //       control={control}
-  //       value={""}
-  //     />
+  return (
+    <View>
+      <SelectParameter
+        values={options}
+        fieldName={lookupReturnField}
+        control={control}
+        value={""}
+      />
 
-  //     {/* Keywords */}
-  //     <View
-  //       style={{
-  //         flexDirection: "row",
-  //         flexWrap: "wrap",
-  //         marginTop: 12,
-  //         gap: 8,
-  //       }}
-  //     >
-  //       {keywords.map((item, index) => (
-  //         <View
-  //           key={index}
-  //           style={{
-  //             flexDirection: "row",
-  //             alignItems: "center",
-  //             backgroundColor: "#eee",
-  //             paddingHorizontal: 10,
-  //             paddingVertical: 4,
-  //             borderRadius: 8,
-  //           }}
-  //         >
-  //           <Text style={{ marginRight: 6 }}>{item}</Text>
+      {/* Keywords */}
+      <View
+        style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          marginTop: 12,
+          gap: 8,
+        }}
+      >
+        {keywords.map((item, index) => (
+          <View
+            key={index}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              backgroundColor: "#eee",
+              paddingHorizontal: 10,
+              paddingVertical: 4,
+              borderRadius: 8,
+            }}
+          >
+            <Text style={{ marginRight: 6 }}>{item}</Text>
 
-  //           <Pressable onPress={() => removeKeyword(index)}>
-  //             <Text style={{ color: "red", fontWeight: "bold" }}>×</Text>
-  //           </Pressable>
-  //         </View>
-  //       ))}
-  //     </View>
-  //   </View>
-  // );
+            <Pressable onPress={() => removeKeyword(index)}>
+              <Text style={{ color: "red", fontWeight: "bold" }}>×</Text>
+            </Pressable>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
   return;
 }
 

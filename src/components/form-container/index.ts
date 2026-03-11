@@ -1,6 +1,7 @@
 export { default as BooleanParameter } from "./inputs/BooleanParameter";
 export { default as CheckBoxParameter } from "./inputs/CheckBoxParameter";
 // export { default as DateParameter } from "./DateParameter";
+export { default as ImageParameterWithPanelActions } from "./inputs/InputActions/ImageParameterWithPanelActions";
 export { default as MeddleRangeParameter } from "./inputs/MeddleRangeParameter";
 export { default as TextParameter } from "./inputs/TextParameter";
 export { default as SelectParameter } from "./inputs/SelectParameter";

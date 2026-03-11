@@ -1,39 +1,37 @@
 import React, { Component } from "react";
+import { TextInput, View } from "react-native";
 
 class BaseInput extends Component {
-  handleChange = (e) => {
-    let value = this.props.value;
-    let rowParam = this.props.row[this.props.fieldName];
-    let row = this.props.row;
-    if (rowParam) {
-      rowParam = value;
-    } else {
-      const newParam = {
-        [rowParam]: value,
-      };
-      row = { ...row, ...newParam };
+  handleChange = (text) => {
+    const { row, fieldName, onChange } = this.props;
+
+    const updatedRow = {
+      ...row,
+      [fieldName]: text,
+    };
+
+    if (onChange) {
+      onChange(updatedRow);
     }
   };
 
   render() {
-    const {
-      fieldName,
-      value,
-      errorMessage,
-      row,
-      enable,
-      changed = true,
-    } = this.props;
+    const { value, enable = true } = this.props;
+
     return (
-      <div>
-        <input
-          name={fieldName}
-          type="text"
+      <View>
+        <TextInput
           value={value}
-          onChange={this.handleChange}
-          disabled={!enable}
+          onChangeText={this.handleChange}
+          editable={enable}
+          style={{
+            borderWidth: 1,
+            borderColor: "#ccc",
+            padding: 8,
+            borderRadius: 6,
+          }}
         />
-      </div>
+      </View>
     );
   }
 }

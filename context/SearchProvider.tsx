@@ -31,11 +31,14 @@ import AssetsSchema from "../src/Schemas/MenuSchema/AssetsSchema.json";
 import AssetsSchemaActions from "../src/Schemas/MenuSchema/AssetsSchemaActions.json";
 
 import { useShopNode } from "./ShopNodeProvider";
+import { useTab } from "./TabsProvider";
 
 export const SearchContext = createContext(null);
 
 export const SearchProvider = ({ children }) => {
-  const [menuItemRow, setMenuItemRow] = useState({});
+  const { activeTab } = useTab();
+  const [menuItemRow, setMenuItemRow] = useState({ ...activeTab });
+
   const [WS_Connected, setWS_Connected] = useState(false);
   const previousRowRef = useRef({});
   const previousControllerRef = useRef(null);
@@ -70,11 +73,14 @@ export const SearchProvider = ({ children }) => {
 
   const dataSourceAPI = (query, skip, take) => {
     const pageIndex = Math.floor(skip / take) + 1;
-
+    console.log("====================================");
+    console.log(activeTab, "build api");
+    console.log("====================================");
     return buildApiUrl(query, {
       pageIndex,
       pageSize: take,
       ...menuItemRow,
+      ...activeTab,
     });
   };
 
@@ -99,7 +105,9 @@ export const SearchProvider = ({ children }) => {
    */
   useEffect(() => {
     const controller = new AbortController();
-
+    console.log("====================================");
+    console.log(activeTab, "useeffect");
+    console.log("====================================");
     prepareLoad({
       state,
       dataSourceAPI,
@@ -112,7 +120,7 @@ export const SearchProvider = ({ children }) => {
     previousControllerRef.current = controller;
 
     return () => controller.abort();
-  }, [menuItemRow, currentSkip]);
+  }, [menuItemRow, activeTab, currentSkip]);
 
   /**
    * Reset websocket when node changes

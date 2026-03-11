@@ -25,6 +25,7 @@ import { persistor, store } from "./src/store/reduxStore";
 import { theme } from "./src/Theme";
 import "./patch-registerWebModule";
 import { CompareProvider } from "./context/CompareProvider";
+import { TabsProvider } from "./context/TabsProvider";
 
 const queryClient = new QueryClient();
 
@@ -92,9 +93,11 @@ export default function App() {
                               style={{ flex: 1, overflow: "scroll" }}
                             >
                               <CartProvider>
-                                <SearchProvider>
-                                  <RootStack />
-                                </SearchProvider>
+                                <TabsProvider>
+                                  <SearchProvider>
+                                    <RootStack />
+                                  </SearchProvider>
+                                </TabsProvider>
                               </CartProvider>
                             </SafeAreaView>
                           </PreparingApp>

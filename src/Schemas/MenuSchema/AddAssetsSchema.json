@@ -153,22 +153,38 @@
       "lookupDisplayField": null,
       "indexNumber": 0
     },
-            {
-                "dashboardFormSchemaParameterID": "302167fc-ef36-49d1-adcd-1b41e1504629",
-                "dashboardFormSchemaID": "854454a8-119b-4def-abdc-4b337d643813",
-                "isEnable": true,
-                "parameterType": "checkBox",
-                "parameterField": "services",
-                "parameterTitel": "services",
-                "parameterLookupTitel": "serviceName",
-                "isIDField": false,
-                "lookupID": "c595c97b-584e-48be-a059-e1019cb8d060",
-                "lookupReturnField": "serviceID",
-                "lookupDisplayField": "serviceName",
-                "indexNumber": 11,
-                "isFilterOperation": true,
-                "dashboardFormSchemaParameterDependencies": []
-            }
+    {
+      "dashboardFormSchemaParameterID": "302167fc-ef36-49d1-adcd-1b41e1504629",
+      "dashboardFormSchemaID": "854454a8-119b-4def-abdc-4b337d643813",
+      "isEnable": true,
+      "parameterType": "checkBox",
+      "parameterField": "services",
+      "parameterTitel": "services",
+      "parameterLookupTitel": "serviceName",
+      "isIDField": false,
+      "lookupID": "c595c97b-584e-48be-a059-e1019cb8d060",
+      "lookupReturnField": "serviceID",
+      "lookupDisplayField": "serviceName",
+      "indexNumber": 11,
+      "isFilterOperation": true,
+      "dashboardFormSchemaParameterDependencies": []
+    },
+    {
+      "dashboardFormSchemaParameterID": "302167fc-ef36-49d1-adcd-1b41e1504629",
+      "dashboardFormSchemaID": "854454a8-119b-4def-abdc-4b337d643813",
+      "isEnable": true,
+      "parameterType": "image",
+      "parameterField": "imageTest",
+      "parameterTitel": "services",
+      "parameterLookupTitel": "serviceName",
+      "isIDField": false,
+      "lookupID": "c595c97b-584e-48be-a059-e1019cb8d060",
+      "lookupReturnField": "serviceID",
+      "lookupDisplayField": "serviceName",
+      "indexNumber": 11,
+      "isFilterOperation": true,
+      "dashboardFormSchemaParameterDependencies": []
+    }
   ],
 
   "isMainSchema": true,

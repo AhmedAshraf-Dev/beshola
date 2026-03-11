@@ -1,0 +1,45 @@
+{
+  "dashboardFormSchemaID": "c595c97b-584e-48be-a059-e1019cb8d060",
+  "idField": "serviceID",
+  "dashboardFormSchemaInfoDTOView": {
+    "dashboardFormSchemaID": "c595c97b-584e-48be-a059-e1019cb8d060",
+    "schemaHeader": "Service",
+    "addingHeader": "Add Service",
+    "editingHeader": "Edit Service"
+  },
+  "dashboardFormSchemaParameters": [
+    {
+      "dashboardFormSchemaParameterID": "93328f35-b2dd-4d40-a461-b853241ab867",
+      "dashboardFormSchemaID": "c595c97b-584e-48be-a059-e1019cb8d060",
+      "isEnable": true,
+      "parameterType": "text",
+      "parameterField": "serviceID",
+      "parameterTitel": "Service ID",
+      "parameterLookupTitel": "Service ID",
+      "isIDField": true,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 1,
+      "isFilterOperation": false,
+      "dashboardFormSchemaParameterDependencies": []
+    },
+    {
+      "dashboardFormSchemaParameterID": "ff601d9c-d16c-4abd-b4cc-cf63642a4862",
+      "dashboardFormSchemaID": "c595c97b-584e-48be-a059-e1019cb8d060",
+      "isEnable": true,
+      "parameterType": "tabDisplay",
+      "parameterField": "serviceName",
+      "parameterTitel": "Service Name",
+      "parameterLookupTitel": "Service Name",
+      "isIDField": false,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 2,
+      "isFilterOperation": false,
+      "dashboardFormSchemaParameterDependencies": []
+    }
+  ],
+  "projectProxyRoute": "BrandingMartService"
+}

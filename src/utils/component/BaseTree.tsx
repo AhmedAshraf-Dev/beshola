@@ -16,6 +16,7 @@ import { createRowCache } from "../../components/Pagination/createRowCache";
 import { buildApiUrl } from "../../../components/hooks/APIsFunctions/BuildApiUrl";
 import LoadData from "../../../components/hooks/APIsFunctions/LoadData";
 import { updateRows } from "../../components/Pagination/updateRows";
+import { string } from "yup";
 
 const VIRTUAL_PAGE_SIZE = 50;
 
@@ -28,6 +29,8 @@ const BaseTree = ({
   canUnchecked = false,
   canChecked = false,
   values = [],
+  lookupDisplayField = "label",
+  lookupReturnField = "value",
 }) => {
   const { data: _schemaActions } = useFetch(
     GetSchemaActionsUrl(schema.dashboardFormSchemaID),
@@ -76,6 +79,7 @@ const BaseTree = ({
         ? prev.filter((id) => id !== rowId)
         : [...prev, rowId],
     );
+    console.log("rowId", schema, rowId, expandedRows);
   };
 
   const columns = useMemo(() => {
@@ -88,6 +92,8 @@ const BaseTree = ({
         title: param.parameterTitel,
         type: param.parameterType,
         lookupID: param.lookupID,
+        lookupDisplayField: param.lookupDisplayField,
+        lookupReturnField: param.lookupReturnField,
       }));
   }, [schema]);
 
@@ -102,7 +108,9 @@ const BaseTree = ({
   const isLeaf = !subSchemas || subSchemas.length === 0;
   const renderChildrenSchemas = (row) => {
     if (!subSchemas || subSchemas.length === 0) return null;
-
+    const col = schema.dashboardFormSchemaParameters.find(
+      (param) => param.lookupID,
+    );
     return subSchemas.map((childSchema) => (
       <View
         key={childSchema.dashboardFormSchemaID}
@@ -121,6 +129,8 @@ const BaseTree = ({
           onRowClick={onRowClick}
           onLeafCheckChange={onLeafCheckChange}
           values={values}
+          lookupDisplayField={col.lookupDisplayField}
+          lookupReturnField={col.lookupReturnField}
         />
       </View>
     ));
@@ -177,20 +187,19 @@ const BaseTree = ({
   const RenderKeyWords = ({ values }) => {
     const selectedCol = columns.find((col) => col.lookupID);
 
+    // const col = schema.dashboardFormSchemaParameters.find(
+    //   (param) => param.lookupID === selectedCol?.lookupID,
+    // );
     const col = schema.dashboardFormSchemaParameters.find(
-      (param) => param.lookupID === selectedCol?.lookupID,
+      (param) => param.lookupID,
     );
-    console.log(selectedCol, col, "selectedCol, col,");
 
     return (
       <View style={{ flex: 1, marginRight: 10 }}>
         <ListOfKeywordsParameter
           values={values}
-          fieldName="keyword"
-          lookupDisplayField={col?.lookupDisplayField}
-          lookupReturnField={col?.lookupReturnField}
-          col={col}
-          // onChange={(keywords) => handleCheck(row, keywords)}
+          lookupDisplayField={lookupDisplayField}
+          lookupReturnField={lookupReturnField}
         />
       </View>
     );

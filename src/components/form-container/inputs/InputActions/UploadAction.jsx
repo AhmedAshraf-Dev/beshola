@@ -1,42 +1,97 @@
 import React from "react";
-import { LuUpload } from "react-icons/lu";
-import BaseAction from "./BaseAction";
-import { uploadActionStyle } from "./styles";
-class UploadAction extends BaseAction {
-  constructor(props) {
-    super(props);
-    this.handleChange = this.handleChange.bind(this);
-  }
+import { Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { launchImageLibrary } from "react-native-image-picker";
+
+class UploadAction extends React.Component {
+  openGallery = async () => {
+    const result = await launchImageLibrary({
+      mediaType: "photo",
+      selectionLimit: this.props.isFileContainer ? 0 : 1,
+    });
+
+    if (result.assets) {
+      result.assets.forEach((asset) => {
+        this.props.onImageUpload(asset.uri, asset.type);
+      });
+    }
+  };
 
   render() {
-    const { onChange, fieldName, enable } = this.props;
-    const fetchImage = async (e) => {
-      const files = e.target.files;
-      if (files && files.length > 0) {
-        [...files].forEach((file) => {
-          this.props.onImageUpload(URL.createObjectURL(file), file.type);
-        });
-      }
-    };
-
     return (
-      <label htmlFor={fieldName} className={uploadActionStyle.label}>
-        {/* <Button className="pop"> */}
-        <LuUpload className={uploadActionStyle.icon} size={24} />
-
-        <input
-          onChange={fetchImage}
-          id={fieldName}
-          enable={enable}
-          name={fieldName}
-          type="file"
-          className={uploadActionStyle.hiddenInput}
-          multiple={this.props.isFileContainer}
-        />
-        {/* </Button> */}
-      </label>
+      <Pressable onPress={this.openGallery}>
+        <Ionicons name="cloud-upload-outline" size={24} />
+      </Pressable>
     );
   }
 }
 
 export default UploadAction;
+// import React from "react";
+// import { TouchableOpacity, StyleSheet, Alert } from "react-native";
+// // Use lucide-react-native for the same LuUpload look
+// import { Ionicons } from "@expo/vector-icons";
+// import { launchImageLibrary } from "react-native-image-picker";
+// import { uploadActionStyle } from "./styles";
+
+// const UploadAction = (props) => {
+//   const { onImageUpload, isFileContainer, fieldName } = props;
+
+//   const handlePickImage = async () => {
+//     const options = {
+//       mediaType: "photo",
+//       // selectionLimit: 0 allows multiple if isFileContainer is true (0 = no limit)
+//       selectionLimit: isFileContainer ? 0 : 1,
+//       includeBase64: false,
+//     };
+
+//     try {
+//       const result = await launchImageLibrary(options);
+
+//       if (result.didCancel) {
+//         return;
+//       }
+
+//       if (result.errorCode) {
+//         Alert.alert("Error", result.errorMessage);
+//         return;
+//       }
+
+//       // Loop through assets (handles single or multiple)
+//       if (result.assets) {
+//         result.assets.forEach((asset) => {
+//           // In RN, asset.uri is the equivalent of URL.createObjectURL
+//           // asset.type is the mime type (e.g., 'image/jpeg')
+//           onImageUpload(asset.uri, asset.type);
+//         });
+//       }
+//     } catch (error) {
+//       console.error("ImagePicker Error: ", error);
+//     }
+//   };
+
+//   return (
+//     <TouchableOpacity
+//       onPress={handlePickImage}
+//       style={[styles.label, uploadActionStyle?.label]}
+//       accessibilityLabel={`Upload image for ${fieldName}`}
+//     >
+//       <Ionicons
+//         name="cloud-upload-outline"
+//         color="#000" // Adjust color to match your theme
+//         style={uploadActionStyle?.icon}
+//       />
+//     </TouchableOpacity>
+//   );
+// };
+
+// const styles = StyleSheet.create({
+//   label: {
+//     padding: 10,
+//     justifyContent: "center",
+//     alignItems: "center",
+//     // Add your base styling here
+//   },
+// });
+
+// export default UploadAction;

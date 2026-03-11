@@ -8,8 +8,8 @@ import CartSchemaActions from "../Schemas/MenuSchema/CartSchemaActions.json";
 import FastWaySchema from "../Schemas/MenuSchema/FastWaySchema.json";
 import FastWaySchemaActions from "../Schemas/MenuSchema/FastWaySchemaActions.json";
 import FilterSchema from "../Schemas/MenuSchema/FilterSchema.json";
-import NodeMenuCatSchema from "../Schemas/MenuSchema/NodeMenuCatSchema.json";
-import NodeMenuCatSchemaActions from "../Schemas/MenuSchema/NodeMenuCatSchemaActions.json";
+import ServiceTypesSchema from "../Schemas/MenuSchema/ServiceTypesSchema.json";
+import ServiceTypesSchemaActions from "../Schemas/MenuSchema/ServiceTypesSchemaActions.json";
 import AssetsSchema from "../Schemas/MenuSchema/AssetsSchema.json";
 import NodeMenuItemsSchemaActions from "../Schemas/MenuSchema/AssetsSchemaActions.json";
 import FavoriteMenuItemsSchema from "../Schemas/MenuSchema/FavoriteMenuItemsSchema.json";
@@ -84,9 +84,9 @@ export const schemasSlice = createSlice({
     cart: { schema: CartSchema, actions: CartSchemaActions },
     fastWay: { schema: FastWaySchema, actions: FastWaySchemaActions },
     filter: { schema: FilterSchema, actions: [{}] },
-    menuCategories: {
-      schema: NodeMenuCatSchema,
-      actions: NodeMenuCatSchemaActions,
+    serviceCat: {
+      schema: ServiceTypesSchema,
+      actions: ServiceTypesSchemaActions,
     },
     menuItems: {
       schema: AssetsSchema,
