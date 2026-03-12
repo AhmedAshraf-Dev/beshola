@@ -14,6 +14,7 @@ import { useSchemas } from "../../context/SchemaProvider";
 import { useSelector } from "react-redux";
 import { PolygonForm } from "../components/maps/PolygonForm";
 import DynamicTreeSchema from "../utils/component/DynamicTreeSchema";
+import PolygonMapEmbed from "../components/maps/DrawSmoothPolygon";
 
 const Explorepage = () => {
   const { os } = useDeviceInfo();
@@ -28,7 +29,12 @@ const Explorepage = () => {
             {os === "web" && <HomeCarouselWeb />}
             {os !== "web" && <HomeCarousel />}
             <DynamicTreeSchema />
-            <PolygonForm enable={false} setNewPolygon={() => {}} />
+            {/* <PolygonForm enable={false} setNewPolygon={() => {}} /> */}
+            <PolygonMapEmbed
+              clickable={false}
+              onLocationChange={() => {}}
+              setNewPolygon={() => {}}
+            />
             <View className="flex-col">
               <SuggestCardContainer
                 row={{ onlyDiscountItems: true }}

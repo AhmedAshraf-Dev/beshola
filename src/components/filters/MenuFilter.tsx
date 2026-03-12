@@ -2,21 +2,26 @@ import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import GoBackHeader from "../header/GoBackHeader";
 import FormContainer from "../form-container/FormContainer";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import schema from "../../Schemas/MenuSchema/FilterSchema.json";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { updateFilters } from "../../reducers/FilterReducer";
 import { tabsData } from "../company-components/tabsData";
 import { buildFilterRow } from "../../utils/operation/buildFilterRow";
+import { SearchProvider, useSearch } from "../../../context/SearchProvider";
 
-export default function MenuFilter({ onFilterDone }) {
+export default function MenuFilter({
+  onFilterDone = (filters) => {},
+  filtersMap,
+}) {
   const [updateKey, setUpdateKey] = useState(1);
   const {
     control,
     handleSubmit,
     formState: { errors },
     reset,
+    ...methods
   } = useForm();
   const localization = useSelector((state) => state.localization.localization);
 
@@ -100,18 +105,21 @@ export default function MenuFilter({ onFilterDone }) {
 
       {/* Form Content */}
       <ScrollView>
-        <FormContainer
-          key={updateKey}
-          tableSchema={schema}
-          row={{
-            rating: { min: 1, max: 400 },
-            bedrooms: { min: 1, max: 20 },
-            bathrooms: { min: 1, max: 10 },
-            area: { min: 80, max: 1000 },
-          }} // Populate form with Redux state
-          errorResult={errors}
-          control={control}
-        />
+        <FormProvider {...methods}>
+          <FormContainer
+            key={updateKey}
+            tableSchema={schema}
+            row={{
+              rating: { min: 1, max: 400 },
+              bedrooms: { min: 1, max: 20 },
+              bathrooms: { min: 1, max: 10 },
+              area: { min: 80, max: 1000 },
+            }} // Populate form with Redux state
+            errorResult={errors}
+            control={control}
+            filtersMap={filtersMap}
+          />
+        </FormProvider>
       </ScrollView>
 
       {/* Footer Button */}
@@ -126,5 +134,6 @@ export default function MenuFilter({ onFilterDone }) {
         </TouchableOpacity>
       </View>
     </View>
+    // <></>
   );
 }

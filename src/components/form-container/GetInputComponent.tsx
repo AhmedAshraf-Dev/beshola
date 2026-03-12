@@ -13,6 +13,7 @@ import {
   OtpParameter,
   PhoneNumberParameter,
   ImageParameterWithPanelActions,
+  DynamicTreeSchema,
 } from "./index";
 export function GetInputComponent(type) {
   switch (type) {
@@ -38,6 +39,8 @@ export function GetInputComponent(type) {
       return RadioParameter;
     case "radioList":
       return RadioListParameter;
+    case "tree":
+      return DynamicTreeSchema;
     case "minMax":
       return MeddleRangeParameter;
     case "password":

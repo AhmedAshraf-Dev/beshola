@@ -8,18 +8,45 @@ import { initCompanyRows } from "../company-components/tabsData";
 import SheetCard from "../../kitchensink-components/compare/SheetCard";
 import MapDrawer from "./MapDrawer";
 import DrawerComponent from "./DrawerComponent";
+import { store } from "../../store/reduxStore";
 
 const PolygonMapEmbed = ({
-  location = {},
+  location = store.getState().location.currentLocation,
   clickable = false,
-  fields = [],
+  fields = [
+    {
+      dashboardFormSchemaParameterID: "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      dashboardFormSchemaID: "270f513b-1788-4c01-879e-4526c990f898",
+      isEnable: true,
+      parameterType: "areaMapLatitudePoint",
+      parameterField: "latitude",
+      parameterTitel: "locationLatitudePoint",
+      isIDField: false,
+      lookupID: null,
+      lookupReturnField: null,
+      lookupDisplayField: null,
+      indexNumber: 0,
+    },
+    {
+      dashboardFormSchemaParameterID: "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      dashboardFormSchemaID: "270f513b-1788-4c01-879e-4526c990f898",
+      isEnable: true,
+      parameterType: "areaMapLongitudePoint",
+      parameterField: "longitude",
+      parameterTitel: "longitude",
+      isIDField: false,
+      lookupID: null,
+      lookupReturnField: null,
+      lookupDisplayField: null,
+      indexNumber: 0,
+    },
+  ],
   haveRadius = false,
   clickAction = "pin",
-  host = "https://ihs-solutions.com:7552", // your web app host,"https://ihs-solutions.com:7552", 
+  host = "https://ihs-solutions.com:7552", // your web app host,"https://ihs-solutions.com:7552",
   onLocationChange,
   setNewPolygon,
 }) => {
-
   const webRef = useRef(null);
   const iframeRef = useRef(null);
   const locationRef = useRef(JSON.stringify(location));
@@ -27,12 +54,18 @@ const PolygonMapEmbed = ({
   const [openDrawer, setOpenDrawer] = useState(false);
 
   const drawerComponent = openDrawer && (
-<DrawerComponent polygonObj={polygonObj} openDrawer={openDrawer} setOpenDrawer={setOpenDrawer}/>
+    <DrawerComponent
+      polygonObj={polygonObj}
+      openDrawer={openDrawer}
+      setOpenDrawer={setOpenDrawer}
+    />
   );
-    useEffect(()=>{
-      if(Object.keys(polygonObj).length > 0)
-   { setOpenDrawer(true)}
-  },[polygonObj])
+  useEffect(() => {
+    if (Object.keys(polygonObj).length > 0) {
+      setOpenDrawer(true);
+    }
+  }, [polygonObj]);
+
   // Build query params to pass all values via URL
   const params = new URLSearchParams({
     location: locationRef.current,
@@ -44,12 +77,17 @@ const PolygonMapEmbed = ({
   });
 
   const url = `${host}/displayMap?${params.toString()}`;
-  const switchFun= (data)=>windowMessageSwitch(
-              data,
-              onLocationChange,
-              setNewPolygon,
-              setPolygonObj,
-            );
+  console.log("====================================");
+  console.log(
+    location,
+    store.getState().location.currentLocation,
+    fields,
+    url,
+    "store.getState().location.currentLocation,",
+  );
+  console.log("====================================");
+  const switchFun = (data) =>
+    windowMessageSwitch(data, onLocationChange, setNewPolygon, setPolygonObj);
   // ✅ React Native (Mobile)
   if (Platform.OS !== "web") {
     return (
@@ -64,7 +102,7 @@ const PolygonMapEmbed = ({
           onMessage={async (event) => {
             const data = JSON.parse(event.nativeEvent.data);
 
-           switchFun(data)
+            switchFun(data);
           }}
         />
 
@@ -82,8 +120,7 @@ const PolygonMapEmbed = ({
       try {
         const data =
           typeof event.data === "string" ? JSON.parse(event.data) : event.data;
-           switchFun(data)
-
+        switchFun(data);
       } catch (error) {
         console.log("Invalid message received:", error);
       }
@@ -97,33 +134,32 @@ const PolygonMapEmbed = ({
   }, [onLocationChange, setNewPolygon]);
 
   return (
-<div
-  style={{
-    width: "100%",
-    height: "400px",
-    position: "relative",
-    overflow: "hidden",
-  }}
->
-  <iframe
-    ref={iframeRef}
-    src={url}
-    title="Polygon Map"
-    scrolling="no"
-    style={{
-      width: "100%",
-      height: "100%",
-      border: "none",
-      position: "absolute",
-      top: 0,
-      left: 0,
-      zIndex: 1,
-    }}
-  />
+    <div
+      style={{
+        width: "100%",
+        height: "400px",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <iframe
+        ref={iframeRef}
+        src={url}
+        title="Polygon Map"
+        scrolling="no"
+        style={{
+          width: "100%",
+          height: "100%",
+          border: "none",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          zIndex: 1,
+        }}
+      />
 
-
-    {drawerComponent}
-</div>
+      {drawerComponent}
+    </div>
   );
 };
 

@@ -14,6 +14,8 @@ import {
 } from "../../../request";
 import { fetchData } from "../../../components/hooks/APIsFunctions/useFetch";
 import BaseTree from "./BaseTree";
+import { useFormContext } from "react-hook-form";
+import { useSearch } from "../../../context/SearchProvider";
 const testSchema = {
   dashboardFormSchemaID: "937cdd0e-3303-447b-bd7c-f0f027e8ce78",
   schemaType: "Table",
@@ -64,9 +66,19 @@ const testSchema = {
   propertyName: "string",
   indexNumber: 0,
 };
-const DynamicTreeSchema = ({ schema = testSchema, selectedRow = {} }) => {
+const DynamicTreeSchema = ({
+  schema = testSchema,
+  selectedRow = {},
+  fieldName,
+  control,
+  filtersMap,
+}) => {
   const [subSchemas, setSubSchemas] = useState([]);
-
+  const [parentRow, setParentRow] = useState([]);
+  // const { setValue } = useFormContext();
+  console.log("====================================");
+  console.log(filtersMap, "filtersMap");
+  console.log("====================================");
   // prevent duplicate fetch
   const visitedLookups = useRef(new Set());
 
@@ -120,6 +132,9 @@ const DynamicTreeSchema = ({ schema = testSchema, selectedRow = {} }) => {
 
     loadSchemas();
   }, [schema]);
+  console.log("====================================");
+  console.log(parentRow, "parentRow");
+  console.log("====================================");
   return (
     <View>
       {schema && (
@@ -138,6 +153,8 @@ const DynamicTreeSchema = ({ schema = testSchema, selectedRow = {} }) => {
           }}
           // selectedRow={selectedRow}
           subSchemas={subSchemas}
+          setParentRow={setParentRow}
+          filtersMap={filtersMap}
         />
       )}
     </View>

@@ -22,6 +22,8 @@ function SelectParameter({
   fieldName,
   enable = true,
   control,
+  lookupDisplayField,
+  lookupReturnField,
   ...props
 }) {
   const localization = useSelector((state) => state.localization.localization);
@@ -81,7 +83,11 @@ function SelectParameter({
                   <SelectDragIndicator />
                 </SelectDragIndicatorWrapper>
                 {values.map((value) => (
-                  <SelectItem key={value} label={value} value={value} />
+                  <SelectItem
+                    key={value}
+                    label={value?.[lookupDisplayField]}
+                    value={value?.[lookupReturnField]}
+                  />
                 ))}
               </SelectContent>
             </SelectPortal>

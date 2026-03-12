@@ -31,6 +31,9 @@ const BaseTree = ({
   values = [],
   lookupDisplayField = "label",
   lookupReturnField = "value",
+  setParentRow,
+  parentID,
+  filtersMap,
 }) => {
   const { data: _schemaActions } = useFetch(
     GetSchemaActionsUrl(schema.dashboardFormSchemaID),
@@ -72,7 +75,6 @@ const BaseTree = ({
       dispatch,
     );
   }, [getAction, rowDetails]);
-
   const toggleExpand = (rowId) => {
     setExpandedRows((prev) =>
       prev.includes(rowId)
@@ -131,6 +133,9 @@ const BaseTree = ({
           values={values}
           lookupDisplayField={col.lookupDisplayField}
           lookupReturnField={col.lookupReturnField}
+          setParentRow={setParentRow}
+          parentID={row[schema.idField]}
+          filtersMap={filtersMap}
         />
       </View>
     ));
@@ -184,22 +189,16 @@ const BaseTree = ({
       </View>
     );
   };
-  const RenderKeyWords = ({ values }) => {
-    const selectedCol = columns.find((col) => col.lookupID);
-
-    // const col = schema.dashboardFormSchemaParameters.find(
-    //   (param) => param.lookupID === selectedCol?.lookupID,
-    // );
-    const col = schema.dashboardFormSchemaParameters.find(
-      (param) => param.lookupID,
-    );
-
+  const RenderKeyWords = ({ values, setParentRow }) => {
     return (
       <View style={{ flex: 1, marginRight: 10 }}>
         <ListOfKeywordsParameter
           values={values}
           lookupDisplayField={lookupDisplayField}
           lookupReturnField={lookupReturnField}
+          setParentRow={setParentRow}
+          parentID={parentID}
+          filtersMap={filtersMap}
         />
       </View>
     );
@@ -215,7 +214,7 @@ const BaseTree = ({
       }}
     >
       {isLeaf ? (
-        <RenderKeyWords values={state.rows} />
+        <RenderKeyWords values={state.rows} setParentRow={setParentRow} />
       ) : (
         <FlatList
           data={state.rows}

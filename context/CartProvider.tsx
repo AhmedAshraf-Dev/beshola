@@ -89,110 +89,110 @@ export const CartProvider = ({ children }) => {
     note: getField(parameters, "note"),
     proxyRoute: cartSchemaState?.schema?.projectProxyRoute,
   };
-  const postAction =
-    fastWayState.actions &&
-    fastWayState.actions.find(
-      (action) => action.dashboardFormActionMethodType === "Post",
-    );
-  const isInitial = useRef(true);
-  useEffect(() => {
-    if (isInitial.current) {
-      isInitial.current = false; // Skip the first run
-      return;
-    }
-    if (cartRows.length === 0) return;
-    const runEffect = async () => {
-      try {
-        const req = await onApply(
-          { ...row, ...paymentRow, ...reduxSelectedLocation },
-          null,
-          true,
-          postAction,
-        );
-        // You can use `req` if needed
-        // console.log("API response:", req);
-      } catch (error) {
-        console.error("Error in onApply:", error);
-      }
-    };
+  // const postAction =
+  //   fastWayState.actions &&
+  //   fastWayState.actions.find(
+  //     (action) => action.dashboardFormActionMethodType === "Post",
+  //   );
+  // const isInitial = useRef(true);
+  // useEffect(() => {
+  //   if (isInitial.current) {
+  //     isInitial.current = false; // Skip the first run
+  //     return;
+  //   }
+  //   if (cartRows.length === 0) return;
+  //   const runEffect = async () => {
+  //     try {
+  //       const req = await onApply(
+  //         { ...row, ...paymentRow, ...reduxSelectedLocation },
+  //         null,
+  //         true,
+  //         postAction,
+  //       );
+  //       // You can use `req` if needed
+  //       // console.log("API response:", req);
+  //     } catch (error) {
+  //       console.error("Error in onApply:", error);
+  //     }
+  //   };
 
-    runEffect();
-  }, [row, paymentRow, reduxSelectedLocation, selectedNode]);
-  const selectedNodeRef = useRef(selectedNode);
-  useEffect(() => {
-    // if (!selectedNode) return;
-    // if (selectedNodeRef.current !== selectedNode) {
-    //   selectedNodeRef.current = selectedNode;
-    //   cartReducerDispatch({
-    //     type: "RESET_SERVICE_LIST",
-    //     payload: { lastQuery: "" },
-    //   });
-    // }
-    prepareLoad({
-      state: cartState,
-      dataSourceAPI: cartDataSourceAPI,
-      getAction: getCustomerCartAction,
-      cache: createRowCache(4000),
-      reducerDispatch: cartReducerDispatch,
-      abortController: false,
-      reRequest: true,
-    });
-    setReRequest(false);
-  }, [selectedNode]);
-  useEffect(() => {
-    setCartWS_Connected(false);
-  }, [selectedNode, isOnline]);
-  useEffect(() => {
-    // 🌐 WebSocket connect effect
+  //   runEffect();
+  // }, [row, paymentRow, reduxSelectedLocation, selectedNode]);
+  // const selectedNodeRef = useRef(selectedNode);
+  // useEffect(() => {
+  //   // if (!selectedNode) return;
+  //   // if (selectedNodeRef.current !== selectedNode) {
+  //   //   selectedNodeRef.current = selectedNode;
+  //   //   cartReducerDispatch({
+  //   //     type: "RESET_SERVICE_LIST",
+  //   //     payload: { lastQuery: "" },
+  //   //   });
+  //   // }
+  //   prepareLoad({
+  //     state: cartState,
+  //     dataSourceAPI: cartDataSourceAPI,
+  //     getAction: getCustomerCartAction,
+  //     cache: createRowCache(4000),
+  //     reducerDispatch: cartReducerDispatch,
+  //     abortController: false,
+  //     reRequest: true,
+  //   });
+  //   setReRequest(false);
+  // }, [selectedNode]);
+  // useEffect(() => {
+  //   setCartWS_Connected(false);
+  // }, [selectedNode, isOnline]);
+  // useEffect(() => {
+  //   // 🌐 WebSocket connect effect
 
-    if (cart_WS_Connected) return;
-    let cleanup;
-    ConnectToWS(
-      setWSMessageCart,
-      setCartWS_Connected,
-      cartFieldsType.dataSourceName,
-    )
-      .then(() => {})
-      .catch((e) => {
-        console.error("❌ Cart WebSocket error", e);
-      });
-    return () => {
-      if (cleanup) cleanup(); // Clean up when component unmounts or deps change
-    };
-  }, [cart_WS_Connected]);
+  //   if (cart_WS_Connected) return;
+  //   let cleanup;
+  //   ConnectToWS(
+  //     setWSMessageCart,
+  //     setCartWS_Connected,
+  //     cartFieldsType.dataSourceName,
+  //   )
+  //     .then(() => {})
+  //     .catch((e) => {
+  //       console.error("❌ Cart WebSocket error", e);
+  //     });
+  //   return () => {
+  //     if (cleanup) cleanup(); // Clean up when component unmounts or deps change
+  //   };
+  // }, [cart_WS_Connected]);
 
-  // ✅ Callback to update reducer
-  const cartCallbackReducerUpdate = async (cart_ws_updatedRows) => {
-    await cartReducerDispatch({
-      type: "WS_OPE_ROW",
-      payload: {
-        rows: cart_ws_updatedRows.rows,
-        totalCount: cart_ws_updatedRows.totalCount,
-      },
-    });
-  };
+  // // ✅ Callback to update reducer
+  // const cartCallbackReducerUpdate = async (cart_ws_updatedRows) => {
+  //   await cartReducerDispatch({
+  //     type: "WS_OPE_ROW",
+  //     payload: {
+  //       rows: cart_ws_updatedRows.rows,
+  //       totalCount: cart_ws_updatedRows.totalCount,
+  //     },
+  //   });
+  // };
 
-  // 📨 WebSocket message handler
-  useEffect(() => {
-    if (!_wsMessageCart) return;
+  // // 📨 WebSocket message handler
+  // useEffect(() => {
+  //   if (!_wsMessageCart) return;
 
-    const handlerCartWSMessage = new WSMessageHandler({
-      _WSsetMessage: _wsMessageCart, // match param name
-      fieldsType: cartFieldsType,
-      rows: cartRows,
-      totalCount: cartTotalCount,
-      callbackReducerUpdate: cartCallbackReducerUpdate,
-    });
-    handlerCartWSMessage.process();
-  }, [_wsMessageCart]);
+  //   const handlerCartWSMessage = new WSMessageHandler({
+  //     _WSsetMessage: _wsMessageCart, // match param name
+  //     fieldsType: cartFieldsType,
+  //     rows: cartRows,
+  //     totalCount: cartTotalCount,
+  //     callbackReducerUpdate: cartCallbackReducerUpdate,
+  //   });
+  //   handlerCartWSMessage.process();
+  // }, [_wsMessageCart]);
 
-  const cartDataSourceAPI = (query, skip, take) => {
-    return buildApiUrl(query, {
-      pageIndex: skip + 1,
-      pageSize: take,
-      // ...row,
-    });
-  };
+  // const cartDataSourceAPI = (query, skip, take) => {
+  //   return buildApiUrl(query, {
+  //     pageIndex: skip + 1,
+  //     pageSize: take,
+  //     // ...row,
+  //   });
+  // };
   // const loadData = useCallback(() => {
   //   prepareLoad({
   // state: cartState,

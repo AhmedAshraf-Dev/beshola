@@ -28,7 +28,6 @@ const CompanyCardsView = ({}: any) => {
   const fieldsType = useSelector((state: any) => state.menuItem.fieldsType);
   const navigation = useNavigation();
   const localization = useSelector((state) => state.localization.localization);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: () =>

@@ -27,9 +27,6 @@ export const SearchTabs = ({}: any) => {
     setActiveTab,
     serviceTypesFieldsTypes,
   } = useTab();
-  console.log("====================================");
-  console.log(state, "searchBar");
-  console.log("====================================");
   const { idField, tabDisplay: display } = serviceTypesFieldsTypes;
   //todo make sure when menu items change that depend on categoryId and filter and search by API and make caching
   //todo by in case offline make it with out api
@@ -44,13 +41,12 @@ export const SearchTabs = ({}: any) => {
           contentContainerStyle={{
             direction: "inherit",
           }}
+          className="flex-col"
           key={activeTab}
         >
           <HStack
             space="lg"
-            className={`mx-0.5 xl:gap-5 2xl:gap-6 flex ${
-              isRTL() ? "flex-row" : "flex-row"
-            } justify-center items-center w-full`}
+            className={`mx-0.5 xl:gap-5 2xl:gap-6 justify-center items-center w-full`}
             style={{ direction: "inherit", flexWrap: "nowrap" }}
           >
             {state.rows.map((tab) => {
@@ -63,16 +59,13 @@ export const SearchTabs = ({}: any) => {
                     justifyContent: "center",
                     alignItems: "center",
                   }}
-                  className={`px-4 py-2 mx-1 !w-1/3 rounded-full border ${
+                  className={`px-4 py-2 mx-1 !w-5/12 rounded-full border ${
                     isActive
                       ? "border-accent bg-accent/10"
                       : "border-transparent hover:border-accent/40"
                   } transition-all duration-200`}
                   onPress={() => {
                     if (activeTab[idField] !== tab[idField]) {
-                      console.log("====================================");
-                      console.log(activeTab, tab, "setactive tabe");
-                      console.log("====================================");
                       setActiveTab(tab);
                     }
                   }}

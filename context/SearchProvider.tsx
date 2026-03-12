@@ -37,6 +37,7 @@ export const SearchContext = createContext(null);
 
 export const SearchProvider = ({ children }) => {
   const { activeTab } = useTab();
+  const filtersMap = new Map();
   const [menuItemRow, setMenuItemRow] = useState({ ...activeTab });
 
   const [WS_Connected, setWS_Connected] = useState(false);
@@ -49,6 +50,7 @@ export const SearchProvider = ({ children }) => {
 
   const { selectedNode } = useShopNode();
   const selectedNodeRef = useRef(selectedNode);
+  const activeTabRef = useRef(activeTab);
 
   const [state, reducerDispatch] = useReducer(
     reducer,
@@ -73,9 +75,6 @@ export const SearchProvider = ({ children }) => {
 
   const dataSourceAPI = (query, skip, take) => {
     const pageIndex = Math.floor(skip / take) + 1;
-    console.log("====================================");
-    console.log(activeTab, "build api");
-    console.log("====================================");
     return buildApiUrl(query, {
       pageIndex,
       pageSize: take,
@@ -88,8 +87,12 @@ export const SearchProvider = ({ children }) => {
    * Reset when selected node changes
    */
   useEffect(() => {
-    if (selectedNodeRef.current !== selectedNode) {
+    if (
+      selectedNodeRef.current !== selectedNode ||
+      activeTabRef.current !== activeTab
+    ) {
       selectedNodeRef.current = selectedNode;
+      activeTabRef.current = activeTab;
 
       reducerDispatch({
         type: "RESET_SERVICE_LIST",
@@ -98,16 +101,13 @@ export const SearchProvider = ({ children }) => {
 
       setCurrentSkip((prev) => prev + 1);
     }
-  }, [selectedNode]);
+  }, [selectedNode, activeTab]);
 
   /**
    * Load data
    */
   useEffect(() => {
     const controller = new AbortController();
-    console.log("====================================");
-    console.log(activeTab, "useeffect");
-    console.log("====================================");
     prepareLoad({
       state,
       dataSourceAPI,
@@ -120,7 +120,7 @@ export const SearchProvider = ({ children }) => {
     previousControllerRef.current = controller;
 
     return () => controller.abort();
-  }, [menuItemRow, activeTab, currentSkip]);
+  }, [menuItemRow, currentSkip]);
 
   /**
    * Reset websocket when node changes
@@ -253,6 +253,7 @@ export const SearchProvider = ({ children }) => {
         reducerDispatch,
         handleScroll,
         onLoadMore,
+        filtersMap,
       }}
     >
       {children}
