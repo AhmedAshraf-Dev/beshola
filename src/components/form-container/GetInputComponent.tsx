@@ -41,7 +41,8 @@ export function GetInputComponent(type) {
       return RadioListParameter;
     case "tree":
       return DynamicTreeSchema;
-    case "minMax":
+    case "range":
+    case "minmax":
       return MeddleRangeParameter;
     case "password":
     case "confirmPassword":

@@ -99,7 +99,7 @@ const PrivacyPolicy = ({ route }) => {
       {/* Footer */}
       <View className="flex-row justify-between items-center bg-gray-200 px-4 py-3 mt-4">
         <Image
-          source={require("../../../assets/display/logo.webp")}
+          source={require("../../../assets/display/logo.jpeg")}
           style={{ width: 50, height: 50 }}
           resizeMode="contain"
         />

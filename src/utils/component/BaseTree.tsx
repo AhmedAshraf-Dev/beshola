@@ -17,6 +17,7 @@ import { buildApiUrl } from "../../../components/hooks/APIsFunctions/BuildApiUrl
 import LoadData from "../../../components/hooks/APIsFunctions/LoadData";
 import { updateRows } from "../../components/Pagination/updateRows";
 import { string } from "yup";
+import { theme } from "../../Theme";
 
 const VIRTUAL_PAGE_SIZE = 50;
 
@@ -145,12 +146,10 @@ const BaseTree = ({
     const rowId = row[schema.idField];
     const expanded = expandedRows.includes(rowId);
 
-    const isChecked = !!values.find(
-      (i) => i[schema.idField] === row[schema.idField],
-    );
+  
 
     return (
-      <View style={{ borderBottomWidth: 1, borderBottomColor: "#eee" }}>
+      <View style={{ borderBottomWidth: 1, borderBottomColor: theme.accent }}>
         {/* Row */}
         <Pressable
           onPress={() => {
@@ -162,7 +161,7 @@ const BaseTree = ({
             alignItems: "center",
             padding: 10,
             backgroundColor:
-              selectedRow?.[schema.idField] === rowId ? "#f0f8ff" : "white",
+              theme.body,
           }}
         >
           {/* Expand icon */}
@@ -171,7 +170,7 @@ const BaseTree = ({
               onPress={() => toggleExpand(rowId)}
               style={{ marginRight: 10 }}
             >
-              <Text>{expanded ? "▼" : "▶"}</Text>
+              <Text  style={{color : theme.accent }}>{expanded ? "▼" : "▶"}</Text>
             </Pressable>
           )}
 
@@ -179,7 +178,7 @@ const BaseTree = ({
           {!isLeaf &&
             columns.map((col) => (
               <View key={col.name} style={{ flex: 1 }}>
-                <Text numberOfLines={1}>{row[col.name]}</Text>
+                <Text style={{color : theme.accent }} numberOfLines={1}>{row[col.name]}</Text>
               </View>
             ))}
         </Pressable>
@@ -208,7 +207,7 @@ const BaseTree = ({
     <View
       style={{
         borderWidth: 1,
-        borderColor: "#ddd",
+        borderColor: theme.accent,
         borderRadius: 6,
         marginBottom: 10,
       }}

@@ -45,7 +45,7 @@ export default function HeaderParent() {
         {/* Logo and App Name in Column */}
         <View className="flex flex-row items-center">
           <Image
-            source={require("../../../assets/display/logo.webp")} // Replace with your logo path
+            source={require("../../../assets/display/logo.jpeg")} // Replace with your logo path
             style={{
               width: scale(60), // Responsive logo width
               height: moderateScale(40), // Responsive logo height

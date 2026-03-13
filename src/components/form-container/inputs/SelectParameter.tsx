@@ -14,6 +14,7 @@ import {
   SelectDragIndicator,
   SelectDragIndicatorWrapper,
   SelectItem,
+  TextareaInput,
 } from "../../../../components/ui";
 import { useSelector } from "react-redux";
 function SelectParameter({
@@ -46,54 +47,64 @@ function SelectParameter({
   // };
   return (
     <View>
-      <Controller
-        control={control}
-        rules={{
-          required: false,
+<Controller
+  control={control}
+  name={fieldName}
+  render={({ field: { onChange, value } }) => {
+    const selectedItem = values.find(
+      (item) => item?.[lookupReturnField] === value
+    );
+
+    return (
+      <Select
+        value={value}
+        className="mx-2"
+        onValueChange={(displayValue) => {
+          const selected = values.find(
+            (item) => item?.[lookupDisplayField] === displayValue
+          );
+
+          onChange(selected?.[lookupReturnField]); // save hidden return value
         }}
-        name={fieldName}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <Select
-            value={value || defaultValue}
-            onValueChange={(newValue) => {
-              onChange(newValue);
-            }}
-            className="mx-2"
-          >
-            <SelectTrigger
-              variant="outline"
-              size="sm"
-              className="w-full h-11 flex flex-row justify-between"
-            >
-              <SelectInput
-                placeholder={localization.inputs.select.placeholder}
-                value={value || defaultValue}
-                className="text-base text-text"
+      >
+        <SelectTrigger
+          variant="outline"
+          size="sm"
+          className="w-full h-11 flex flex-row justify-between"
+        >
+          <SelectInput
+            placeholder={localization.inputs.select.placeholder}
+            value={selectedItem?.[lookupDisplayField] || ""}
+            className="text-base text-text"
+          />
+
+          <SelectIcon
+            as={AntDesign}
+            name="down"
+            className="mr-3 text-text"
+          />
+        </SelectTrigger>
+
+        <SelectPortal>
+          <SelectBackdrop />
+          <SelectContent>
+            <SelectDragIndicatorWrapper>
+              <SelectDragIndicator />
+            </SelectDragIndicatorWrapper>
+
+            {values.map((item) => (
+              <SelectItem
+                key={item?.[lookupReturnField]}
+                label={item?.[lookupDisplayField]}   // visible text
+                value={item?.[lookupDisplayField]}   // UI value
               />
-              <SelectIcon
-                as={AntDesign}
-                name="down"
-                className="mr-3 text-text"
-              />
-            </SelectTrigger>
-            <SelectPortal>
-              <SelectBackdrop />
-              <SelectContent>
-                <SelectDragIndicatorWrapper>
-                  <SelectDragIndicator />
-                </SelectDragIndicatorWrapper>
-                {values.map((value) => (
-                  <SelectItem
-                    key={value}
-                    label={value?.[lookupDisplayField]}
-                    value={value?.[lookupReturnField]}
-                  />
-                ))}
-              </SelectContent>
-            </SelectPortal>
-          </Select>
-        )}
-      />
+            ))}
+          </SelectContent>
+        </SelectPortal>
+      </Select>
+    );
+  }}
+/>
     </View>
   );
 }

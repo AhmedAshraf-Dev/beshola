@@ -23,7 +23,8 @@ import LoadData from "../components/hooks/APIsFunctions/LoadData";
 import { updateRows } from "../src/components/Pagination/updateRows";
 import { useSchemas } from "./SchemaProvider";
 import { useSearch } from "./SearchProvider";
-
+import ServiceTypesSchema from "../src/Schemas/MenuSchema/ServiceTypesSchema.json";
+import ServiceTypesSchemaActions from "../src/Schemas/MenuSchema/ServiceTypesSchemaActions.json";
 export const TabsContext = createContext(null);
 
 export const TabsProvider = ({ children }) => {
@@ -33,14 +34,14 @@ export const TabsProvider = ({ children }) => {
   const [activeTab, setActiveTab] = useState({});
   const activeMenuType = useSelector((state) => state.menuItem.currentItemType);
   const menuItems = useSelector((state) => state.menuItem.menuItem);
-  const idField = serviceTypesState.schema.idField;
-  const display = serviceTypesState.schema.dashboardFormSchemaParameters.find(
+  const idField =ServiceTypesSchema.idField;
+  const display = ServiceTypesSchema.dashboardFormSchemaParameters.find(
     (pram) => pram.parameterType === "tabDisplay",
   ).parameterField;
   const localization = useSelector((state) => state.localization.localization);
   const [state, reducerDispatch] = useReducer(
     reducer,
-    initialState(VIRTUAL_PAGE_SIZE, serviceTypesState.schema.idField),
+    initialState(VIRTUAL_PAGE_SIZE, ServiceTypesSchema.idField),
   );
   const serviceTypesFieldsTypes = {
     idField: idField,
@@ -57,8 +58,8 @@ export const TabsProvider = ({ children }) => {
   };
   const cache = createRowCache(VIRTUAL_PAGE_SIZE);
   const getAction =
-    serviceTypesState.actions &&
-    serviceTypesState.actions.find(
+    ServiceTypesSchemaActions &&
+    ServiceTypesSchemaActions.find(
       (action) => action.dashboardFormActionMethodType === "Get",
     );
 

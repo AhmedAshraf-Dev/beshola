@@ -4,21 +4,27 @@ import SelectParameter from "./SelectParameter";
 import { useForm } from "react-hook-form";
 import { cleanObject } from "../../../utils/operation/cleanObject";
 import { useSearch } from "../../../../context/SearchProvider";
+import { addAlpha } from "../../../utils/operation/addAlpha";
+import { theme } from "../../../Theme";
 
 function ListOfKeywordsParameter({
+ 
   values = [],
-  parentID,
-  fieldName,
-  lookupDisplayField,
-  lookupReturnField,
-  col,
-  filtersMap,
-  setParentRow,
+  parentID = "parentID",
+  fieldName = "",
+  lookupDisplayField = "label",
+  lookupReturnField = "value",
+  col = 1,
+  filtersMap = new Map(), // default to an empty Map
+  setParentRow = () => {},
 }) {
   // const { filtersMap } = useSearch();
-  const [keywords, setKeywords] = useState(filtersMap.get(parentID) || []);
+ 
+const current = filtersMap.get(parentID) || [];
 
-  const [options, setOptions] = useState(values);
+const [options, setOptions] = useState(
+  values.filter(e => !current.includes(e))
+);
 
   const { control, watch, reset } = useForm({});
 
@@ -27,26 +33,26 @@ function ListOfKeywordsParameter({
     const subscription = watch((formValues) => {
       const cleanedValues = cleanObject(formValues);
 
-      const returned = cleanedValues?.[lookupReturnField];
-      const selected = cleanedValues?.[lookupDisplayField];
-      console.log("====================================");
-      console.log(selected, cleanedValues, "selected");
-      console.log("====================================");
+const value = values.find(e=>e?.[lookupReturnField] === cleanedValues?.[lookupReturnField])
+      const returned = value?.[lookupReturnField];
+      const selected = value?.[lookupDisplayField];
+    
       if (!selected) return;
 
       // add keyword
-      setKeywords((prev) => {
-        if (prev.includes(selected)) return prev;
-        filtersMap.set(parentID, [...prev, selected]);
-        return [...prev, selected];
-      });
+       const current = filtersMap.get(parentID) || [];
+       if (!current.some(e => e[lookupReturnField] === value[lookupReturnField])) {
+  console.log("current", current);
+  filtersMap.set(parentID, [...current, value]);
+}
       setParentRow((prev) => {
         if (prev.includes(returned)) return prev;
         return [...prev, returned];
       });
 
       // remove from select options
-      setOptions((prev) => prev.filter((opt) => opt !== selected));
+      if (!value) return; // make sure value exists
+
 
       // reset select
       reset({ attributeValue: "" });
@@ -56,17 +62,14 @@ function ListOfKeywordsParameter({
   }, [watch]);
 
   const removeKeyword = (index) => {
-    const removed = keywords[index];
-    const newKeywords = keywords.filter((_, i) => i !== index);
+    const current = filtersMap.get(parentID) || [];
+    const newKeywords = current.filter((_, i) => i !== index);
 
-    // remove from keywords
-    setKeywords(newKeywords);
     filtersMap.set(parentID, newKeywords);
 
     setParentRow((prev) => prev.filter((_, i) => i !== index));
 
-    // return to select options
-    setOptions((prev) => [...prev, removed]);
+
   };
 
   return (
@@ -89,22 +92,23 @@ function ListOfKeywordsParameter({
           gap: 8,
         }}
       >
-        {keywords.map((item, index) => (
+        {(filtersMap.get(parentID) || []).map((item, index) => (
           <View
-            key={index}
+          key={item?.[lookupReturnField]}
+            //key={index}
             style={{
               flexDirection: "row",
               alignItems: "center",
-              backgroundColor: "#eee",
+              backgroundColor: theme.accent,
               paddingHorizontal: 10,
               paddingVertical: 4,
               borderRadius: 8,
             }}
           >
-            <Text style={{ marginRight: 6 }}>{item}</Text>
+            <Text style={{ marginRight: 6,color : theme.body, }}>{item[lookupDisplayField]}</Text>
 
             <Pressable onPress={() => removeKeyword(index)}>
-              <Text style={{ color: "red", fontWeight: "bold" }}>×</Text>
+              <Text style={{ color: theme.body, fontWeight: "bold" }}>×</Text>
             </Pressable>
           </View>
         ))}

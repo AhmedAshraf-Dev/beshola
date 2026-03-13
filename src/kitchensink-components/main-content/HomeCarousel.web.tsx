@@ -7,10 +7,10 @@ import "./slider.css";
 import { View } from "react-native";
 
 const data = [
-  { src: require("../../../assets/display/ad1.jpg") },
-  { src: require("../../../assets/display/ad2.jpg") },
-  { src: require("../../../assets/display/ad3.jpg") },
-  { src: require("../../../assets/display/ad4.jpg") },
+  { src: require("../../../assets/display/ad1.png") },
+  { src: require("../../../assets/display/ad2.png") },
+  { src: require("../../../assets/display/ad3.png") },
+  { src: require("../../../assets/display/ad4.png") },
 ];
 
 const HomeCarouselWeb = () => {

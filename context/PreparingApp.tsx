@@ -1,27 +1,27 @@
 import React, {
   createContext,
-  useState,
   ReactNode,
+  useContext,
   useEffect,
   useReducer,
-  useRef,
-  useContext,
+  useState
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import AssetsSchema from "../src/Schemas/MenuSchema/AssetsSchema.json";
-import { prepareLoad } from "../src/utils/operation/loadHelpers";
-import AddressLocationAction from "../src/Schemas/AddressLocation/AddressLocationAction.json";
-import WorkingHoursSchemaActions from "../src/Schemas/AddressLocation/WorkingHoursSchemaActions.json";
+import { buildApiUrl } from "../components/hooks/APIsFunctions/BuildApiUrl";
 import AddressLocationSchema from "../src/Schemas/AddressLocation/AddressLocation.json";
+import AddressLocationAction from "../src/Schemas/AddressLocation/AddressLocationAction.json";
 import NearestBranchesSchema from "../src/Schemas/AddressLocation/NearestBranches.json";
 import NearestBranchesActions from "../src/Schemas/AddressLocation/NearestBranchesActions.json";
+import WorkingHoursSchemaActions from "../src/Schemas/AddressLocation/WorkingHoursSchemaActions.json";
+import CurrencyTypesSchemaActions from "../src/Schemas/MenuSchema/CurrencyTypesSchemaActions.json";
+import AssetsSchema from "../src/Schemas/MenuSchema/AssetsSchema.json";
+import { createRowCache } from "../src/components/Pagination/createRowCache";
 import {
   initialState,
   VIRTUAL_PAGE_SIZE,
 } from "../src/components/Pagination/initialState";
-import { buildApiUrl } from "../components/hooks/APIsFunctions/BuildApiUrl";
-import { createRowCache } from "../src/components/Pagination/createRowCache";
 import reducer from "../src/components/Pagination/reducer";
+import { onApply } from "../src/components/form-container/OnApply";
 import {
   updateContacts,
   updateOrderStatus,
@@ -29,26 +29,17 @@ import {
   updateSelectedNode,
   updateWorkingHours,
 } from "../src/reducers/LocationReducer";
-import { WSMessageHandler } from "../src/utils/WS/handleWSMessage";
 import { ConnectToWS } from "../src/utils/WS/ConnectToWS";
-import { initializeLocalization } from "../src/reducers/localizationReducer";
-import { useNetwork } from "./NetworkContext";
-import { ShopNodeProvider, useShopNode } from "./ShopNodeProvider";
-import { Chase } from "react-native-animated-spinkit";
-import LoadingScreen from "../src/kitchensink-components/loading/LoadingScreen";
-import useLocalizationPolling from "../src/components/language/useLocalizationPolling";
-import { onApply } from "../src/components/form-container/OnApply";
+import { WSMessageHandler } from "../src/utils/WS/handleWSMessage";
 import {
   convertUTCToLocalTime,
   getMinutesFromTime,
 } from "../src/utils/operation/handleLocalTime";
-import ShopStatusIndicator from "../src/utils/component/ShopStatusIndicator";
-import { View } from "react-native";
-import { useVideoPlayer, VideoView } from "expo-video";
-import { useAuth } from "./auth";
-import AddMediaCard from "../src/components/cards/AddMediaCard";
-import { useSchemas } from "./SchemaProvider";
+import { prepareLoad } from "../src/utils/operation/loadHelpers";
 import { LocalizationContext } from "./LocalizationContext";
+import { useNetwork } from "./NetworkContext";
+import { useShopNode } from "./ShopNodeProvider";
+import { useAuth } from "./auth";
 
 // Define the shape of the WebSocket context
 interface WSContextType {
@@ -108,6 +99,9 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
 
   const addressLocationCache = createRowCache(VIRTUAL_PAGE_SIZE);
   const addressLocationGetAction = AddressLocationAction?.find(
+    (action) => action.dashboardFormActionMethodType === "Get",
+  );
+  const currencyTypesGetAction = CurrencyTypesSchemaActions?.find(
     (action) => action.dashboardFormActionMethodType === "Get",
   );
 
@@ -193,6 +187,28 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLocation, nodeGetAction, isOnline]);
+  //load currecy 
+  useEffect(() => {
+
+    const fetchData = async () => {
+      try {
+        // wait for prepareLoad to finish
+        await prepareLoad({
+          state: nodeState,
+          dataSourceAPI: nodeDataSourceAPI,
+          getAction: currencyTypesGetAction,
+          cache: nodeCache,
+          reducerDispatch: nodeReducerDispatch,
+        });
+        // now safely check rows
+      } catch (err) {
+        console.error("Error in prepareLoad:", err);
+      }
+    };
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currencyTypesGetAction, isOnline]);
 
   useEffect(() => {
     if (nodeState.rows.length > 0 && Object.keys(selectedNode).length <= 0) {

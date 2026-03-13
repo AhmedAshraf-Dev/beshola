@@ -10,6 +10,7 @@ import { updateFilters } from "../../reducers/FilterReducer";
 import { tabsData } from "../company-components/tabsData";
 import { buildFilterRow } from "../../utils/operation/buildFilterRow";
 import { SearchProvider, useSearch } from "../../../context/SearchProvider";
+import DynamicRangeSchema from "../../utils/component/DynamicRangeComponent";
 
 export default function MenuFilter({
   onFilterDone = (filters) => {},
@@ -102,6 +103,7 @@ export default function MenuFilter({
           {localization.Hum_screens.menu.filter.clearButton}
         </Text>
       </TouchableOpacity>
+     <DynamicRangeSchema filtersMap={{}} />
 
       {/* Form Content */}
       <ScrollView>

@@ -37,7 +37,7 @@ export const SearchContext = createContext(null);
 
 export const SearchProvider = ({ children }) => {
   const { activeTab } = useTab();
-  const filtersMap = new Map();
+  const filtersMap = new Map([]);
   const [menuItemRow, setMenuItemRow] = useState({ ...activeTab });
 
   const [WS_Connected, setWS_Connected] = useState(false);

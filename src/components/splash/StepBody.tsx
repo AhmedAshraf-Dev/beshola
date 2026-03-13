@@ -16,7 +16,7 @@ export default function StepBody({ stepNum }) {
       return (
         <View className="flex justify-center items-center">
           {/* <Image
-            source={require("../../../assets/display/logo.webp")}
+            source={require("../../../assets/display/logo.jpeg")}
             style={styles.logo}
             resizeMode="contain"
           /> */}

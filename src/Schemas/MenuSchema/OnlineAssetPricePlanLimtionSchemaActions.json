@@ -1,0 +1,33 @@
+[
+  {
+    "dashboardFormSchemaActionID": "f5e0c17a-3ad8-4c0e-904f-606d38f6f5a4",
+    "dashboardFormActionMethodType": "Get",
+    "routeAdderss": "OnlineAssetPricePlan/GetOnlineAssetPricePlanLimtion",
+    "body": "",
+    "returnPropertyName": "",
+    "projectProxyRoute": "BrandingMartAssets",
+    "dashboardFormSchemaActionQueryParams": [
+      {
+        "dashboardFormSchemaActionQueryParameterID": "bb29da06-d76b-4dc4-856f-2072e759da68",
+        "dashboardFormSchemaActionID": "f5e0c17a-3ad8-4c0e-904f-606d38f6f5a4",
+        "parameterName": "PageSize",
+        "dashboardFormParameterField": "pageSize",
+        "isRequired": true
+      },
+      {
+        "dashboardFormSchemaActionQueryParameterID": "8fa14508-a9dc-457d-a472-a3019fe7afab",
+        "dashboardFormSchemaActionID": "f5e0c17a-3ad8-4c0e-904f-606d38f6f5a4",
+        "parameterName": "PageNumber",
+        "dashboardFormParameterField": "pageIndex",
+        "isRequired": true
+      },
+      {
+        "dashboardFormSchemaActionQueryParameterID": "4b0c550b-e6ce-4099-a950-cec05e78ddec",
+        "dashboardFormSchemaActionID": "f5e0c17a-3ad8-4c0e-904f-606d38f6f5a4",
+        "parameterName": "CurrencyTypeID",
+        "dashboardFormParameterField": "currencyTypeID",
+        "isRequired": false
+      }
+    ]
+  }
+]

@@ -76,9 +76,7 @@ const DynamicTreeSchema = ({
   const [subSchemas, setSubSchemas] = useState([]);
   const [parentRow, setParentRow] = useState([]);
   // const { setValue } = useFormContext();
-  console.log("====================================");
-  console.log(filtersMap, "filtersMap");
-  console.log("====================================");
+
   // prevent duplicate fetch
   const visitedLookups = useRef(new Set());
 

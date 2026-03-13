@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import { PolygonForm } from "../components/maps/PolygonForm";
 import DynamicTreeSchema from "../utils/component/DynamicTreeSchema";
 import PolygonMapEmbed from "../components/maps/DrawSmoothPolygon";
+import DynamicRangeSchema from "../utils/component/DynamicRangeComponent";
 
 const Explorepage = () => {
   const { os } = useDeviceInfo();
@@ -28,7 +29,6 @@ const Explorepage = () => {
           <VStack space="sm">
             {os === "web" && <HomeCarouselWeb />}
             {os !== "web" && <HomeCarousel />}
-            <DynamicTreeSchema />
             {/* <PolygonForm enable={false} setNewPolygon={() => {}} /> */}
             <PolygonMapEmbed
               clickable={false}
