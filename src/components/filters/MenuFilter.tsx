@@ -11,6 +11,7 @@ import { tabsData } from "../company-components/tabsData";
 import { buildFilterRow } from "../../utils/operation/buildFilterRow";
 import { SearchProvider, useSearch } from "../../../context/SearchProvider";
 import DynamicRangeSchema from "../../utils/component/DynamicRangeComponent";
+import { theme } from "../../Theme";
 
 export default function MenuFilter({
   onFilterDone = (filters) => {},
@@ -69,6 +70,9 @@ export default function MenuFilter({
   };
   // Handle form submission
   const onSubmit = (data) => {
+    console.log("====================================");
+    console.log(data, "data");
+    console.log("====================================");
     const formattedFilters = buildFilterRow(data);
 
     onFilterDone({ ...filterRow, ...formattedFilters });
@@ -103,8 +107,6 @@ export default function MenuFilter({
           {localization.Hum_screens.menu.filter.clearButton}
         </Text>
       </TouchableOpacity>
-     <DynamicRangeSchema filtersMap={{}} />
-
       {/* Form Content */}
       <ScrollView>
         <FormProvider {...methods}>
@@ -120,6 +122,15 @@ export default function MenuFilter({
             errorResult={errors}
             control={control}
             filtersMap={filtersMap}
+            labelStyle={{
+              fontSize: 16,
+              color: theme.body, // text color for contrast
+              backgroundColor: theme.accent,
+              fontWeight: "bold",
+              paddingHorizontal: 6,
+              paddingVertical: 2,
+              borderRadius: 4,
+            }}
           />
         </FormProvider>
       </ScrollView>

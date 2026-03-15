@@ -18,6 +18,7 @@ import LoadData from "../../../components/hooks/APIsFunctions/LoadData";
 import { updateRows } from "../../components/Pagination/updateRows";
 import { string } from "yup";
 import { theme } from "../../Theme";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const VIRTUAL_PAGE_SIZE = 50;
 
@@ -35,6 +36,8 @@ const BaseTree = ({
   setParentRow,
   parentID,
   filtersMap,
+  fieldName,
+  control,
 }) => {
   const { data: _schemaActions } = useFetch(
     GetSchemaActionsUrl(schema.dashboardFormSchemaID),
@@ -115,16 +118,7 @@ const BaseTree = ({
       (param) => param.lookupID,
     );
     return subSchemas.map((childSchema) => (
-      <View
-        key={childSchema.dashboardFormSchemaID}
-        style={{
-          marginLeft: 40,
-          borderLeftWidth: 2,
-          borderLeftColor: "#ddd",
-          paddingLeft: 15,
-          marginTop: 10,
-        }}
-      >
+      <View key={childSchema.dashboardFormSchemaID} className="mt-2 ps-4 ms-10">
         <BaseTree
           schema={childSchema}
           rowDetails={{ ...rowDetails, ...row }}
@@ -137,40 +131,51 @@ const BaseTree = ({
           setParentRow={setParentRow}
           parentID={row[schema.idField]}
           filtersMap={filtersMap}
+          fieldName={fieldName}
+          control={control}
         />
       </View>
     ));
   };
-
   const renderRow = ({ item: row }) => {
     const rowId = row[schema.idField];
     const expanded = expandedRows.includes(rowId);
 
-  
-
     return (
       <View style={{ borderBottomWidth: 1, borderBottomColor: theme.accent }}>
-        {/* Row */}
         <Pressable
           onPress={() => {
             setSelectedRow(row);
             onRowClick?.(row);
+            toggleExpand(rowId);
           }}
           style={{
             flexDirection: "row",
             alignItems: "center",
-            padding: 10,
-            backgroundColor:
-              theme.body,
+            paddingVertical: 12,
+            paddingHorizontal: 10,
+            backgroundColor: theme.body,
           }}
         >
-          {/* Expand icon */}
+          {/* Expand Icon */}
           {!isLeaf && (
             <Pressable
               onPress={() => toggleExpand(rowId)}
-              style={{ marginRight: 10 }}
+              style={{
+                marginRight: 10,
+                width: 28,
+                height: 28,
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 14,
+                backgroundColor: theme.card,
+              }}
             >
-              <Text  style={{color : theme.accent }}>{expanded ? "▼" : "▶"}</Text>
+              <MaterialIcons
+                name={expanded ? "expand-more" : "chevron-right"}
+                size={22}
+                color={theme.accent}
+              />
             </Pressable>
           )}
 
@@ -178,7 +183,16 @@ const BaseTree = ({
           {!isLeaf &&
             columns.map((col) => (
               <View key={col.name} style={{ flex: 1 }}>
-                <Text style={{color : theme.accent }} numberOfLines={1}>{row[col.name]}</Text>
+                <Text
+                  numberOfLines={1}
+                  style={{
+                    color: theme.accent,
+                    fontSize: 15,
+                    fontWeight: "500",
+                  }}
+                >
+                  {row[col.name]}
+                </Text>
               </View>
             ))}
         </Pressable>
@@ -190,7 +204,7 @@ const BaseTree = ({
   };
   const RenderKeyWords = ({ values, setParentRow }) => {
     return (
-      <View style={{ flex: 1, marginRight: 10 }}>
+      <View style={{ flex: 1 }}>
         <ListOfKeywordsParameter
           values={values}
           lookupDisplayField={lookupDisplayField}
@@ -198,6 +212,8 @@ const BaseTree = ({
           setParentRow={setParentRow}
           parentID={parentID}
           filtersMap={filtersMap}
+          fieldName={fieldName}
+          control={control}
         />
       </View>
     );
@@ -206,7 +222,6 @@ const BaseTree = ({
   return (
     <View
       style={{
-        borderWidth: 1,
         borderColor: theme.accent,
         borderRadius: 6,
         marginBottom: 10,

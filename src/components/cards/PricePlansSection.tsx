@@ -27,12 +27,15 @@ import { theme } from "../../Theme";
 import { isRTL } from "../../utils/operation/isRTL";
 import PricePlansInput from "./PricePlansInput";
 import PricePlanSchemaActions from "../../Schemas/MenuSchema/PricePlanSchemaActions.json";
+import PricePlanSchema from "../../Schemas/MenuSchema/PricePlanSchema.json";
 import { buildApiUrl } from "../../../components/hooks/APIsFunctions/BuildApiUrl";
 import useFetchWithoutBaseUrl from "../../../components/hooks/APIsFunctions/UseFetchWithoutBaseUrl";
+import { getField } from "../../utils/operation/getField";
+import CardPriceDiscount from "../../utils/component/CardPriceDiscount";
 
 const PricePlansSection = ({ item }) => {
   const [openModal, setOpenModal] = useState(false);
-  const getLanguageAction = PricePlanSchemaActions?.find(
+  const getAction = PricePlanSchemaActions?.find(
     (action) => action.dashboardFormActionMethodType === "Get",
   );
   const dataSourceAPI = (query) =>
@@ -41,25 +44,88 @@ const PricePlansSection = ({ item }) => {
       pageSize: 1000,
       activeStatus: 1,
 
-      projectRout: getLanguageAction.projectProxyRoute,
+      projectRout: getAction.projectProxyRoute,
       ...item,
     });
 
-  const query = dataSourceAPI(getLanguageAction);
+  const query = dataSourceAPI(getAction);
   const { data: pricePlans } = useFetchWithoutBaseUrl(query);
   const { control, watch, setValue } = useForm({
     defaultValues: { selectedPlan: "0" },
   });
+  const parameters = PricePlanSchema.dashboardFormSchemaParameters;
+  console.log(pricePlans, "pricePlans");
+  const pricePlanFieldsType = {
+    idField: PricePlanSchema.idField,
+    name: getField(parameters, "onlineAssetPricePlanName", false),
+    currencyShortName: getField(parameters, "currencyTypeShortName", false),
 
-  const selectedPlanIndex = watch("selectedPlan");
-  const selectedPlan = {};
-  const handleOpenMap = (location) => {
-    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-      location,
-    )}`;
-    Linking.openURL(url);
+    startDate: getField(parameters, "startTime", false),
+    endDate: getField(parameters, "endTime", false),
+
+    totalPrice: getField(parameters, "totalPrice", false),
+    downPayment: getField(parameters, "downPayment", false),
+    discount: getField(parameters, "discountPercentage", false),
+    cashback: getField(parameters, "cashbackAmount", false),
+
+    maintenanceFees: getField(parameters, "maintenanceFees", false),
+    insuranceFees: getField(parameters, "insuranceFees", false),
+    tax: getField(parameters, "taxPercentage", false),
+
+    remarks: getField(parameters, "remarks", false),
   };
-
+  // const selectedPlanIndex = watch("selectedPlan");
+  // const selectedPlan = {};
+  // const handleOpenMap = (location) => {
+  //   const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+  //     location,
+  //   )}`;
+  //   Linking.openURL(url);
+  // };
+  const pricePlansTest = [
+    {
+      assetPricePlanID: "plan-001",
+      onlineAssetPricePlanName: "Cash Offer",
+      startDate: "2024-01-01",
+      endDate: "2024-12-31",
+      totalPrice: 1200000,
+      downPayment: 120000,
+      discountPercentage: 5,
+      cashbackAmount: 20000,
+      maintenanceFees: 15000,
+      insuranceFees: 3000,
+      taxPercentage: 14,
+      remarks: "Best price for cash buyers",
+    },
+    {
+      assetPricePlanID: "plan-002",
+      onlineAssetPricePlanName: "Installment Plan - 3 Years",
+      startDate: "2024-01-01",
+      endDate: "2027-01-01",
+      totalPrice: 1350000,
+      downPayment: 200000,
+      discountPercentage: 2,
+      cashbackAmount: 10000,
+      maintenanceFees: 20000,
+      insuranceFees: 3500,
+      taxPercentage: 14,
+      remarks: "Flexible payment over 3 years",
+    },
+    {
+      assetPricePlanID: "plan-003",
+      onlineAssetPricePlanName: "Installment Plan - 5 Years",
+      startDate: "2024-01-01",
+      endDate: "2029-01-01",
+      totalPrice: 1500000,
+      downPayment: 250000,
+      discountPercentage: 0,
+      cashbackAmount: 0,
+      maintenanceFees: 25000,
+      insuranceFees: 4000,
+      taxPercentage: 14,
+      remarks: "Long-term payment plan",
+    },
+  ];
   return (
     <Box className="items-center">
       <TouchableOpacity
@@ -77,7 +143,11 @@ const PricePlansSection = ({ item }) => {
             isRTL() ? "text-right" : "text-left"
           }`}
         >
-          View Price Plans
+          <CardPriceDiscount
+            fieldsType={pricePlanFieldsType}
+            item={item}
+            style={{}}
+          />
         </Text>
       </TouchableOpacity>
 
@@ -237,7 +307,10 @@ const PricePlansSection = ({ item }) => {
                   })
                 }
               /> */}
-              <PricePlansInput pricePlans={pricePlans} />
+              <PricePlansInput
+                pricePlans={pricePlansTest}
+                fieldsType={pricePlanFieldsType}
+              />
             </VStack>
           </ModalBody>
 
@@ -246,9 +319,9 @@ const PricePlansSection = ({ item }) => {
               className="bg-accent rounded-xl px-5"
               onPress={() => setOpenModal(false)}
             >
-              <ButtonText>
+              {/* <ButtonText>
                 {selectedPlan ? `Selected: ${selectedPlan.name}` : "Close"}
-              </ButtonText>
+              </ButtonText> */}
             </Button>
           </ModalFooter>
         </ModalContent>

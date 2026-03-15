@@ -1,38 +1,39 @@
 {
   "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
-  "schemaType": "PropertyFilter",
-  "idField": "id",
+  "schemaType": "tab",
+  "idField": "menuCategoryID",
   "dashboardFormSchemaParameters": [
     {
-      "dashboardFormSchemaParameterID": "param-price-minmax",
+      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
       "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
       "isEnable": true,
-      "parameterType": "tree",
-      "parameterField": "attributes",
-      "parameterTitel": "attributes",
-      "isIDField": false,
+      "parameterType": "text",
+      "parameterField": "menuCategoryID",
+      "parameterTitel": "menuCategoryID",
+      "isIDField": true,
       "lookupID": null,
       "lookupReturnField": null,
       "lookupDisplayField": null,
       "indexNumber": 0
     },
     {
-      "dashboardFormSchemaParameterID": "param-price-minmax",
+      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
       "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
       "isEnable": true,
-      "parameterType": "dynamicRange",
-      "parameterField": "priceFilter",
-      "parameterTitel": "price Filter",
+      "parameterType": "tabDisplay",
+      "parameterField": "menuCategoryName",
+      "parameterTitel": "menuCategoryName",
       "isIDField": false,
-      "lookupID": "363E833B-294E-4B83-880D-380FE70D719C",
+      "lookupID": null,
       "lookupReturnField": null,
       "lookupDisplayField": null,
       "indexNumber": 0
     }
   ],
+
   "isMainSchema": true,
   "dataSourceName": null,
-  "projectProxyRoute": "BrandingMartSecurity",
+  "projectProxyRoute": "BrandingMartPOS",
   "propertyName": null,
   "indexNumber": 0
 }

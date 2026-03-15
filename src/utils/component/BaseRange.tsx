@@ -1,137 +1,160 @@
-import React, {
-  useContext,
-  useEffect,
-  useMemo,
-  useReducer,
-  useState,
-} from "react";
-import { View, Text, Pressable, Switch, FlatList } from "react-native";
-import { defaultProjectProxyRouteWithoutBaseURL } from "../../../request";
-import ListOfKeywordsParameter from "../../components/form-container/inputs/ListOfKeywordsParameter";
+import React, { useEffect, useState, useMemo } from "react";
+import { View, Text, Pressable, ScrollView } from "react-native";
+import { useForm } from "react-hook-form";
+import LookupParameter from "../../components/form-container/inputs/LookupParameter";
+import APIHandling from "../../../components/hooks/APIsFunctions/APIHandling";
+import { buildApiUrl } from "../../../components/hooks/APIsFunctions/BuildApiUrl";
+import { MiddleRangeParameter } from "../../components/form-container";
+import { theme } from "../../Theme";
+import { useSelector } from "react-redux";
+import { cleanObject } from "../operation/cleanObject";
 import useFetch from "../../../components/hooks/APIsFunctions/useFetch";
 import GetSchemaActionsUrl from "../../../components/hooks/DashboardAPIs/GetSchemaActionsUrl";
-import reducer from "../../components/Pagination/reducer";
-import { initialState } from "../../components/Pagination/initialState";
-import { createRowCache } from "../../components/Pagination/createRowCache";
-import { buildApiUrl } from "../../../components/hooks/APIsFunctions/BuildApiUrl";
-import LoadData from "../../../components/hooks/APIsFunctions/LoadData";
-import { updateRows } from "../../components/Pagination/updateRows";
-import { string } from "yup";
-import { theme } from "../../Theme";
-import FormContainer from "../../components/form-container/FormContainer";
-import { useForm } from "react-hook-form";
-import { SelectParameter } from "../../components/form-container";
+import { defaultProjectProxyRouteWithoutBaseURL } from "../../../request";
+// Import your specific range component
 
-const VIRTUAL_PAGE_SIZE = 50;
+const BaseRange = ({ schema }) => {
+  const {
+    control,
+    handleSubmit,
+    setError,
+    clearErrors,
+    watch,
+    setValue,
 
-const BaseRange = ({
-  schema,
-  rowDetails = {},
-  subSchema = {},
-  onRowClick,
-  onLeafCheckChange,
-  canUnchecked = false,
-  canChecked = false,
-  values = [],
-  lookupDisplayField = "label",
-  lookupReturnField = "value",
-  setParentRow,
-  parentID,
-  filtersMap,
-}) => {
-    const {control}=useForm()
-    const selectParam=schema.dashboardFormSchemaParameters.find((param)=>param.parameterType==='select')
-    const { data: _schemaActions } = useFetch(
-      GetSchemaActionsUrl(selectParam.lookupID),
-      defaultProjectProxyRouteWithoutBaseURL,
-    );
-  const getAction =
-    _schemaActions &&
-    _schemaActions.find(
-      (action) => action.dashboardFormActionMethodType === "Get",
-    );
+    formState: { errors },
+  } = useForm({});
+  const [rowDetails, setRowDetails] = useState({});
+  const [apiValues, setApiValues] = useState({});
+  const [activeTab, setActiveTab] = useState(0);
+  const [lastQuery, setLastQuery] = useState(null);
+  const localization = useSelector((state) => state.localization.localization);
 
-//   const [expandedRows, setExpandedRows] = useState([]);
-//   const [selectedRow, setSelectedRow] = useState(null);
-
-  const [state, dispatch] = useReducer(
-    reducer,
-    initialState(VIRTUAL_PAGE_SIZE, selectParam.parameterField),
+  const selectParam = schema.dashboardFormSchemaParameters.find(
+    (param) => param.lookupID !== null,
   );
 
-  const cache = useMemo(() => createRowCache(VIRTUAL_PAGE_SIZE), []);
+  // Get range parameters from subSchema
+  const rangeParams = useMemo(
+    () =>
+      schema?.dashboardFormSchemaParameters.filter(
+        (param) => param.parameterType === "range",
+      ) || [],
+    [schema],
+  );
+  const { data: _schemaActions } = useFetch(
+    GetSchemaActionsUrl(schema.dashboardFormSchemaID),
+    defaultProjectProxyRouteWithoutBaseURL,
+  );
 
-  const dataSourceAPI = (query, skip, take) =>
-    buildApiUrl(query, {
-      pageIndex: skip + 1,
-      pageSize: take,
-      ...rowDetails,
-    });
+  const getAction =
+    _schemaActions &&
+    _schemaActions.find((a) => a.dashboardFormActionMethodType === "Get");
 
   useEffect(() => {
-    if (!getAction) return;
+    if (!getAction || Object.keys(rowDetails).length === 0) return;
 
-    LoadData(
-      state,
-      dataSourceAPI,
-      getAction,
-      cache,
-      updateRows(dispatch, cache, state),
-      dispatch,
-    );
+    const run = async () => {
+      const query = buildApiUrl(getAction, rowDetails);
+      if (query !== lastQuery) {
+        setLastQuery(query);
+        const result = await APIHandling(
+          query,
+          getAction.dashboardFormActionMethodType,
+          {},
+        );
+        if (result?.success) {
+          // Expecting result.data to be { totalPrice: {min: 0, max: 100}, ... }
+          setApiValues(result?.data || {});
+        }
+      }
+    };
+    run();
   }, [getAction, rowDetails]);
-  console.log('====================================');
-  console.log('state',state,_schemaActions,getAction);
-  console.log('====================================');
+  useEffect(() => {
+    const subscription = watch((formValues) => {
+      // Clean object is optional if you want to remove empty/undefined values
+      const cleanedValues = cleanObject(formValues);
+      console.log("====================================");
+      console.log(cleanedValues, formValues, "formValues");
+      console.log("====================================");
+      setRowDetails(() => cleanedValues);
+      // setRootRow({ ...rootRow, ...cleanedValues });
+    });
 
-//   const columns = useMemo(() => {
-//     if (!schema?.dashboardFormSchemaParameters) return [];
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
-//     return schema.dashboardFormSchemaParameters
-//       .filter((param) => !param.isIDField)
-//       .map((param) => ({
-//         name: param.parameterField,
-//         title: param.parameterTitel,
-//         type: param.parameterType,
-//         lookupID: param.lookupID,
-//         lookupDisplayField: param.lookupDisplayField,
-//         lookupReturnField: param.lookupReturnField,
-//       }));
-//   }, [schema]);
+  // Current selected parameter metadata
+  const currentParam = rangeParams[activeTab];
 
-//   const handleCheck = (row, keywords) => {
-//     if (onLeafCheckChange) {
-//       onLeafCheckChange({
-//         row,
-//         keywords,
-//       });
-//     }
-//   };
-//   const isLeaf = !subSchemas || subSchemas.length === 0;
-//   const renderChildrenSchemas = (row) => {
-//     if (!subSchemas || subSchemas.length === 0) return null;
-//     const col = schema.dashboardFormSchemaParameters.find(
-//       (param) => param.lookupID,
-//     );
-console.log('====================================');
-console.log(control._formValues);
-console.log('====================================');
-    return (
-      <View
-        style={{
-          marginLeft: 40,
-          borderLeftWidth: 2,
-          borderLeftColor: "#ddd",
-          paddingLeft: 15,
-          marginTop: 10,
-        }}
-      >
-        <SelectParameter control={control} fieldName={selectParam.parameterField} lookupDisplayField={selectParam.lookupDisplayField} lookupReturnField={selectParam.lookupReturnField} value={''} values={state.rows}/>
-        <FormContainer   tableSchema={subSchema}
-  row={{}}
-  errorResult={{}}
-  control={control}/>
+  return (
+    <View style={{ flex: 1, padding: 10 }}>
+      {/* 1. Lookup Selection */}
+      {selectParam && (
+        <View style={{ marginBottom: 20 }}>
+          <LookupParameter
+            fieldName={selectParam.parameterField}
+            lookupDisplayField={selectParam.lookupDisplayField}
+            lookupReturnField={selectParam.lookupReturnField}
+            value={""}
+            control={control}
+            selectParam={selectParam}
+            setValue={setValue}
+            rowDetails={{}}
+          />
+        </View>
+      )}
+
+      {/* 2. Tabs */}
+      <View style={{ marginBottom: 15 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {rangeParams.map((param, index) => (
+            <Pressable
+              key={param.dashboardFormSchemaParameterID}
+              onPress={() => setActiveTab(index)}
+              style={{
+                paddingHorizontal: 15,
+                paddingVertical: 10,
+                borderBottomWidth: activeTab === index ? 3 : 0,
+                borderBottomColor: theme.accentHover,
+              }}
+            >
+              <Text
+                style={{
+                  color: activeTab === index ? theme.accentHover : theme.text,
+                  fontWeight: activeTab === index ? "bold" : "normal",
+                }}
+              >
+                {param.parameterTitel}
+              </Text>
+            </Pressable>
+          ))}
+        </ScrollView>
       </View>
-    );
-  };
+
+      {/* 3. The Slider: Replaced DataCellRender with MiddleRangeParameter */}
+      <View className="bg-body rounded-xl p-4 shadow-sm border">
+        {currentParam ? (
+          <MiddleRangeParameter
+            key={`${currentParam.parameterField}-${activeTab}`}
+            fieldName={currentParam.parameterField}
+            control={control}
+            invalidInput={""}
+            // Pass the specific nested object (e.g., apiValues.totalPrice)
+            // If API hasn't loaded yet, default to a safe 0-500 range
+            value={
+              apiValues?.[currentParam.parameterField] || { min: 0, max: 500 }
+            }
+          />
+        ) : (
+          <Text className="text-center text-gray-400">
+            {localization.Hum_screens.menu.filter.rangeInput.paramNotFound}
+          </Text>
+        )}
+      </View>
+    </View>
+  );
+};
+
 export default BaseRange;

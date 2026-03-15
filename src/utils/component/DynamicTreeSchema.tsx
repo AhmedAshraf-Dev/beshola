@@ -130,9 +130,7 @@ const DynamicTreeSchema = ({
 
     loadSchemas();
   }, [schema]);
-  console.log("====================================");
-  console.log(parentRow, "parentRow");
-  console.log("====================================");
+
   return (
     <View>
       {schema && (
@@ -153,6 +151,8 @@ const DynamicTreeSchema = ({
           subSchemas={subSchemas}
           setParentRow={setParentRow}
           filtersMap={filtersMap}
+          fieldName={fieldName}
+          control={control}
         />
       )}
     </View>

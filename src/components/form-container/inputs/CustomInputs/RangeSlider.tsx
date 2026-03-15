@@ -7,6 +7,7 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { isRTL } from "../../../../utils/operation/isRTL";
 
 const RangeSlider = ({
   sliderWidth,
@@ -107,11 +108,13 @@ const RangeSlider = ({
   const opacityStyle2 = useAnimatedStyle(() => ({
     opacity: opacity2.value,
   }));
-
-  const sliderStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: position.value }],
-    width: position2.value - position.value,
-  }));
+  const sliderStyle = useAnimatedStyle(() => {
+    return {
+      width: position2.value - position.value,
+      transform: [{ translateX: position.value }],
+      direction: "ltr",
+    };
+  });
 
   // Add this line for Reanimated from v3.5.0
   Animated.addWhitelistedNativeProps({ text: true });
@@ -136,7 +139,9 @@ const RangeSlider = ({
   });
 
   return (
-    <View style={[styles.sliderContainer, { width: sliderWidth }]}>
+    <View
+      style={[styles.sliderContainer, { width: sliderWidth, direction: "ltr" }]}
+    >
       <View style={[styles.sliderBack, { width: sliderWidth }]} />
       <Animated.View style={[sliderStyle, styles.sliderFront]} />
       <GestureDetector gesture={pan}>

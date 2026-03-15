@@ -11,9 +11,12 @@ export default function CardPriceDiscount({
 }) {
   const localization = useSelector((state) => state.localization.localization);
 
-  const price = item?.[fieldsType.price];
-  const priceAfterDiscount = item?.[fieldsType.priceAfterDiscount];
-  const hasDiscount = item?.[fieldsType.discount] > 0;
+  const price = item?.[fieldsType.totalPrice.parameterField];
+  const downPayment = item?.[fieldsType.downPayment.parameterField];
+  const hasDiscount = item?.[fieldsType.discount.parameterField] > 0;
+  const currencyShortName = item?.[fieldsType.currencyShortName.parameterField];
+  const priceAfterDiscount =
+    price - (price * item?.[fieldsType.discount.parameterField]) / 100;
 
   // Compose final style
   const finalStyle = [
@@ -23,15 +26,22 @@ export default function CardPriceDiscount({
   ];
 
   return (
-    <View style={styles.container}>
-      {priceAfterDiscount >= 0 && (
-        <Text style={finalStyle}>
-          {priceAfterDiscount.toFixed(2)} {localization.menu.currency}
-        </Text>
-      )}
-      {hasDiscount && (
-        <Text style={styles.originalPrice}>
-          {price.toFixed(2)} {localization.menu.currency}
+    <View>
+      <View style={styles.container}>
+        {priceAfterDiscount >= 0 && (
+          <Text style={finalStyle}>
+            {priceAfterDiscount.toFixed(2)} {currencyShortName}
+          </Text>
+        )}
+        {hasDiscount && (
+          <Text style={styles.originalPrice}>
+            {price.toFixed(2)} {currencyShortName}
+          </Text>
+        )}
+      </View>
+      {downPayment > 0 && (
+        <Text style={styles.downPayment}>
+          {downPayment.toFixed(2)} {currencyShortName}
         </Text>
       )}
     </View>
@@ -55,7 +65,14 @@ const styles = StyleSheet.create({
   originalPrice: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "red",
+    color: theme.error,
+    textDecorationLine: "line-through",
+    textAlign: "center",
+  },
+  downPayment: {
+    fontSize: 10,
+    fontWeight: "bold",
+    color: theme.text,
     textDecorationLine: "line-through",
     textAlign: "center",
   },

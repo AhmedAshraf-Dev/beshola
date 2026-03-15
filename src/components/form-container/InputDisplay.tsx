@@ -60,7 +60,7 @@ function InputDisplay({ props, BaseInput, errorResult }) {
         <View style={styles.formGroup}>
           {props.showTitle && (
             <Text
-              style={[styles.label, { direction: isRTL() ? "rtl" : "ltr" }]}
+              style={[props.labelStyle??styles.label, { direction: isRTL() ? "rtl" : "ltr" }]}
             >
               {props.title}
             </Text>

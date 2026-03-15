@@ -361,7 +361,7 @@ const MobileTabs = ({ userGust }) => {
 
 /* ------------------------------- Main Component ------------------------------- */
 const AppNavigator = () => {
-  const { userGust, setUser } = useAuth();
+  const { userGust, setUser, user } = useAuth();
   const dispatch = useDispatch();
   const { showToast } = useDisplayToast();
   const navigation = useNavigation();
@@ -377,6 +377,13 @@ const AppNavigator = () => {
       return () => window.removeEventListener("resize", handleResize);
     }
   }, []);
+  useEffect(() => {
+    if (user) {
+      console.log("====================================");
+      console.log(user);
+      console.log("====================================");
+    }
+  });
 
   useEffect(() => {
     const handleRedirect = async () => {

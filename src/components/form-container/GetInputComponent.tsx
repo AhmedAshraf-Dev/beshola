@@ -3,7 +3,7 @@ import {
   CheckBoxParameter,
   DateParameter,
   InputPassword,
-  MeddleRangeParameter,
+  MiddleRangeParameter,
   RadioParameter,
   SelectParameter,
   TextParameter,
@@ -14,6 +14,7 @@ import {
   PhoneNumberParameter,
   ImageParameterWithPanelActions,
   DynamicTreeSchema,
+  DynamicRangeComponent,
 } from "./index";
 export function GetInputComponent(type) {
   switch (type) {
@@ -41,9 +42,11 @@ export function GetInputComponent(type) {
       return RadioListParameter;
     case "tree":
       return DynamicTreeSchema;
+    case "dynamicRange":
+      return DynamicRangeComponent;
     case "range":
     case "minmax":
-      return MeddleRangeParameter;
+      return MiddleRangeParameter;
     case "password":
     case "confirmPassword":
       return InputPassword;

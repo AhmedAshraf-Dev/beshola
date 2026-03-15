@@ -55,6 +55,9 @@
       { "text": "Yes", "value": true },
       { "text": "No", "value": false }
     ],
+    "range": {
+      "fixedRange": "Fixed value:"
+    },
     "locationMap": {
       "popupTitle": "Your selected location",
       "radius": "Circle Radius: {radius} meters"
@@ -433,6 +436,9 @@
         "header": {
           "title": "Filters",
           "subTitle": ""
+        },
+        "rangeInput": {
+          "paramNotFound": "No parameters found"
         },
         "clearButton": "Clear All",
         "applyButton": "Apply Filter"

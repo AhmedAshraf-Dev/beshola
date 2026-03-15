@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Linking, TouchableOpacity } from "react-native";
 import {
@@ -16,14 +16,14 @@ import {
 } from "../../../components/ui";
 import { theme } from "../../Theme";
 import { isRTL } from "../../utils/operation/isRTL";
+import PricePlanSummary from "../../kitchensink-components/cart/InvoiceSummary";
 
-export default function PricePlansInput({ pricePlans }) {
+export default function PricePlansInput({ pricePlans = [], fieldsType }) {
   const { control, watch, setValue } = useForm({
     defaultValues: { selectedPlan: "0" },
   });
 
   const selectedPlanIndex = watch("selectedPlan");
-  const selectedPlan = pricePlans[selectedPlanIndex];
 
   const handleOpenMap = (location) => {
     const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
@@ -39,16 +39,20 @@ export default function PricePlansInput({ pricePlans }) {
       render={({ field: { value } }) =>
         pricePlans.map((plan, index) => {
           const isSelected = value === index.toString();
+
+          const name = plan?.[fieldsType?.name];
+
           return (
             <TouchableOpacity
-              key={index}
+              key={plan?.[fieldsType?.id] || index}
               activeOpacity={0.8}
               onPress={() => setValue("selectedPlan", index.toString())}
-              className={isSelected && `!border-accentHover`}
+              className={isSelected ? "!border-accentHover" : ""}
               style={{
                 borderWidth: isSelected ? 2 : 1,
                 borderRadius: 12,
                 overflow: "hidden",
+                marginBottom: 10,
               }}
             >
               <Accordion
@@ -71,20 +75,18 @@ export default function PricePlansInput({ pricePlans }) {
                           className={`items-center space-x-2 ${
                             isRTL() ? "flex-row-reverse" : "flex-row"
                           }`}
-                          style={{ direction: "inherit" }}
                         >
                           <MaterialCommunityIcons
-                            name={plan.icon || "cube-outline"}
+                            name="cash-multiple"
                             size={20}
                             color={theme.secondary}
                           />
-                          <Text
-                            className="text-md font-bold"
-                            // style={{ color: theme.secondary }}
-                          >
-                            {plan.name}
+
+                          <Text className="text-md font-bold">
+                            {name || `Plan ${index + 1}`}
                           </Text>
                         </HStack>
+
                         <AccordionIcon
                           as={() => (
                             <MaterialCommunityIcons
@@ -100,44 +102,13 @@ export default function PricePlansInput({ pricePlans }) {
 
                   <AccordionContent className="bg-bg-tertiary rounded-b-xl px-4 py-3">
                     <Divider className="my-2 bg-outline-50" />
-                    <VStack className="space-y-2">
-                      <Text className="text-text text-sm">
-                        Price:{" "}
-                        <Text className="text-accent font-bold">
-                          {plan.price}
-                        </Text>
-                      </Text>
-                      {plan.area && (
-                        <Text className="text-text text-sm">
-                          Area: {plan.area} m²
-                        </Text>
-                      )}
-                      {plan.paymentPlan && (
-                        <Text className="text-text text-sm">
-                          Payment: {plan.paymentPlan}
-                        </Text>
-                      )}
-                      {plan.deliveryDate && (
-                        <Text className="text-text text-sm">
-                          Delivery: {plan.deliveryDate}
-                        </Text>
-                      )}
-                      {plan.location && (
-                        <TouchableOpacity
-                          onPress={() => handleOpenMap(plan.location)}
-                          className="bg-primary flex-row items-center px-2 py-1 rounded-lg w-fit mt-1"
-                        >
-                          <MaterialCommunityIcons
-                            name="map-marker-outline"
-                            size={16}
-                            color={theme.body}
-                          />
-                          <Text className="text-body text-xs ml-1">
-                            {plan.location}
-                          </Text>
-                        </TouchableOpacity>
-                      )}
-                    </VStack>
+
+                    {/* PLAN SUMMARY */}
+                    <PricePlanSummary
+                      plan={plan} // ✅ fixed
+                      schemaFieldsTypes={fieldsType}
+                      isExpanded={true}
+                    />
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>

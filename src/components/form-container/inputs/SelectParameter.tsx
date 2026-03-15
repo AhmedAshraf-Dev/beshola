@@ -1,5 +1,5 @@
 import { AntDesign } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
@@ -18,93 +18,92 @@ import {
 } from "../../../../components/ui";
 import { useSelector } from "react-redux";
 function SelectParameter({
-  values = [], // Array of objects with { label, value }
-  value: defaultValue,
+  values = [],
+  value: initValue,
   fieldName,
   enable = true,
   control,
   lookupDisplayField,
   lookupReturnField,
+  isLookup = false,
   ...props
 }) {
   const localization = useSelector((state) => state.localization.localization);
-  // const [selectedValue, setSelectedValue] = useState(value); // Selected value
-  // const [isFocus, setIsFocus] = useState(false);
-  // // Prepare dropdown options
-  // const dropdownData = values.map((val) => ({
-  //   label: val, // Display value
-  //   value: val, // Actual value
-  // }));
-  // const renderLabel = () => {
-  //   if (selectedValue || isFocus) {
-  //     return (
-  //       <Text style={[styles.label, isFocus && { color: "blue" }]}>
-  //         {fieldName || "Select an option"}
-  //       </Text>
-  //     );
-  //   }
-  //   return null;
-  // };
+  useEffect(() => {
+    if (values?.length > 0 && initValue.length <= 0) {
+      // props?.setValue &&
+      isLookup && props?.setValue(fieldName, values[0][lookupReturnField]);
+    }
+  }, [values, initValue]);
   return (
     <View>
-<Controller
-  control={control}
-  name={fieldName}
-  render={({ field: { onChange, value } }) => {
-    const selectedItem = values.find(
-      (item) => item?.[lookupReturnField] === value
-    );
+      <Controller
+        control={control}
+        name={fieldName}
+        defaultValue={
+          // initValue
+          values.find((item) => item?.[lookupReturnField] === initValue)?.[
+            lookupReturnField
+          ] ?? values?.[0]?.[lookupReturnField]
+        }
+        render={({ field: { onChange, value } }) => {
+          const selectedItem =
+            values.find((item) => item?.[lookupReturnField] === value) ||
+            isLookup
+              ? values?.[0]
+              : "";
 
-    return (
-      <Select
-        value={value}
-        className="mx-2"
-        onValueChange={(displayValue) => {
-          const selected = values.find(
-            (item) => item?.[lookupDisplayField] === displayValue
+          return (
+            <Select
+              className="mx-2"
+              onValueChange={(displayValue) => {
+                const selected = values.find(
+                  (item) => item?.[lookupDisplayField] === displayValue,
+                );
+
+                if (selected) {
+                  onChange(selected[lookupReturnField]);
+                }
+              }}
+            >
+              <SelectTrigger
+                variant="outline"
+                size="sm"
+                className="w-full h-11 flex flex-row justify-between"
+              >
+                <SelectInput
+                  placeholder={localization.inputs.select.placeholder}
+                  value={selectedItem?.[lookupDisplayField] || ""}
+                  className="text-base text-text"
+                />
+
+                <SelectIcon
+                  as={AntDesign}
+                  name="down"
+                  className="mr-3 text-text"
+                />
+              </SelectTrigger>
+
+              <SelectPortal>
+                <SelectBackdrop />
+                <SelectContent>
+                  <SelectDragIndicatorWrapper>
+                    <SelectDragIndicator />
+                  </SelectDragIndicatorWrapper>
+
+                  {values.map((item) => (
+                    <SelectItem
+                      key={item?.[lookupReturnField]}
+                      label={item?.[lookupDisplayField]}
+                      value={item?.[lookupDisplayField]}
+                    />
+                  ))}
+                </SelectContent>
+              </SelectPortal>
+            </Select>
           );
-
-          onChange(selected?.[lookupReturnField]); // save hidden return value
         }}
-      >
-        <SelectTrigger
-          variant="outline"
-          size="sm"
-          className="w-full h-11 flex flex-row justify-between"
-        >
-          <SelectInput
-            placeholder={localization.inputs.select.placeholder}
-            value={selectedItem?.[lookupDisplayField] || ""}
-            className="text-base text-text"
-          />
-
-          <SelectIcon
-            as={AntDesign}
-            name="down"
-            className="mr-3 text-text"
-          />
-        </SelectTrigger>
-
-        <SelectPortal>
-          <SelectBackdrop />
-          <SelectContent>
-            <SelectDragIndicatorWrapper>
-              <SelectDragIndicator />
-            </SelectDragIndicatorWrapper>
-
-            {values.map((item) => (
-              <SelectItem
-                key={item?.[lookupReturnField]}
-                label={item?.[lookupDisplayField]}   // visible text
-                value={item?.[lookupDisplayField]}   // UI value
-              />
-            ))}
-          </SelectContent>
-        </SelectPortal>
-      </Select>
-    );
-  }}
-/>
+      />
     </View>
   );
 }

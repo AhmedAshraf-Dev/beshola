@@ -118,30 +118,30 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
               <VStack>
                 <View
                   className={
-                    isRTL() ? "items-start" : "items-start" + " min-h-28"
+                    isRTL() ? "items-start" : "items-start"
+                    //  + " max-h-28"
                   }
                 >
                   {/* Company Name + Verified + Stars */}
                   {fieldsType.companyName && item[fieldsType.companyName] && (
                     <View>
-                      {
-                        <Image
-                          source={
-                            item[fieldsType.companyLogo]
-                              ? {
-                                  uri: GetMediaUrl(
-                                    item[fieldsType.companyLogo],
-                                    "publicImage",
-                                  ),
-                                }
-                              : "" // Fallback to local asset if URI is null/undefined
-                          }
-                          // Optional: helps on iOS while the remote image is downloading
-                          // defaultSource={defaultImagePath}
-                          className="w-10 h-10 rounded-full mr-2"
-                          resizeMode="cover"
-                        />
-                      }
+                      {/* <Image
+                        source={
+                          item[fieldsType.companyLogo]
+                            ? {
+                                uri: GetMediaUrl(
+                                  item[fieldsType.companyLogo],
+                                  "publicImage",
+                                ),
+                              }
+                            : "" // Fallback to local asset if URI is null/undefined
+                        }
+                        // Optional: helps on iOS while the remote image is downloading
+                        // defaultSource={defaultImagePath}
+                        className="w-10 h-10 rounded-full mr-2"
+                        resizeMode="cover"
+                      /> */}
+
                       <Text
                         numberOfLines={2}
                         key={`${item[fieldsType.idField]}-${
@@ -150,29 +150,29 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
                         className="text-lg font-bold mb-1"
                         style={{ color: theme.secondary, direction: "inherit" }}
                       >
-                        {item.verified && (
-                          <View className="flex-row items-center">
-                            <MaterialCommunityIcons
-                              name="check-decagram"
-                              size={18}
-                              color={theme.accentHover}
-                            />
-                          </View>
-                        )}{" "}
+                        {/* {item.verified && ( */}
+                        <View className="flex-row items-center">
+                          <MaterialCommunityIcons
+                            name="check-decagram"
+                            size={18}
+                            color={theme.accentHover}
+                          />
+                        </View>
+                        {/* )}{" "} */}
                         {item.companyName}
                       </Text>
                     </View>
                   )}
 
                   {/* Stars */}
-                  {fieldsType.rate && item[fieldsType.rate] && (
-                    <View className="flex-row items-center justify-center w-full mb-1">
-                      <StarsIcons
-                        value={parseFloat(item[fieldsType.rate])}
-                        size={14}
-                      />
-                    </View>
-                  )}
+                  {/* {fieldsType.rate && item[fieldsType.rate] && ( */}
+                  <View className="flex-row items-center justify-center w-full mb-1">
+                    <StarsIcons
+                      value={parseFloat(item[fieldsType.rate] || 5)}
+                      size={14}
+                    />
+                  </View>
+                  {/* )} */}
 
                   {/* Property Info */}
                   {fieldsType.attributes && item[fieldsType.attributes] && (
@@ -183,45 +183,51 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
             </View>
           </View>
 
-         {/* Bottom Actions */}
-<View className="flex-row items-center mt-2 px-2 w-full">
-  {/* Address Section - 50% width */}
-  <View style={{ width: "50%" }} className="items-center justify-center">
-    {fieldsType.address && item[fieldsType.address] && (
-      <AddressComponent addressText={item[fieldsType.address]} />
-    )}
-  </View>
+          {/* Bottom Actions */}
+          <View className="flex-row items-center mt-2 px-2 w-full">
+            {/* Address Section - 50% width */}
+            <View
+              style={{ width: "50%" }}
+              className="items-center justify-center"
+            >
+              {fieldsType.address && item[fieldsType.address] && (
+                <AddressComponent addressText={item[fieldsType.address]} />
+              )}
+            </View>
 
-  {/* Viewers Section - 35% width */}
-  <View
-    style={{ width: "35%" }}
-    className="flex-row items-center justify-center px-2 py-1 rounded"
-  >
-    <View
-      className="flex-row items-center justify-center px-2 py-1 rounded"
-      style={{ backgroundColor: addAlpha(theme.accentHover , .1) }}
-    >
-      <MaterialCommunityIcons
-        name="eye-outline"
-        size={18}
-        color={theme.secondary}
-      />
-      <Text className="text-body text-xs ml-1">
-        {item.viewers} viewing
-      </Text>
-    </View>
-  </View>
+            {/* Viewers Section - 35% width */}
+            <View
+              style={{ width: "35%" }}
+              className="flex-row items-center justify-center px-2 py-1 rounded"
+            >
+              <View
+                className="flex-row items-center justify-center px-2 py-1 rounded"
+                style={{ backgroundColor: addAlpha(theme.accentHover, 0.1) }}
+              >
+                <MaterialCommunityIcons
+                  name="eye-outline"
+                  size={18}
+                  color={theme.secondary}
+                />
+                <Text className="text-body text-xs ml-1">
+                  {item.viewers} viewing
+                </Text>
+              </View>
+            </View>
 
-  {/* Chat Section - 15% width */}
-  <View style={{ width: "15%" }} className="items-center justify-center">
-    <TouchableOpacity
-      className="bg-body p-2 rounded-xl items-center justify-center"
-      onPress={() => console.log("Contact icon pressed")}
-    >
-      <AntDesign name="wechat" size={22} color={theme.accent} />
-    </TouchableOpacity>
-  </View>
-</View>
+            {/* Chat Section - 15% width */}
+            <View
+              style={{ width: "15%" }}
+              className="items-center justify-center"
+            >
+              <TouchableOpacity
+                className="bg-body p-2 rounded-xl items-center justify-center"
+                onPress={() => console.log("Contact icon pressed")}
+              >
+                <AntDesign name="wechat" size={22} color={theme.accent} />
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </Card>
 
