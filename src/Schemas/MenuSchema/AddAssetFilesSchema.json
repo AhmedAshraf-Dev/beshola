@@ -1,0 +1,66 @@
+{
+  "dashboardFormSchemaID": "a5d266e7-bfed-4ea8-8be7-b0e2be44bd4c",
+  "schemaType": "FilesContainer",
+  "idField": "displayFileForAssetID",
+  "dashboardFormSchemaInfoDTOView": {
+    "dashboardFormSchemaID": "a5d266e7-bfed-4ea8-8be7-b0e2be44bd4c",
+    "schemaHeader": "ملف عرض الأصل",
+    "addingHeader": "إضافة ملف عرض",
+    "editingHeader": "تعديل ملف عرض"
+  },
+  "dashboardFormSchemaParameters": [
+    {
+      "dashboardFormSchemaParameterID": "c6ddd2e2-a753-44f4-86ff-9c7a6b23e37d",
+      "dashboardFormSchemaID": "a5d266e7-bfed-4ea8-8be7-b0e2be44bd4c",
+      "isEnable": true,
+      "parameterType": "text",
+      "parameterField": "displayFileForAssetID",
+      "parameterTitel": "المعرف",
+      "parameterLookupTitel": "المعرف",
+      "isIDField": true,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 1,
+      "isFilterOperation": false,
+      "dashboardFormSchemaParameterDependencies": []
+    },
+    {
+      "dashboardFormSchemaParameterID": "1f4bbe26-0638-48d1-b22b-de362446cd78",
+      "dashboardFormSchemaID": "a5d266e7-bfed-4ea8-8be7-b0e2be44bd4c",
+      "isEnable": true,
+      "parameterType": "text",
+      "parameterField": "displayFileTitle",
+      "parameterTitel": "عنوان الملف",
+      "parameterLookupTitel": "عنوان الملف",
+      "isIDField": false,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 2,
+      "isFilterOperation": false,
+      "dashboardFormSchemaParameterDependencies": []
+    },
+    {
+      "dashboardFormSchemaParameterID": "04dbdacb-11bb-40cc-b3b8-f212d9afa814",
+      "dashboardFormSchemaID": "a5d266e7-bfed-4ea8-8be7-b0e2be44bd4c",
+      "isEnable": true,
+      "parameterType": "imagePath",
+      "parameterField": "displayFile",
+      "parameterTitel": "المحتوي",
+      "parameterLookupTitel": "المحتوي",
+      "isIDField": false,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 3,
+      "isFilterOperation": false,
+      "dashboardFormSchemaParameterDependencies": []
+    }
+  ],
+  "projectProxyRoute": "BrandingMartAssets",
+  "isMainSchema": false,
+  "dataSourceName": "",
+  "propertyName": "",
+  "indexNumber": 3
+}

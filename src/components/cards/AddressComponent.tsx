@@ -17,8 +17,15 @@ const AddressComponent = ({ addressText, item, fieldsType }) => {
   // Assuming a character width of approx 7-8 pixels for 'text-xs'.
   const availableTextSpace = Math.max(0, labelWidth - 36);
   const calculatedLimit = Math.floor(availableTextSpace / 7.5);
-  const onPress = () => {};
 
+console.log("PopupModal",
+  {
+            [fieldsType.latitude]: item[fieldsType.latitude],
+            [fieldsType.longitude]: item[fieldsType.longitude],
+          },fieldsType.latitude,item
+);
+ console.log("fieldsType full JSON:");
+ //console.table(fieldsType);
   return (
     <View
       onLayout={(e) => {
@@ -39,20 +46,22 @@ const AddressComponent = ({ addressText, item, fieldsType }) => {
         row={{}}
       >
         <PolygonMapEmbed
+       
           location={{
             [fieldsType.latitude]: item[fieldsType.latitude],
-            [fieldsType.longitude]: item[fieldsType.latitude],
+            [fieldsType.longitude]: item[fieldsType.longitude],
           }}
           fields={fieldsType.parameters}
           onLocationChange={() => {}}
           setNewPolygon={() => {}}
-        />
+          canClickPolygon={false}
+        >
+        
+        </PolygonMapEmbed>
       </PopupModal>
       <TouchableOpacity
         onPress={() => {
-          console.log("====================================");
-          console.log("pressing");
-          console.log("====================================");
+         
           setIsModalVisible(true);
         }}
         activeOpacity={0.8}

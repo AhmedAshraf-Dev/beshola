@@ -35,6 +35,7 @@ export function GetInputComponent(type) {
       return DateParameter;
     case "image":
     case "publicImage":
+    case "imagePath":
       return ImageParameterWithPanelActions;
     case "boolean":
       return BooleanParameter;

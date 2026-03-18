@@ -16,7 +16,7 @@
         "isEnable": true,
         "parameterType": "lookup",
         "parameterField": "jobTypeID",
-        "parameterTitel": "job Type",
+        "parameterTitel": "Job Type",
         "isIDField": false,
         "lookupID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
         "lookupReturnField": "jobTypeID",

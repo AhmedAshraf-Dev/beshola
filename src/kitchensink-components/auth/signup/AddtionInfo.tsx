@@ -111,14 +111,12 @@ import {
   ButtonText,
   HStack,
 } from "../../../../components/ui";
-import schema from "../../../Schemas/LoginSchema/AddtionInfomation.json";
+
 import FormContainer from "../../../components/form-container/FormContainer";
-import { useNavigation } from "@react-navigation/native";
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function AdditionalInfoScreen({}) {
-  const navigation = useNavigation();
-
+export default function AdditionalInfoScreen({ schema, onComplete }) {
   const {
     control,
     handleSubmit,
@@ -127,27 +125,28 @@ export default function AdditionalInfoScreen({}) {
     setError,
     clearErrors,
   } = useForm({});
-  const mainSchema = schema[0];
 
   // ✅ Continue
   const onSubmit = (data) => {
     console.log("FORM DATA:", data);
 
     // TODO: send to API
-
-    navigation.replace("Home");
+    onComplete();
   };
 
   // ✅ Skip once
   const handleSkip = () => {
-    navigation.replace("Home");
+    onComplete();
   };
 
   // ✅ Skip forever
   const handleDontShowAgain = async () => {
     try {
-      await AsyncStorage.setItem("hideAdditionalInfo", "true");
-      navigation.replace("Home");
+      await AsyncStorage.setItem(
+        `hideAdditionalInfoByID=${schema.dashboardFormSchemaID}`,
+        "true",
+      );
+      await onComplete();
     } catch (e) {
       console.error("Storage error", e);
     }
@@ -168,7 +167,7 @@ export default function AdditionalInfoScreen({}) {
           {/* Job Type */}
           <VStack>
             <FormContainer
-              tableSchema={mainSchema}
+              tableSchema={schema}
               row={{}}
               setError={setError}
               control={control}

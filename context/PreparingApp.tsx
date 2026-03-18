@@ -4,7 +4,7 @@ import React, {
   useContext,
   useEffect,
   useReducer,
-  useState
+  useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { buildApiUrl } from "../components/hooks/APIsFunctions/BuildApiUrl";
@@ -15,6 +15,7 @@ import NearestBranchesActions from "../src/Schemas/AddressLocation/NearestBranch
 import WorkingHoursSchemaActions from "../src/Schemas/AddressLocation/WorkingHoursSchemaActions.json";
 import CurrencyTypesSchemaActions from "../src/Schemas/MenuSchema/CurrencyTypesSchemaActions.json";
 import AssetsSchema from "../src/Schemas/MenuSchema/AssetsSchema.json";
+import AdditionInformationSchema from "../src/Schemas/LoginSchema/AdditionInformationSchema.json";
 import { createRowCache } from "../src/components/Pagination/createRowCache";
 import {
   initialState,
@@ -40,6 +41,9 @@ import { LocalizationContext } from "./LocalizationContext";
 import { useNetwork } from "./NetworkContext";
 import { useShopNode } from "./ShopNodeProvider";
 import { useAuth } from "./auth";
+import AdditionalInfoScreen from "../src/kitchensink-components/auth/signup/AddtionInfo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { store } from "../src/store/reduxStore";
 
 // Define the shape of the WebSocket context
 interface WSContextType {
@@ -66,7 +70,7 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
     setNode: false,
     setWorkingHours: false,
   });
-  const { userGust } = useAuth();
+  const { userGust, user } = useAuth();
   // WebSocket state
   const [WS_Connected, setWS_Connected] = useState(false);
   const [welcomeTime, setWelcomeTime] = useState(Date.now());
@@ -187,9 +191,8 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLocation, nodeGetAction, isOnline]);
-  //load currecy 
+  //load currecy
   useEffect(() => {
-
     const fetchData = async () => {
       try {
         // wait for prepareLoad to finish
@@ -353,17 +356,49 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
   //   );
   // }
   ////////////////////////////////
+  const [isAdditionalInfoCompleted, setIsAdditionalInfoCompleted] =
+    useState(false);
+  const [selectedAdditionalInfoSchema, setSelectedAdditionalInfoSchema] =
+    useState(AdditionInformationSchema[0]);
+  useEffect(() => {
+    const checkRedirect = async () => {
+      if (user && !user.nationality) {
+        const neverSee = await AsyncStorage.getItem(
+          `hideAdditionalInfoByID=${selectedAdditionalInfoSchema.dashboardFormSchemaID}`,
+        );
+
+        if (neverSee === "true") {
+          setIsAdditionalInfoCompleted(true); // ✅ skip forever
+        } else {
+          setIsAdditionalInfoCompleted(false); // ✅ show screen
+        }
+      } else {
+        setIsAdditionalInfoCompleted(true); // ✅ no need to show
+      }
+    };
+
+    checkRedirect();
+  }, [user, selectedAdditionalInfoSchema]);
   return (
     <WSContext.Provider
       value={{ notifications: [], setNotifications: () => {} }}
     >
-      {isEndFinishing && (
-        // <LoadingScreen />
-        <>
-          {/* <ShopStatusIndicator /> */}
-          {children}
-        </>
-      )}
+      {isEndFinishing ? (
+        !isAdditionalInfoCompleted ? (
+          // Show additional screen first
+          <AdditionalInfoScreen
+            onComplete={() => setIsAdditionalInfoCompleted(true)}
+            schema={selectedAdditionalInfoSchema}
+          />
+        ) : (
+          // Only show children after additional screen is completed
+          <>{children}</>
+        )
+      ) : null}
+      {/* <AdditionalInfoScreen
+        onComplete={() => setIsAdditionalInfoCompleted(true)}
+        schema={selectedAdditionalInfoSchema}
+      /> */}
     </WSContext.Provider>
   );
 };

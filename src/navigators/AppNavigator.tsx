@@ -115,10 +115,6 @@ const AppStack = ({ userGust }) => {
       </Stack.Screen>
 
       <Stack.Screen name="DetailsProductScreen" component={DetailsScreen} />
-      <Stack.Screen
-        name="AdditionInformation"
-        component={AdditionalInfoScreen}
-      />
 
       {!userGust && (
         <Stack.Screen name="NotificationScreen">

@@ -50,7 +50,6 @@ const linking = {
       NotificationScreen: "notifications",
       CheckoutScreen: "checkout",
       MyAssets: "MyAssets",
-      AdditionInformation: "AdditionInformation",
       DetailsProductScreen: "property/:id", // if using dynamic products
     },
   },

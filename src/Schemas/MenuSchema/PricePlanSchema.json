@@ -234,38 +234,6 @@
       "dashboardFormSchemaParameterDependencies": []
     },
     {
-      "dashboardFormSchemaParameterID": "33872d13-6583-42fc-acfe-cef065868611",
-      "dashboardFormSchemaID": "5a2a24f7-354c-418f-a582-d1ca8f3a86dc",
-      "isEnable": true,
-      "parameterType": "boolean",
-      "parameterField": "showOnline",
-      "parameterTitel": "عرض أونلاين",
-      "parameterLookupTitel": "عرض أونلاين",
-      "isIDField": false,
-      "lookupID": null,
-      "lookupReturnField": null,
-      "lookupDisplayField": null,
-      "indexNumber": 16,
-      "isFilterOperation": false,
-      "dashboardFormSchemaParameterDependencies": []
-    },
-    {
-      "dashboardFormSchemaParameterID": "d55b26b7-7eee-4c00-9cab-18ed16b071f6",
-      "dashboardFormSchemaID": "5a2a24f7-354c-418f-a582-d1ca8f3a86dc",
-      "isEnable": true,
-      "parameterType": "boolean",
-      "parameterField": "isActive",
-      "parameterTitel": "فعال",
-      "parameterLookupTitel": "فعال",
-      "isIDField": false,
-      "lookupID": null,
-      "lookupReturnField": null,
-      "lookupDisplayField": null,
-      "indexNumber": 17,
-      "isFilterOperation": false,
-      "dashboardFormSchemaParameterDependencies": []
-    },
-    {
       "dashboardFormSchemaParameterID": "6a154e41-c899-4929-8675-9f5fab72f539",
       "dashboardFormSchemaID": "5a2a24f7-354c-418f-a582-d1ca8f3a86dc",
       "isEnable": true,

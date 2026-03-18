@@ -42,9 +42,6 @@ const ImageParameter = (props) => {
   };
 
   const imageAltValue = "Image";
-  console.log("====================================");
-  console.log(value, "value value");
-  console.log("====================================");
   return (
     <View style={[styles.container, props.style]}>
       <TouchableOpacity
@@ -60,7 +57,7 @@ const ImageParameter = (props) => {
           accessibilityLabel={imageAltValue}
         /> */}
         <AddMediaCard
-          source={Object.keys(value).length > 1 ? { uri: value } : defaultImage}
+          source={value || defaultImage}
           customStyle={[styles.image, props.imageStyle]}
         />
 

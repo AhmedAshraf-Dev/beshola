@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import CartInfoSchema from "../Schemas/MenuSchema/CartInfoSchema.json";
 import CartInfoSchemaAction from "../Schemas/MenuSchema/CartInfoSchemaAction.json";
 import CartSchema from "../Schemas/MenuSchema/CartSchema.json";
-import CartSchemaActions from "../Schemas/MenuSchema/CartSchemaActions.json";
+import RequestSchemaActions from "../Schemas/MenuSchema/RequestSchemaActions.json";
 import FastWaySchema from "../Schemas/MenuSchema/FastWaySchema.json";
 import FastWaySchemaActions from "../Schemas/MenuSchema/FastWaySchemaActions.json";
 import FilterSchema from "../Schemas/MenuSchema/FilterSchema.json";
@@ -81,7 +81,7 @@ export const schemasSlice = createSlice({
       schema: CartInfoSchema,
       actions: CartInfoSchemaAction,
     },
-    cart: { schema: CartSchema, actions: CartSchemaActions },
+    cart: { schema: CartSchema, actions: RequestSchemaActions },
     fastWay: { schema: FastWaySchema, actions: FastWaySchemaActions },
     filter: { schema: FilterSchema, actions: [{}] },
     serviceCat: {

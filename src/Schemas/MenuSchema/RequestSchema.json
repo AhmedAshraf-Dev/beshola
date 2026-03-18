@@ -1,0 +1,110 @@
+{
+  "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f888",
+  "schemaType": "OnlineAssetReques",
+  "idField": "onlineAssetRequestID",
+  "dashboardFormSchemaParameters": [
+    {
+      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
+      "isEnable": true,
+      "parameterType": "text",
+      "parameterField": "onlineAssetRequestID",
+      "parameterTitel": "onlineAssetRequestID",
+      "isIDField": true,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 0
+    },
+   
+    {
+      "parameterType": "assetID",
+      "parameterField": "onlineAssetID",
+      "parameterTitel": "Asset ID",
+      "isIDField": false,
+      "indexNumber": 1
+    },
+   
+    {
+      "parameterType": "companyName",
+      "parameterField": "companyName",
+      "parameterTitel": "Company Name",
+      "isIDField": false,
+      "indexNumber": 5
+    },
+    {
+      "parameterType": "companyLogo",
+      "parameterField": "companyLogo",
+      "parameterTitel": "Company Logo",
+      "isIDField": false,
+      "indexNumber": 6
+    },
+    {
+      "parameterType": "isActive",
+      "parameterField": "isActive",
+      "parameterTitel": "Active",
+      "isIDField": false,
+      "indexNumber": 7
+    },
+ 
+    {
+      "parameterType": "address",
+      "parameterField": "address",
+      "parameterTitel": "Address",
+      "isIDField": false,
+      "indexNumber": 9
+    },
+
+
+    {
+      "parameterType": "locationLatitudePoint",
+      "parameterField": "locationLatitudePoint",
+      "parameterTitel": "Latitude",
+      "isIDField": false,
+      "indexNumber": 16
+    },
+    {
+      "parameterType": "locationLongitudePoint",
+      "parameterField": "locationLongitudePoint",
+      "parameterTitel": "Longitude",
+      "isIDField": false,
+      "indexNumber": 17
+    },
+    {
+      "parameterType": "attributes",
+      "parameterField": "attributes",
+      "parameterTitel": "Attributes",
+      "isIDField": false,
+      "indexNumber": 18
+    },
+    {
+      "parameterType": "serviceName",
+      "parameterField": "serviceName",
+      "parameterTitel": "Service",
+      "isIDField": false,
+      "indexNumber": 19
+    },
+
+    {
+      "parameterType": "openTime",
+      "parameterField": "openTime",
+      "parameterTitel": "OpenTime",
+      "isIDField": false,
+      "indexNumber": 21
+    },
+    {
+      "parameterType": "displayFile",
+      "parameterField": "displayFile",
+      "parameterTitel": "displayFile",
+      "isIDField": false,
+      "indexNumber": 21
+    }
+  
+  ],
+
+  "isMainSchema": true,
+  "dataSourceName": null,
+  "projectProxyRoute": "BrandingMartAssets",
+  "propertyName": null,
+  "indexNumber": 0
+}

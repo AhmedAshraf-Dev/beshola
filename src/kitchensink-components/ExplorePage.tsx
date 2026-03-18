@@ -35,6 +35,7 @@ const Explorepage = () => {
               clickable={false}
               onLocationChange={() => {}}
               setNewPolygon={() => {}}
+              
             />
             <View className="flex-col">
               <SuggestCardContainer

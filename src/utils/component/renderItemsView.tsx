@@ -10,11 +10,10 @@ import { GetCard } from "../operation/GetCard";
 import { requestLocationPermission } from "./requestLocationPermission";
 import RequestsScreen from "../../kitchensink-components/orders/RequestsScreen";
 import AssetsForm from "../../components/addAsset/AssetsForm";
+import OnlineAssetsSchema from "../../Schemas/MenuSchema/OnlineAssetsSchema.json"
 const RenderItemsView = ({ routePath }: any) => {
-  const { menuItemsState } = useSchemas();
-  console.log("====================================");
-  console.log(routePath, "routePath");
-  console.log("====================================");
+
+
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
   const total = useSelector((state) => state.cart.totalAmount);
@@ -23,7 +22,7 @@ const RenderItemsView = ({ routePath }: any) => {
     // if (GetCustomerCart) {
     //   GetCard(menuItemsState.schema, GetCustomerCart, dispatch, cart, total);
     // }
-    GetCard(menuItemsState.schema, null, dispatch, cart, total);
+    GetCard(OnlineAssetsSchema, null, dispatch, cart, total);
   }, []);
   useEffect(() => {
     const getAndSetLocation = async () => {
