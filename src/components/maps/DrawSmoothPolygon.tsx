@@ -7,66 +7,53 @@ import { store } from "../../store/reduxStore";
 import { selectCurrentLocation } from "../../reducers/LocationReducer";
 
 const PolygonMapEmbed = ({
-  canClickPolygon=true,
+  canClickPolygon = true,
   location = null,
   clickable = false,
   polygonClickable = false,
   fields = [
-  
-   
-   
     {
-      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
-      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f898",
-      "isEnable": true,
-      "parameterType": "areaMapLatitudePoint",
-      "parameterField": "latitude",
-      "parameterTitel": "locationLatitudePoint",
-      "isIDField": false,
-      "lookupID": null,
-      "lookupReturnField": null,
-      "lookupDisplayField": null,
-      "indexNumber": 0
+      dashboardFormSchemaParameterID: "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      dashboardFormSchemaID: "270f513b-1788-4c01-879e-4526c990f898",
+      isEnable: true,
+      parameterType: "areaMapLatitudePoint",
+      parameterField: "latitude",
+      parameterTitel: "locationLatitudePoint",
+      isIDField: false,
+      lookupID: null,
+      lookupReturnField: null,
+      lookupDisplayField: null,
+      indexNumber: 0,
     },
     {
-      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
-      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f898",
-      "isEnable": true,
-      "parameterType": "areaMapLongitudePoint",
-      "parameterField": "longitude",
-      "parameterTitel": "locationLongitudePoint",
-      "isIDField": false,
-      "lookupID": null,
-      "lookupReturnField": null,
-      "lookupDisplayField": null,
-      "indexNumber": 0
+      dashboardFormSchemaParameterID: "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      dashboardFormSchemaID: "270f513b-1788-4c01-879e-4526c990f898",
+      isEnable: true,
+      parameterType: "areaMapLongitudePoint",
+      parameterField: "longitude",
+      parameterTitel: "locationLongitudePoint",
+      isIDField: false,
+      lookupID: null,
+      lookupReturnField: null,
+      lookupDisplayField: null,
+      indexNumber: 0,
     },
-
-   
-    
-    
-   
-   
-    
-   
-  
   ],
   haveRadius = true,
   clickAction = "pin",
- // host = "http://localhost:3001",
+  // host = "http://localhost:3001",
   host = "https://ihs-solutions.com:7552",
   onLocationChange,
   setNewPolygon,
 }) => {
   const webRef = useRef(null);
   const iframeRef = useRef(null);
-  const [coords,setCoords] = useState(location||selectCurrentLocation(store.getState()));
+  const [coords, setCoords] = useState(
+    location || selectCurrentLocation(store.getState()),
+  );
   const locationRef = useRef(JSON.stringify(coords));
   const [polygonObj, setPolygonObj] = useState({});
   const [openDrawer, setOpenDrawer] = useState(false);
-
-console.log("selectCurrentLocation(store.getState())",
-  location||selectCurrentLocation(store.getState()))
   // New Loading State
   const [isLoading, setIsLoading] = useState(true);
 
@@ -79,41 +66,49 @@ console.log("selectCurrentLocation(store.getState())",
   );
 
   useEffect(() => {
-    if (Object.keys(polygonObj).length > 0) {
+    if (Object.keys(polygonObj).length > 0 && !clickable) {
       setOpenDrawer(true);
     }
   }, [polygonObj]);
-useEffect(() => {
-  console.log("coords,location",coords)
-  const interval = setInterval(() => {
-    const newCoords = selectCurrentLocation(store.getState()); // get latest coords
-    const newCoordsStr = JSON.stringify(newCoords);
+  useEffect(() => {
+    console.log("coords,location", coords);
+    const interval = setInterval(() => {
+      const newCoords = selectCurrentLocation(store.getState()); // get latest coords
+      const newCoordsStr = JSON.stringify(newCoords);
 
-    if (!location||coords === newCoordsStr) return; // no change
+      if (!location || coords === newCoordsStr) return; // no change
 
-    locationRef.current = JSON.stringify(coords);
+      locationRef.current = JSON.stringify(coords);
 
-    // reload WebView / iframe
-    if (webRef.current && Platform.OS !== "web") {
-      webRef.current.reload();
-    }
-    if (iframeRef.current && Platform.OS === "web") {
-      const updatedParams = new URLSearchParams({
-        location: locationRef.current,
-        clickable,
-        fields: JSON.stringify(fields),
-        haveRadius,
-        findServerContainer: JSON.stringify(schema),
-        clickAction,
-        polygonClickable
-      });
-      iframeRef.current.src = `${host}/displayMap?${updatedParams.toString()}`;
-    }
-  }, 300000); // 5 minutes
+      // reload WebView / iframe
+      if (webRef.current && Platform.OS !== "web") {
+        webRef.current.reload();
+      }
+      if (iframeRef.current && Platform.OS === "web") {
+        const updatedParams = new URLSearchParams({
+          location: locationRef.current,
+          clickable,
+          fields: JSON.stringify(fields),
+          haveRadius,
+          findServerContainer: JSON.stringify(schema),
+          clickAction,
+          polygonClickable,
+        });
+        iframeRef.current.src = `${host}/displayMap?${updatedParams.toString()}`;
+      }
+    }, 300000); // 5 minutes
 
-  return () => clearInterval(interval); // cleanup
-}, [host, clickable, fields, haveRadius, clickAction, polygonClickable,coords]);
-console.log("locationRef.current",locationRef.current)
+    return () => clearInterval(interval); // cleanup
+  }, [
+    host,
+    clickable,
+    fields,
+    haveRadius,
+    clickAction,
+    polygonClickable,
+    coords,
+  ]);
+  console.log("locationRef.current", locationRef.current);
   const params = new URLSearchParams({
     location: locationRef.current,
     clickable,
@@ -125,16 +120,18 @@ console.log("locationRef.current",locationRef.current)
   });
 
   const url = `${host}/displayMap?${params.toString()}`;
- 
-  const switchFun = (data) =>{
-    if(canClickPolygon)
-  return windowMessageSwitch(data, onLocationChange, setNewPolygon, setPolygonObj);
 
-    }
-    
+  const switchFun = (data) => {
+    if (canClickPolygon)
+      return windowMessageSwitch(
+        data,
+        onLocationChange,
+        setNewPolygon,
+        setPolygonObj,
+      );
+  };
 
   // --- RENDERING EARTH OVERLAY (Shared Logic) ---
-
 
   // ✅ React Native (Mobile)
   if (Platform.OS !== "web") {
@@ -150,12 +147,10 @@ console.log("locationRef.current",locationRef.current)
           domStorageEnabled
           onLoadEnd={() => setIsLoading(false)} // Hides Earth on Mobile
           onMessage={async (event) => {
-            if(canClickPolygon)
-            {
-const data = JSON.parse(event.nativeEvent.data);
-            switchFun(data);
+            if (canClickPolygon) {
+              const data = JSON.parse(event.nativeEvent.data);
+              switchFun(data);
             }
-            
           }}
         />
         {drawerComponent}
@@ -186,8 +181,6 @@ const data = JSON.parse(event.nativeEvent.data);
         backgroundColor: "#000",
       }}
     >
-      
-
       <iframe
         ref={iframeRef}
         src={url}
@@ -208,9 +201,7 @@ const data = JSON.parse(event.nativeEvent.data);
       />
 
       {drawerComponent}
-    
     </div>
-    
   );
 };
 
@@ -225,8 +216,6 @@ const windowMessageSwitch = (
   } else if (data.type === "newPolygonChange") {
     setNewPolygon(data.payload);
   } else if (data.type === "clickedPolygon") {
-    
-            
     setClickedPolygon(data.payload);
   }
 };

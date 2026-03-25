@@ -1,5 +1,5 @@
 export function CreateInputProps(param, value) {
-  console.log("param",value,param)
+  console.log("param", value, param);
   let props = {
     fieldName: param.parameterField,
     title: param.parameterTitel,
@@ -18,6 +18,7 @@ export function CreateInputProps(param, value) {
       lookupDisplayField: param.lookupDisplayField,
       lookupID: param.lookupID,
       lookupReturnField: param.lookupReturnField,
+      dashboardFormSchemaParameterID: param.dashboardFormSchemaParameterID,
     };
     props = { ...props, ...additionProps };
   }

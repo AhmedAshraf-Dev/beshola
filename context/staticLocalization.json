@@ -500,6 +500,25 @@
       "no": "No",
       "noOrders": "No Orders available."
     },
+    "ownAsset": {
+      "pickupSteps": ["Ordered", "Prepared", "", "Picked Up"],
+      "deliverySteps": ["Ordered", "Prepared", "Out for Delivery", "Delivered"],
+      "showDetails": "Show Details",
+      "hideDetails": "Hide Details",
+      "order": "Order",
+      "cancelConfirmationTitle": "Cancel Order?",
+      "cancelConfirmationMessage": "Are you sure you want to cancel this order? This action cannot be undone.",
+      "paid": "Paid",
+      "notify": {
+        "orderAdded": "🛒 Your order has been placed successfully!",
+        "orderAddedError": "❌ Oops! We couldn't place your order. Please try again.",
+        "orderRemoved": "🗑 Your order has been removed.",
+        "orderRemovedError": "⚠ Sorry, we couldn't remove your order. Please try again."
+      },
+      "yes": "Yes",
+      "no": "No",
+      "noAsset": "You did not add any assets yet."
+    },
     "profile": {
       "collapses": [
         {

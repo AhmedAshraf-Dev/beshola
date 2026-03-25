@@ -17,6 +17,7 @@ import {
   DynamicRangeComponent,
   ListOfKeywordsParameter,
   LookupParameter,
+  ButtonInput,
 } from "./index";
 export function GetInputComponent(type) {
   switch (type) {
@@ -43,6 +44,9 @@ export function GetInputComponent(type) {
       return RadioParameter;
     case "radioList":
       return RadioListParameter;
+    case "button":
+    case "detailsCell":
+      return ButtonInput;
     case "tree":
       return DynamicTreeSchema;
     case "lookup":

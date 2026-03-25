@@ -63,19 +63,10 @@ export default function LocationParameter({ ...props }) {
       try {
         const lat = +location[latitudeField] || location.latitude;
         const lng = +location[longitudeField] || location.longitude;
-
-        let locationInfo = null;
-
-        // if (Platform.OS === "web") {
-        locationInfo = await reverseGeocode(lat, lng, fields);
-        // }
-        handleLocationChange(
-          {
-            [latitudeField]: lat,
-            [longitudeField]: lng,
-          },
-          locationInfo,
-        );
+        handleLocationChange({
+          [latitudeField]: lat,
+          [longitudeField]: lng,
+        });
       } catch (error) {
         console.error("Error fetching location info:", error);
       }
@@ -112,7 +103,7 @@ export default function LocationParameter({ ...props }) {
           onLocationChange={handleLocationChange}
           clickable={true}
           fields={props.formSchemaParameters}
-          haveRadius={props.type === "areaMapLongitudePoint"}
+          haveRadius={true}
           // subSchemas={props.subSchemas}
           // findServerContainer={findServerContainer}
           clickAction={clickAction}

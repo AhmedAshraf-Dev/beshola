@@ -1,26 +1,53 @@
-import { View, Text, ScrollView } from "react-native";
-import React, { useState } from "react";
-import { SearchTabs } from "../company-components/SearchTabs";
-import CompanyCardsFlatList from "../company-components/CompanyCardsVirtualized";
-import RenderLoadingItems from "../../utils/component/RenderLoadingItems";
-import { useSearch } from "../../../context/SearchProvider";
-import { useSchemas } from "../../../context/SchemaProvider";
-import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import CompanyCardView from "../company-components/CompanyCardView";
-import SkeletonMenuCardWeb from "../skeletonLoading/SkeletonMenuCardWeb";
-import AddAsset from "./AddAsset";
+import React, { useState } from "react";
+import { ScrollView, Text, View } from "react-native";
+import { useSelector } from "react-redux";
+import { useSchemas } from "../../../context/SchemaProvider";
+import RenderLoadingItems from "../../utils/component/RenderLoadingItems";
 import OwnAssetCard from "../cards/OwnAssetCard";
+import CompanyCardsFlatList from "../company-components/CompanyCardsVirtualized";
+import { usePreloadList } from "../Pagination/usePreloadList";
+import SkeletonMenuCardWeb from "../skeletonLoading/SkeletonMenuCardWeb";
+import AddAssetsSchema from "../../Schemas/MenuSchema/AddAssetsSchema.json";
+import AddAssetsSchemaActions from "../../Schemas/MenuSchema/AddAssetsSchemaActions.json";
+import AddAsset from "./AddAsset";
+import { buildApiUrl } from "../../../components/hooks/APIsFunctions/BuildApiUrl";
+import { MaterialIcons } from "@expo/vector-icons";
+import EmptyAssets from "../../utils/component/EmptyAssets";
+
 const AssetsForm = () => {
   const { menuItemsState } = useSchemas();
 
-  const { handleScroll, state } = useSearch();
-  const { rows, skip, totalCount, loading } = state;
   const [selectedItems, setSelectedItems] = useState([]);
   const fieldsType = useSelector((state: any) => state.menuItem.fieldsType);
   const navigation = useNavigation();
   const localization = useSelector((state) => state.localization.localization);
-
+  const addAssetDataSourceAPI = (query, skip, take) => {
+    return buildApiUrl(query, {
+      pageIndex: skip + 1,
+      pageSize: take,
+      projectRout: AddAssetsSchema.projectProxyRoute,
+    });
+  };
+  const getAddAssetsSchemaAction =
+    AddAssetsSchemaActions &&
+    AddAssetsSchemaActions.find(
+      (action) => action.dashboardFormActionMethodType === "Get",
+    );
+  const { rows, totalCount, loading, handleScroll } = usePreloadList({
+    schema: AddAssetsSchema,
+    getAction: getAddAssetsSchemaAction,
+    dataSourceAPI: addAssetDataSourceAPI,
+    deps: [],
+  });
+  if (!loading && rows.length === 0) {
+    return (
+      <EmptyAssets
+        message={localization.Hum_screens.ownAsset.noAsset}
+        actionComponent={<AddAsset />}
+      />
+    );
+  }
   return (
     <View className="flex-1 bg-background">
       {/* Scrollable content */}

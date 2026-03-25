@@ -14,7 +14,7 @@ export function selectedRoutes(userGust) {
   const tabs =
     [
       ...localization.tabs,
-      { name: "MyAssets", routePath: "MyAssets", icon: "" },
+      { name: "MyAssets", routePath: "MyAssets", icon: "inventory-2" },
     ]?.map((tab) => {
       if (tab.icon === "home") {
         return { ...tab, routePath: "Home" };

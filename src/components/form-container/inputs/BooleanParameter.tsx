@@ -10,22 +10,26 @@ import {
   RadioIcon,
   RadioIndicator,
   RadioLabel,
-} from "../../../../components/ui"; // Hypothetical Glustak components
+} from "../../../../components/ui";
+import { useSelector } from "react-redux";
 
 const BooleanParameter = ({
-  values,
   value: defaultValue,
   fieldName,
   enable,
   control,
-  ...props
 }) => {
-  // Local state for controlling the selected radio button
-  const [localValue, setLocalValue] = useState(defaultValue || values[0]);
+  const localization = useSelector((state) => state.localization.localization);
+  // ✅ Boolean options
+  const options = localization.inputs.boolean;
+
+  // ✅ Default = Yes (true)
+  const [localValue, setLocalValue] = useState(
+    defaultValue ?? options[0].value,
+  );
 
   useEffect(() => {
-    // If the parent passes a new `value`, update the local state
-    if (defaultValue !== localValue) {
+    if (defaultValue !== undefined && defaultValue !== localValue) {
       setLocalValue(defaultValue);
     }
   }, [defaultValue]);
@@ -34,26 +38,21 @@ const BooleanParameter = ({
     <View>
       <Controller
         control={control}
-        rules={{
-          required: false, // Add any validation rules here
-        }}
         name={fieldName}
-        defaultValue={localValue} // Set the default value for the Controller
-        render={({ field: { onChange: formOnChange, onBlur } }) => (
+        defaultValue={localValue}
+        render={({ field: { onChange: formOnChange } }) => (
           <View>
             <RadioGroup
               value={localValue}
               onChange={(newValue) => {
-                // Update both local state and form state when radio value changes
                 setLocalValue(newValue);
-                formOnChange(newValue); // Update form state via react-hook-form
+                formOnChange(newValue);
               }}
               isDisabled={!enable}
               style={{ paddingHorizontal: 16, paddingVertical: 8 }}
             >
-              {/* Yes Option */}
-              {values.map((value, index) => (
-                <Radio value={value} key={index}>
+              {options.map((item, index) => (
+                <Radio value={item.value} key={index}>
                   <RadioIndicator>
                     <RadioIcon
                       as={() => (
@@ -65,27 +64,20 @@ const BooleanParameter = ({
                       )}
                     />
                   </RadioIndicator>
-                  <RadioLabel>{value}</RadioLabel>
+                  <RadioLabel>{item.text}</RadioLabel>
                 </Radio>
               ))}
             </RadioGroup>
 
-            <Input
-              variant="outline"
-              className={"w-0 h-0 opacity-0"}
-              size="md"
-              isDisabled={false}
-              isReadOnly={false}
-            >
+            {/* Hidden sync input (optional but safe) */}
+            <Input className="w-0 h-0 opacity-0">
               <InputField
-                className={"w-0 h-0 opacity-0"}
-                value={localValue}
+                value={String(localValue)}
                 onChangeText={(text) => {
-                  // Update both form and local state on value change
-                  formOnChange(text); // Update the form data in react-hook-form
-                  setLocalValue(text); // Update the local state
+                  const parsedValue = text === "true";
+                  setLocalValue(parsedValue);
+                  formOnChange(parsedValue);
                 }}
-                defaultValue={defaultValue}
               />
             </Input>
           </View>

@@ -24,7 +24,7 @@ const useFetchWithoutBaseUrl = (realurl) => {
           },
           (error) => {
             return Promise.reject(error);
-          }
+          },
         );
 
         const res = await request.get(realurl);

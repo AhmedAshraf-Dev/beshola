@@ -6,11 +6,7 @@ import { theme } from "../../Theme";
 import { addAlpha } from "../../utils/operation/addAlpha";
 
 import { FontAwesome5 } from "@expo/vector-icons";
-
-const iconMap = {
-  "985a6440-8efa-4618-ad5f-1698b076e914": "bed",
-  "7789ef2a-6553-4656-b9bd-9e9e5c91342b": "bath",
-};
+import { iconMap } from "../../utils/operation/getIconWithID";
 
 const AttributeItem = ({ iconID, fullText }) => {
   const [itemWidth, setItemWidth] = useState(0);
@@ -42,11 +38,7 @@ const AttributeItem = ({ iconID, fullText }) => {
         }}
       >
         {/* Icon */}
-        <FontAwesome5
-          name={iconName}
-          size={14}
-          color={theme.accent}
-        />
+        <FontAwesome5 name={iconName} size={14} color={theme.accent} />
 
         {/* Text */}
         <ExpandableText
@@ -69,51 +61,51 @@ const Attributes = ({ attributes = [] }) => {
 
   return (
     <View style={{ flexDirection: "column", gap: 8, width: "100%" }}>
-  {displayedAttributes.map((attr, index) => {
-    const parts = attr.split("{,}");
+      {displayedAttributes.map((attr, index) => {
+        const parts = attr.split("{,}");
 
-    const iconID = parts[0]?.trim() || "";
-    const label = parts[1]?.trim() || "";
-    const value = parts[2]?.trim() || "";
+        const iconID = parts[0]?.trim() || "";
+        const label = parts[1]?.trim() || "";
+        const value = parts[2]?.trim() || "";
 
-    const fullText = value ? `${value}` : label;
+        const fullText = value ? `${value}` : label;
 
-    return (
-      <AttributeItem
-        key={`${iconID}-${index}`}
-        iconID={iconID}
-        label={label}
-        value={value}
-        fullText={fullText}
-      />
-    );
-  })}
+        return (
+          <AttributeItem
+            key={`${iconID}-${index}`}
+            iconID={iconID}
+            label={label}
+            value={value}
+            fullText={fullText}
+          />
+        );
+      })}
 
-  {/* Footer "Show More" Button */}
-  {hasMore && (
-    <TouchableOpacity
-      style={{
-        marginTop: 4,
-        paddingVertical: 4,
-        alignSelf: "flex-start",
-      }}
-      onPress={() => {
-        console.log("Show all attributes pressed");
-      }}
-    >
-      <Text
-        style={{
-          color: theme.accent,
-          fontSize: 14,
-          fontWeight: "bold",
-          textDecorationLine: "underline",
-        }}
-      >
-        Show {attributes.length - initialLimit} more attributes...
-      </Text>
-    </TouchableOpacity>
-  )}
-</View>
+      {/* Footer "Show More" Button */}
+      {hasMore && (
+        <TouchableOpacity
+          style={{
+            marginTop: 4,
+            paddingVertical: 4,
+            alignSelf: "flex-start",
+          }}
+          onPress={() => {
+            console.log("Show all attributes pressed");
+          }}
+        >
+          <Text
+            style={{
+              color: theme.accent,
+              fontSize: 14,
+              fontWeight: "bold",
+              textDecorationLine: "underline",
+            }}
+          >
+            Show {attributes.length - initialLimit} more attributes...
+          </Text>
+        </TouchableOpacity>
+      )}
+    </View>
   );
 };
 

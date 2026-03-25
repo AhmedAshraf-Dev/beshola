@@ -20,10 +20,14 @@ import PopupModal from "../../utils/component/PopupModal";
 
 // ✅ Schemas
 import AddAssetFilesSchema from "../../Schemas/MenuSchema/AddAssetFilesSchema.json";
+import AddAssetsSchema from "../../Schemas/MenuSchema/AddAssetsSchema.json";
 import AddAssetFilesSchemaActions from "../../Schemas/MenuSchema/AddAssetFilesSchemaActions.json";
 import PricePlanSchemaActions from "../../Schemas/MenuSchema/PricePlanSchemaActions.json";
 import PricePlansSchema from "../../Schemas/MenuSchema/PricePlanSchema.json";
 import { handleSubmitWithCallback } from "../../utils/operation/handleSubmitWithCallback";
+import FormContainer from "../form-container/FormContainer";
+import { GetFieldsItemTypes } from "../../utils/operation/GetFieldsItemTypes";
+import { getField } from "../../utils/operation/getField";
 
 const OwnAssetCard = ({
   itemPackage,
@@ -33,8 +37,30 @@ const OwnAssetCard = ({
 }) => {
   const [item] = useState(itemPackage);
 
-  const fieldsType = useSelector((state) => state.menuItem.fieldsType);
+  const parameters = AddAssetsSchema?.dashboardFormSchemaParameters ?? [];
 
+  const fieldsType = {
+    imageView: getField(parameters, "hiddenDisplayFile"),
+    address: getField(parameters, "hiddenAddress"),
+    streetName: getField(parameters, "streetName"),
+    idField: AddAssetsSchema.idField,
+    dataSourceName: AddAssetsSchema.dataSourceName,
+    zoneName: getField(parameters, "zoneName"),
+    buildNumber: getField(parameters, "buildNumber"),
+    floorNumber: getField(parameters, "floorNumber"),
+    partitionNumber: getField(parameters, "partitionNumber"),
+    flagMark: getField(parameters, "flagMark"),
+    latitude: getField(parameters, "locationLatitudePoint"),
+    longitude: getField(parameters, "locationLongitudePoint"),
+    isActive: getField(parameters, "isActive"),
+  };
+  const ownSchemaWithButtonOnlyParameters = {
+    ...AddAssetsSchema,
+    dashboardFormSchemaParameters:
+      AddAssetsSchema.dashboardFormSchemaParameters.filter(
+        (pram) => pram.parameterType === "detailsCell",
+      ),
+  };
   // ✅ Modal State (CLEAN)
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalType, setModalType] = useState(null); // "files" | "price"
@@ -117,7 +143,7 @@ const OwnAssetCard = ({
   return (
     <View className="mb-3">
       {/* ✅ Modal */}
-      <PopupModal
+      {/* <PopupModal
         isOpen={isModalVisible}
         onClose={() => {
           setIsModalVisible(false);
@@ -130,7 +156,7 @@ const OwnAssetCard = ({
         schema={getSchema()}
         errors={errors}
         disable={loading}
-      />
+      /> */}
 
       {/* ✅ Card */}
       <Card
@@ -164,17 +190,23 @@ const OwnAssetCard = ({
 
           {/* Actions */}
           <View className="flex-col justify-center items-center w-1/4">
+            <FormContainer
+              tableSchema={ownSchemaWithButtonOnlyParameters}
+              row={{}}
+              errorResult={{}}
+              control={control}
+            />
             {/* Contact Icon */}
-            <TouchableOpacity
+            {/* <TouchableOpacity
               className="p-2 rounded-full mb-2"
               style={{ backgroundColor: theme.accent }}
               onPress={() => console.log("Contact pressed")}
             >
               <AntDesign name="form" size={20} color={theme.body} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             {/* ✅ Add Files */}
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => {
                 setModalType("files");
                 setIsModalVisible(true);
@@ -183,10 +215,10 @@ const OwnAssetCard = ({
               style={{ backgroundColor: theme.accent }}
             >
               <Feather name="paperclip" size={20} color="white" />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             {/* ✅ Add Price Plans */}
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => {
                 setModalType("price");
                 setIsModalVisible(true);
@@ -199,7 +231,7 @@ const OwnAssetCard = ({
                 size={20}
                 color="white"
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </Card>
