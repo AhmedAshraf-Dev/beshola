@@ -30,7 +30,7 @@
       "dashboardFormSchemaID": "d4cf9cd7-0b06-4a56-a9cc-7b518f5455e7",
       "isEnable": true,
       "parameterType": "image",
-      "parameterField": "fileContent",
+      "parameterField": "displayFile",
       "parameterTitel": "Display File",
       "parameterLookupTitel": "Display File",
       "isIDField": false,

@@ -3,7 +3,7 @@
     "projectProxyRoute": "BrandingMartAssets",
     "dashboardFormSchemaActionID": "46ac8869-4745-41c8-8839-d02dfe9999f0",
     "dashboardFormActionMethodType": "Get",
-    "routeAdderss": "asset/GetOwnOnlineAssetRequests",
+    "routeAdderss": "asset/GetPreviewAssetRequestsByDay",
     "body": "",
     "returnPropertyName": "",
     "dashboardFormSchemaActionQueryParams": [
@@ -12,6 +12,20 @@
         "dashboardFormSchemaActionID": "ac648562-e859-4cae-a49a-6f9a4cce975d",
         "parameterName": "PageNumber",
         "dashboardFormParameterField": "pageIndex",
+        "isRequired": true
+      },
+      {
+        "dashboardFormSchemaActionQueryParameterID": "896ccbd1-7d20-4f8b-939b-31bda6cc7f23",
+        "dashboardFormSchemaActionID": "ac648562-e859-4cae-a49a-6f9a4cce975d",
+        "parameterName": "Date",
+        "dashboardFormParameterField": "date",
+        "isRequired": true
+      },
+      {
+        "dashboardFormSchemaActionQueryParameterID": "896ccbd1-7d20-4f8b-939b-31bda6cc7f23",
+        "dashboardFormSchemaActionID": "ac648562-e859-4cae-a49a-6f9a4cce975d",
+        "parameterName": "AssetID",
+        "dashboardFormParameterField": "assetID",
         "isRequired": true
       },
       {
@@ -24,28 +38,13 @@
     ]
   },
   {
-    "projectProxyRoute": "BrandingMartPOS",
+    "projectProxyRoute": "BrandingMartAssets",
     "dashboardFormSchemaActionID": "46ac8869-4745-41c8-8839-d02dfe9999f0",
     "dashboardFormActionMethodType": "Post",
-    "routeAdderss": "ShopNode/AddOrEditCustomerCartItem",
+    "routeAdderss": "asset/AddPreviewAssetRequest",
     "body": "",
     "returnPropertyName": "",
-    "dashboardFormSchemaActionQueryParams": [
-      {
-        "dashboardFormSchemaActionQueryParameterID": "5c060feb-679d-45fe-b48a-4ebce6fec77f",
-        "dashboardFormSchemaActionID": "e77b4a7b-7ab5-46f7-8240-0da8a3b50a25",
-        "parameterName": "CustomerAddressLocationID",
-        "IsRequired": false,
-        "dashboardFormParameterField": "customerAddressLocationID"
-      },
-      {
-        "dashboardFormSchemaActionQueryParameterID": "5c060feb-679d-45fe-b48a-4ebce6fec77f",
-        "dashboardFormSchemaActionID": "e77b4a7b-7ab5-46f7-8240-0da8a3b50a25",
-        "parameterName": "NodeMaxDistanceID",
-        "IsRequired": true,
-        "dashboardFormParameterField": "nodeMaxDistanceID"
-      }
-    ]
+    "dashboardFormSchemaActionQueryParams": []
   },
   {
     "projectProxyRoute": "BrandingMartPOS",

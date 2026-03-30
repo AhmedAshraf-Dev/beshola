@@ -29,6 +29,7 @@ import { useCart } from "../../../context/CartProvider";
 import { useSearch } from "../../../context/SearchProvider";
 import RequestCard from "../../components/cards/RequestCard";
 import { initCompanyRows } from "../../components/company-components/tabsData";
+import { usePreloadList } from "../../components/Pagination/usePreloadList";
 export default function RequestsScreen({}) {
   const {
     status: { isConnected: isOnline },
@@ -51,11 +52,11 @@ export default function RequestsScreen({}) {
   const [disable, setDisable] = useState(null);
   const [row, setRow] = useState(null);
   const [col, setCol] = useState({});
-  const [state, reducerDispatch] = useReducer(
-    reducer,
-    initialState(VIRTUAL_PAGE_SIZE, orderState.schema[0].idField),
-  );
-  const [currentSkip, setCurrentSkip] = useState(1);
+  const getAction =
+    orderState.actions &&
+    orderState.actions.find(
+      (action) => action.dashboardFormActionMethodType === "Get",
+    );
   const dataSourceAPI = (query, skip, take) => {
     return buildApiUrl(query, {
       pageIndex: skip + 1,
@@ -64,25 +65,50 @@ export default function RequestsScreen({}) {
       ...row,
     });
   };
-  const cache = createRowCache(VIRTUAL_PAGE_SIZE);
-  const getAction =
-    orderState.actions &&
-    orderState.actions.find(
-      (action) => action.dashboardFormActionMethodType === "Get",
-    );
+  const {
+    rows,
+    totalCount,
+    loading,
+    handleScroll,
+    // dispatch: reducerDispatch,
+  } = usePreloadList({
+    idField: orderState.schema?.idField,
+    getAction: getAction,
+    dataSourceAPI: dataSourceAPI,
+    deps: [],
+  });
+  // const [state, reducerDispatch] = useReducer(
+  //   reducer,
+  //   initialState(VIRTUAL_PAGE_SIZE, orderState.schema[0].idField),
+  // );
+  // const [currentSkip, setCurrentSkip] = useState(1);
+  // const dataSourceAPI = (query, skip, take) => {
+  //   return buildApiUrl(query, {
+  //     pageIndex: skip + 1,
+  //     pageSize: take,
 
-  const { rows, skip, totalCount, loading } = state;
-  useEffect(() => {
-    prepareLoad({
-      state,
-      dataSourceAPI,
-      getAction,
-      cache,
-      reducerDispatch,
-    });
+  //     ...row,
+  //   });
+  // };
+  // const cache = createRowCache(VIRTUAL_PAGE_SIZE);
+  // const getAction =
+  //   orderState.actions &&
+  //   orderState.actions.find(
+  //     (action) => action.dashboardFormActionMethodType === "Get",
+  //   );
 
-    // Call LoadData with the controller
-  }, [currentSkip]);
+  // const { rows, skip, totalCount, loading } = state;
+  // useEffect(() => {
+  //   prepareLoad({
+  //     state,
+  //     dataSourceAPI,
+  //     getAction,
+  //     cache,
+  //     reducerDispatch,
+  //   });
+
+  //   // Call LoadData with the controller
+  // }, [currentSkip]);
   //WS
   useEffect(() => {
     setWS_Connected(false);
@@ -117,8 +143,8 @@ export default function RequestsScreen({}) {
     });
   };
   const fieldsType = {
-    idField: orderState.schema[0].idField,
-    dataSourceName: orderState.schema[0].dataSourceName,
+    idField: orderState.schema.idField,
+    dataSourceName: orderState.schema.dataSourceName,
   };
 
   // 📨 React to WebSocket messages only when valid
@@ -134,18 +160,18 @@ export default function RequestsScreen({}) {
     _handleWSMessage.process();
     //setWSMessageMenuItem(_wsMessageMenuItem);
   }, [_wsMessageOrders]);
-  const handleScroll = (event) => {
-    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+  // const handleScroll = (event) => {
+  //   const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
 
-    const isScrolledToBottom =
-      layoutMeasurement.height + contentOffset.y >=
-      contentSize.height - OFF_SET_SCROLL;
+  //   const isScrolledToBottom =
+  //     layoutMeasurement.height + contentOffset.y >=
+  //     contentSize.height - OFF_SET_SCROLL;
 
-    if (isScrolledToBottom && rows.length < totalCount && !loading) {
-      getRemoteRows(currentSkip, VIRTUAL_PAGE_SIZE * 2, reducerDispatch); //todo change dispatch by reducerDispatch
-      setCurrentSkip(currentSkip + 1);
-    }
-  };
+  //   if (isScrolledToBottom && rows.length < totalCount && !loading) {
+  //     getRemoteRows(currentSkip, VIRTUAL_PAGE_SIZE * 2, reducerDispatch); //todo change dispatch by reducerDispatch
+  //     setCurrentSkip(currentSkip + 1);
+  //   }
+  // };
   //
   const { cartState, cartFieldsType } = useCart();
   const { menuItemsState } = useSchemas();
@@ -175,7 +201,7 @@ export default function RequestsScreen({}) {
         menuItemsState={menuItemsState}
         selectedItems={selectedItems}
         setSelectedItems={setSelectedItems}
-        rows={initCompanyRows}
+        rows={rows}
         CardComponent={RequestCard}
       />
       <RenderLoadingItems

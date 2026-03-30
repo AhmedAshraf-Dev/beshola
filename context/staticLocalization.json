@@ -263,6 +263,12 @@
       "desc": "In hac habitasse platea dictumst"
     }
   },
+  "tableTransform": {
+    "textButtonSkipValue": "Skip",
+    "textButtonFinishValue": "Finish",
+    "textButtonNextValue": "Next",
+    "parameterFieldValue": "parameterField"
+  },
   "portfolio": {
     "PageHeading": {
       "title": "Our Portfolio",

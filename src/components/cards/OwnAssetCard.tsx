@@ -202,12 +202,7 @@ const OwnAssetCard = ({
                   !column.parameterType.startsWith("hidden"),
               )
               .map((param: any) => {
-                return (
-                  <ButtonInput
-                    parentSchema={ownSchemaWithButtonOnlyParameters}
-                    {...CreateInputProps(param, {})}
-                  />
-                );
+                return <ButtonInput {...CreateInputProps(param, {})} />;
               })}
             {/* Contact Icon */}
             {/* <TouchableOpacity

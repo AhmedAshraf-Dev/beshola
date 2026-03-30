@@ -1,0 +1,80 @@
+{
+  "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
+  "schemaType": "AddressLocation",
+  "idField": "assetID",
+  "dashboardFormSchemaInfoDTOView": {
+    "dashboardFormSchemaID": "66a8b526-4e63-49b9-ad10-b5112f6646f4",
+    "schemaHeader": "Login Information",
+    "addingHeader": "add new Market Place",
+    "editingHeader": "Edit Cart"
+  },
+  "dashboardFormSchemaParameters": [
+    {
+      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
+      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
+      "isEnable": true,
+      "parameterType": "text",
+      "parameterField": "assetID",
+      "parameterTitel": "assetID",
+      "isIDField": true,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 0
+    },
+    {
+      "dashboardFormSchemaParameterID": "302167fc-ef36-49d1-adcd-1b41e1504629",
+      "dashboardFormSchemaID": "854454a8-119b-4def-abdc-4b337d643813",
+      "isEnable": true,
+      "parameterType": "availableSlotsHidden",
+      "parameterField": "availableSlots",
+      "parameterTitel": "availableSlots",
+      "parameterLookupTitel": null,
+      "isIDField": false,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 11,
+      "isFilterOperation": true,
+      "dashboardFormSchemaParameterDependencies": []
+    },
+    {
+      "dashboardFormSchemaParameterID": "302167fc-ef36-49d1-adcd-1b41e1504629",
+      "dashboardFormSchemaID": "854454a8-119b-4def-abdc-4b337d643813",
+      "isEnable": true,
+      "parameterType": "calenderDateTime",
+      "parameterField": "previewAssetRequestTime",
+      "parameterTitel": "previewAssetRequestTime",
+      "parameterLookupTitel": null,
+      "isIDField": false,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 11,
+      "isFilterOperation": true,
+      "dashboardFormSchemaParameterDependencies": []
+    },
+    {
+      "dashboardFormSchemaParameterID": "302167fc-ef36-49d1-adcd-1b41e1504629",
+      "dashboardFormSchemaID": "854454a8-119b-4def-abdc-4b337d643813",
+      "isEnable": true,
+      "parameterType": "bookedHidden",
+      "parameterField": "booked",
+      "parameterTitel": "booked",
+      "parameterLookupTitel": null,
+      "isIDField": false,
+      "lookupID": null,
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 11,
+      "isFilterOperation": true,
+      "dashboardFormSchemaParameterDependencies": []
+    }
+  ],
+
+  "isMainSchema": true,
+  "dataSourceName": "BrandingMartSecurity",
+  "projectProxyRoute": "BrandingMartSecurity",
+  "propertyName": null,
+  "indexNumber": 0
+}

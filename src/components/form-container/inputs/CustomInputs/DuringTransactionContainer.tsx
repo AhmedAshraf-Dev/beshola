@@ -1,13 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View } from "react-native";
-import { Button, ButtonText } from "@gluestack-ui/themed";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Circle } from "react-native-animated-spinkit";
-
-import FormContainer from "../DynamicPopup/FormContainer";
-import { onApply } from "../DynamicPopup/OnApplay";
-import { LanguageContext } from "../../../contexts/Language";
-import ProgressFilesLoading from "./ProgressFilesLoading";
+import { useSelector } from "react-redux";
+import { onApply } from "../../OnApply";
+import FormContainer from "../../FormContainer";
+import { Button, ButtonText } from "../../../../../components/ui";
+import { useForm } from "react-hook-form";
 
 function DuringTransactionContainer({
   tableSchema,
@@ -20,7 +19,7 @@ function DuringTransactionContainer({
   setSelectionContext,
   proxyRoute,
 }) {
-  const { localization } = useContext(LanguageContext);
+  const localization = useSelector((state) => state.localization.localization);
 
   const iDField = tableSchema.idField;
 
@@ -34,7 +33,8 @@ function DuringTransactionContainer({
   const [openLoadingModel, setOpenLoadingModel] = useState(automated);
 
   let editedRow = { ...initialRow };
-
+  const { control, formState, watch } = useForm();
+  const { errors } = formState;
   // Init
   useEffect(() => {
     if (selectionContext.length > 0) {
@@ -124,13 +124,13 @@ function DuringTransactionContainer({
   const ReturnRow = (updatedRow) => {
     editedRow = { ...updatedRow(), ...initialRow };
   };
-
   return (
     <View className="flex-1">
       {/* FORM UI */}
       {open && (
         <View className="p-4 bg-white rounded-2xl shadow">
           <FormContainer
+            control={control}
             tableSchema={tableSchema}
             row={editedRow}
             returnRow={ReturnRow}
@@ -160,12 +160,12 @@ function DuringTransactionContainer({
         </View>
       )}
 
-      {/* Progress */}
+      {/* Progress
       <ProgressFilesLoading
         modalOpen={openLoadingModel}
         totalFiles={totalFiles}
         uploadedFiles={uploadedFiles}
-      />
+      /> */}
     </View>
   );
 }

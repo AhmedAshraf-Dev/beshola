@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState, useCallback } from "react";
-import { View, FlatList } from "react-native";
+import { View, FlatList, Pressable } from "react-native";
 import { Circle } from "react-native-animated-spinkit";
 
 import { publicImageURL } from "../../../../../request";
@@ -14,6 +14,15 @@ import {
 import { buildApiUrl } from "../../../../../components/hooks/APIsFunctions/BuildApiUrl";
 import LoadData from "../../../../../components/hooks/APIsFunctions/LoadData";
 import { usePreloadList } from "../../../Pagination/usePreloadList";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Platform } from "react-native";
+import ImageParameterWithPanelActions from "../ImagePathParameter";
+import { useForm } from "react-hook-form";
+import convertImageToBase64 from "../InputActions/ConvertImageToBase64";
+import { Text } from "react-native";
+import { useSelector } from "react-redux";
+import { cleanObject } from "../../../../utils/operation/cleanObject";
+import { getFileTypeFromUrl } from "../../../../utils/operation/getFileTypeFromUrl";
 
 function FilesWithScrollPaging({
   title,
@@ -23,8 +32,16 @@ function FilesWithScrollPaging({
   setSelectedServerFiles,
   getAction,
   fileFieldName,
-  proxyRoute,
+
+  handleUpload,
+  setSelectedFiles,
 }) {
+  const { control, handleSubmit, formState, watch } = useForm();
+  const { errors } = formState;
+  const localization = useSelector((state) => state.localization.localization);
+  const [files, setFiles] = useState([]);
+
+  const { [fileFieldName]: _, ...rowWithoutFieldName } = row;
   const dataSourceAPI = (query, skip, take) => {
     return buildApiUrl(query, {
       pageIndex: skip + 1,
@@ -54,60 +71,115 @@ function FilesWithScrollPaging({
         : [...prev, { ...file, ...row }],
     );
   };
-
   const renderItem = ({ item }) => {
     const buildFileUrl = (base, path) => {
       if (!path) return "";
 
       return `${base.replace(/\/+$/, "")}/${path
-        .replace(/\\/g, "/") // ✅ FIX BACKSLASH
-        .replace(/^\/+/, "")}`; // ✅ remove leading slash
+        .replace(/\\/g, "/")
+        .replace(/^\/+/, "")}`;
     };
+
     const photo = {
       ...item,
       displayFile: item[fileFieldName],
       file: buildFileUrl(publicImageURL, item[fileFieldName]),
-      type: item.fileCodeNumber === 0 ? "image" : "video",
+      type: getFileTypeFromUrl(
+        buildFileUrl(publicImageURL, item[fileFieldName]),
+      ),
       id: item[idField],
     };
 
+    const isSelected = selectedServerFiles.some((f) => f.id === photo.id);
+
     return (
-      <View className="mb-3 p-2 bg-body rounded-xl shadow">
-        <View className="mb-3 p-3 bg-body rounded-2xl shadow">
-          {/* Checkbox */}
-          <View className="mb-2">
+      <View className="mr-4">
+        {/* Card */}
+        <View className="w-40 bg-white rounded-2xl shadow overflow-hidden">
+          {/* Image */}
+          <View className="h-40 w-full">
+            <TypeFile file={photo.file} title={title} type={photo.type} />
+          </View>
+
+          {/* Checkbox Overlay */}
+          <View className="absolute top-2 right-2 bg-white rounded-full p-1 shadow">
             <Checkbox
-              value={selectedServerFiles.some((f) => f.id === photo.id)}
+              value={isSelected}
               onChange={() => handleCheckboxChange(photo)}
             >
               <CheckboxIndicator>
-                <CheckboxIcon as={CheckIcon} />
+                <CheckboxIcon
+                  as={
+                    Platform.OS == "web"
+                      ? () => (
+                          <MaterialIcons name="check" size={20} color="white" />
+                        )
+                      : CheckIcon
+                  }
+                />
               </CheckboxIndicator>
             </Checkbox>
           </View>
-
-          {/* File Preview */}
-          <TypeFile file={photo.file} title={title} type={photo.type} />
         </View>
-
-        {/* File */}
-        {/* <TypeFile file={photo.file} title={title} type={photo.type} /> */}
       </View>
     );
   };
+  useEffect(() => {
+    const subscription = watch((formValues) => {
+      // Clean object is optional if you want to remove empty/undefined values
+      const cleanedValues = cleanObject(formValues);
+      setSelectedFiles([
+        {
+          ...rowWithoutFieldName,
+          ...cleanedValues,
+        },
+      ]);
+    });
 
+    return () => subscription.unsubscribe();
+  }, [watch]);
+  const handleAddMore = () => {
+    handleUpload();
+    setFiles([]);
+  };
   return (
-    <View className="flex-1">
+    <View className="flex-1 flex-row">
+      <View>
+        <ImageParameterWithPanelActions
+          fieldName={fileFieldName || "image"}
+          isFileContainer={true}
+          control={control}
+          enable={true}
+          allowDrop={false}
+          title={title}
+          onChange={() => {}}
+        />
+        {control._formValues?.[fileFieldName] !== "" && (
+          <Pressable
+            onPress={handleAddMore}
+            className="px-4 py-2 bg-accentHover rounded-lg"
+          >
+            <Text className="text-body">
+              {localization.webcam.modal.button.capture}
+            </Text>
+          </Pressable>
+        )}
+      </View>
       <FlatList
         data={rows}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
         horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingVertical: 10,
+        }}
         onEndReached={handleScroll}
         onEndReachedThreshold={0.5}
         ListFooterComponent={
           loading ? (
-            <View className="items-center my-4">
+            <View className="justify-center items-center px-4">
               <Circle size={30} color="#3b82f6" />
             </View>
           ) : null

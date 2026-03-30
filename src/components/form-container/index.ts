@@ -16,6 +16,7 @@ export { default as PhoneNumberParameter } from "./inputs/PhoneNumberParameter";
 export { default as ImagePathParameter } from "./inputs/ImagePathParameter";
 export { default as OtpParameter } from "./inputs/OtpParameter";
 export { default as ButtonInput } from "./inputs/ButtonInput";
+export { default as CalendarParameter } from "./inputs/CustomInputs/CalendarParameter";
 export { default as ListOfKeywordsParameter } from "./inputs/ListOfKeywordsParameter";
 export { default as DynamicTreeSchema } from "../../utils/component/DynamicTreeSchema";
 export { default as DynamicRangeComponent } from "../../utils/component/DynamicRangeComponent";

@@ -95,6 +95,7 @@
     "react-native-animated-spinkit": "^1.5.2",
     "react-native-background-actions": "^4.0.1",
     "react-native-barcode-svg": "^0.0.15",
+    "react-native-calendars": "^1.1314.0",
     "react-native-element-dropdown": "^2.12.2",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-image-picker": "^8.2.1",

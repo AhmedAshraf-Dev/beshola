@@ -19,6 +19,7 @@ import {
   LookupParameter,
   ButtonInput,
   ImagePathParameter,
+  CalendarParameter,
 } from "./index";
 export function GetInputComponent(type) {
   switch (type) {
@@ -30,6 +31,8 @@ export function GetInputComponent(type) {
       return SelectParameter;
     case "checkBox":
       return CheckBoxParameter;
+    case "calender":
+      return CalendarParameter;
     case "datetime":
     case "date":
     case "birthday":

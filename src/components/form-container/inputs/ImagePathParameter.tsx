@@ -53,21 +53,28 @@ class ImageParameterWithPanelActions extends BaseInput {
             };
 
             const actions = [
-              <ServerUploadAction
+              <UploadAction
                 key="upload"
                 fieldName={fieldName}
                 isFileContainer={isFileContainer}
                 onImageUpload={handleImageUpload}
-                {...this.props}
+              />,
+              <BrowserUrlAction
+                key="browser"
+                onImageUpload={handleImageUpload}
               />,
             ];
 
             return (
               <ImageParameter
                 {...this.props}
-                value={FileData}
-                formValue={value} // base64 stored in form
                 actions={actions}
+                value={FileData}
+                defaultValue={
+                  this.props.type === "publicImage"
+                    ? publicImageURL + this.props.value
+                    : this.props.value
+                }
               />
             );
           }}

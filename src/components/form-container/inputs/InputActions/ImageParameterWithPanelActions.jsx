@@ -42,13 +42,13 @@
 //   }
 
 //   handleImageUpload = (path, type) => {
-//     this.setState({
-//       FileData: this.props.addFile ? defaultImage : path,
-//     });
+// this.setState({
+//   FileData: this.props.addFile ? defaultImage : path,
+// });
 
-//     if (this.props.addFile) {
-//       this.props.addFile(path, type);
-//     }
+// if (this.props.addFile) {
+//   this.props.addFile(path, type);
+// }
 //   };
 
 //   render() {

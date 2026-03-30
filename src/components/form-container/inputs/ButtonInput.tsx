@@ -23,7 +23,7 @@ import FileContainer from "./CustomInputs/FileContainer";
 import DisplayFilesServerSchema from "./../../../Schemas/MenuSchema/DisplayFilesServerSchema.json";
 
 const ButtonInput = (props) => {
-  const { title = "Open", fieldName, enable, parentSchema = {} } = props;
+  const { title = "Open", fieldName, enable } = props;
   const { control, handleSubmit, formState } = useForm();
   const { errors } = formState;
   // ✅ Modal State
@@ -138,15 +138,12 @@ const ButtonInput = (props) => {
           onSubmit={handleSubmit(onSubmit)}
           errors={errors}
           disable={loading}
-          parentSchema={parentSchema}
+          // parentSchema={parentSchema}
           childSchema={schema}
           isFormModal={schema.schemaType !== "FilesContainer"}
         >
           {schema.schemaType === "FilesContainer" && (
             <FileContainer
-              parentSchemaParameters={
-                parentSchema?.dashboardFormSchemaParameters
-              }
               row={{}}
               schema={schema}
               serverSchema={DisplayFilesServerSchema}

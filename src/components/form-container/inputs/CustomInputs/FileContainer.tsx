@@ -7,20 +7,18 @@ import { View } from "react-native";
 // import StaticFilesModel from "../PartingFrom/fileInput/StaticFilesModel";
 import { useSelector } from "react-redux";
 import GetActionsFromSchema from "../../../../../components/hooks/DashboardAPIs/GetActionsFromSchema";
+import GetActionsFromSchemaAction from "../../../../../components/hooks/DashboardAPIs/GetActionsFromSchemaAction";
 import { IsSecondListSubsetOfFirstList } from "../../../../utils/operation/IsSecondListSubsetOfFirstList";
 import { Button, ButtonText } from "../../../../../components/ui";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import LoadingScreen from "../../../../kitchensink-components/loading/LoadingScreen";
 import { Chase, Flow } from "react-native-animated-spinkit";
 import FilesWithScrollPaging from "./FilesWithScrollPaging";
+import StaticFilesModel from "./StaticFilesModel";
+import DisplayFilesServerSchemaActions from "../../../../Schemas/MenuSchema/DisplayFilesServerSchemaActions.json";
+import DuringTransactionContainer from "./DuringTransactionContainer";
 
-function FileContainer({
-  parentSchemaParameters,
-  schema,
-  row,
-  title,
-  serverSchema,
-}) {
+function FileContainer({ schema, row, title, serverSchema }) {
   const localization = useSelector((state) => state.localization.localization);
 
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -31,6 +29,8 @@ function FileContainer({
   const [selectPostAction, setSelectPostAction] = useState({});
   const [modalFileIsOpen, setModalFileIsOpen] = useState(false);
   const [selectedFilesContext, setSelectedFilesContext] = useState([]);
+  const [selectedSchema, setSelectedSchema] = useState(schema);
+  const [parentSchema, setParentSchema] = useState(schema);
   const [open, setOpen] = useState(false);
 
   const idField = schema.idField;
@@ -48,10 +48,14 @@ function FileContainer({
     (schema) => !schema.isIDField,
   );
 
+  // const {
+  //   getAction: getActionServerSchema,
+  //   postAction: postActionServerSchema,
+  // } = GetActionsFromSchema(serverSchema);
   const {
     getAction: getActionServerSchema,
     postAction: postActionServerSchema,
-  } = GetActionsFromSchema(serverSchema);
+  } = GetActionsFromSchemaAction(DisplayFilesServerSchemaActions);
 
   const {
     getAction: getActionSchema,
@@ -60,19 +64,24 @@ function FileContainer({
     isLoading,
   } = GetActionsFromSchema(schema);
 
-  const isSubset = IsSecondListSubsetOfFirstList(
-    parentSchemaParameters,
-    schemaWithoutID,
-    ["parameterField"],
-  );
-
   const RefreshFiles = () => {
     setTrigger((prev) => prev + 1);
   };
 
-  function handleUpload(postAction, files, route) {
+  function handleUpload(
+    postAction,
+    files,
+    route,
+    schema,
+    parentSchemaParameters,
+  ) {
+    const isSubset = IsSecondListSubsetOfFirstList(
+      parentSchemaParameters.filter((schema) => !schema.isIDField),
+      schemaWithoutID,
+      ["parameterField"],
+    );
     setSelectPostAction(postAction);
-
+    setSelectedSchema(schema);
     if (files.length > 0) {
       const mapped = files.map((file) => ({
         ...file,
@@ -89,12 +98,18 @@ function FileContainer({
     setSelectedFiles([]);
     setSelectedServerFiles([]);
   }
-
-  function handleDelete(postAction, files, route) {
+  function addToCustomerServer(postAction, files, route) {
     setSelectPostAction(postAction);
-
+    console.log("====================================");
+    console.log(postAction, files, route, "handleUpload");
+    console.log("====================================");
     if (files.length > 0) {
-      setSelectedFilesContext(files);
+      const mapped = files.map((file) => ({
+        ...file,
+        ...row,
+      }));
+
+      setSelectedFilesContext(mapped);
       setProxyRoute(route);
     }
 
@@ -104,6 +119,20 @@ function FileContainer({
     setSelectedFiles([]);
     setSelectedServerFiles([]);
   }
+  // function handleDelete(postAction, files, route) {
+  //   setSelectPostAction(postAction);
+
+  //   if (files.length > 0) {
+  //     setSelectedFilesContext(files);
+  //     setProxyRoute(route);
+  //   }
+
+  //   setOpen(!isSubset);
+  //   setAutomated(isSubset);
+
+  //   setSelectedFiles([]);
+  //   setSelectedServerFiles([]);
+  // }
 
   return (
     <View className="p-3" key={trigger}>
@@ -126,7 +155,6 @@ function FileContainer({
             serverSchema.projectProxyRoute,
           )
         }
-        selectedFiles={selectedFiles}
       /> */}
 
       {/* Buttons */}
@@ -144,6 +172,8 @@ function FileContainer({
                 postActionSchema,
                 selectedServerFiles,
                 schema.projectProxyRoute,
+                serverSchema,
+                serverSchema?.dashboardFormSchemaParameters,
               )
             }
           >
@@ -161,7 +191,16 @@ function FileContainer({
           title={title}
           idField={serverSchema.idField}
           row={row}
-          proxyRoute={serverSchema.projectProxyRoute}
+          handleUpload={() =>
+            handleUpload(
+              postActionServerSchema,
+              selectedFiles,
+              serverSchema.projectProxyRoute,
+              serverSchema,
+              schemaWithoutID,
+            )
+          }
+          setSelectedFiles={setSelectedFiles}
           getAction={getActionServerSchema}
           selectedServerFiles={selectedServerFiles}
           setSelectedServerFiles={setSelectedServerFiles}
@@ -179,10 +218,10 @@ function FileContainer({
           handleToDelete={() => console.log("delete")}
           fileFieldName={fileFieldNameButtonPaging}
         />
-      )}
+      )} */}
 
       <DuringTransactionContainer
-        tableSchema={schema}
+        tableSchema={selectedSchema}
         TransformDone={RefreshFiles}
         automated={automated}
         selectionContext={selectedFilesContext}
@@ -191,7 +230,7 @@ function FileContainer({
         proxyRoute={proxyRoute}
         action={selectPostAction}
         setSelectionContext={setSelectedFilesContext}
-      /> */}
+      />
     </View>
   );
 }
