@@ -1,30 +1,56 @@
 {
-  "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f888",
-  "schemaType": "OnlineAssetReques",
-  "idField": "onlineAssetRequestID",
+  "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
+  "schemaType": "Service",
+  "idField": "onlineAssetID",
+  "dashboardFormSchemaInfoDTOView": {
+    "dashboardFormSchemaID": "66a8b526-4e63-49b9-ad10-b5112f6646f4",
+    "schemaHeader": "Menu Item",
+    "addingHeader": "Add Menu Item",
+    "editingHeader": "Edit Menu Item"
+  },
   "dashboardFormSchemaParameters": [
-    {
-      "dashboardFormSchemaParameterID": "bbc47b3c-baba-4c80-8a8e-50d9875a15d6",
-      "dashboardFormSchemaID": "270f513b-1788-4c01-879e-4526c990f899",
-      "isEnable": true,
-      "parameterType": "text",
-      "parameterField": "onlineAssetRequestID",
-      "parameterTitel": "onlineAssetRequestID",
-      "isIDField": true,
-      "lookupID": null,
-      "lookupReturnField": null,
-      "lookupDisplayField": null,
-      "indexNumber": 0
-    },
-   
     {
       "parameterType": "assetID",
       "parameterField": "onlineAssetID",
       "parameterTitel": "Asset ID",
+      "isIDField": true,
+      "indexNumber": 1
+    },
+    {
+      "parameterType": "isRequested",
+      "parameterField": "isRequested",
+      "parameterTitel": "isRequested",
       "isIDField": false,
       "indexNumber": 1
     },
-   
+    {
+      "parameterType": "onlineAssetViews",
+      "parameterField": "onlineAssetViews",
+      "parameterTitel": "onlineAssetViews",
+      "isIDField": false,
+      "indexNumber": 1
+    },
+    {
+      "parameterType": "productID",
+      "parameterField": "productID",
+      "parameterTitel": "Product ID",
+      "isIDField": false,
+      "indexNumber": 2
+    },
+    {
+      "parameterType": "assetSerialNumber",
+      "parameterField": "assetSerialNumber",
+      "parameterTitel": "Serial Number",
+      "isIDField": false,
+      "indexNumber": 3
+    },
+    {
+      "parameterType": "accountName",
+      "parameterField": "accountName",
+      "parameterTitel": "Account Name",
+      "isIDField": false,
+      "indexNumber": 4
+    },
     {
       "parameterType": "companyName",
       "parameterField": "companyName",
@@ -46,7 +72,13 @@
       "isIDField": false,
       "indexNumber": 7
     },
- 
+    {
+      "parameterType": "city",
+      "parameterField": "city",
+      "parameterTitel": "City",
+      "isIDField": false,
+      "indexNumber": 8
+    },
     {
       "parameterType": "address",
       "parameterField": "address",
@@ -54,8 +86,48 @@
       "isIDField": false,
       "indexNumber": 9
     },
-
-
+    {
+      "parameterType": "streetName",
+      "parameterField": "streetName",
+      "parameterTitel": "Street Name",
+      "isIDField": false,
+      "indexNumber": 10
+    },
+    {
+      "parameterType": "zoneName",
+      "parameterField": "zoneName",
+      "parameterTitel": "Zone",
+      "isIDField": false,
+      "indexNumber": 11
+    },
+    {
+      "parameterType": "buildNumber",
+      "parameterField": "buildNumber",
+      "parameterTitel": "Building Number",
+      "isIDField": false,
+      "indexNumber": 12
+    },
+    {
+      "parameterType": "floorNumber",
+      "parameterField": "floorNumber",
+      "parameterTitel": "Floor",
+      "isIDField": false,
+      "indexNumber": 13
+    },
+    {
+      "parameterType": "partitionNumber",
+      "parameterField": "partitionNumber",
+      "parameterTitel": "Partition",
+      "isIDField": false,
+      "indexNumber": 14
+    },
+    {
+      "parameterType": "flagMark",
+      "parameterField": "flagMark",
+      "parameterTitel": "Landmark",
+      "isIDField": false,
+      "indexNumber": 15
+    },
     {
       "parameterType": "locationLatitudePoint",
       "parameterField": "locationLatitudePoint",
@@ -84,11 +156,17 @@
       "isIDField": false,
       "indexNumber": 19
     },
-
     {
-      "parameterType": "openTime",
-      "parameterField": "openTime",
-      "parameterTitel": "OpenTime",
+      "parameterType": "serviceDescription",
+      "parameterField": "serviceDescription",
+      "parameterTitel": "Service Description",
+      "isIDField": false,
+      "indexNumber": 20
+    },
+    {
+      "parameterType": "createdOn",
+      "parameterField": "createdOn",
+      "parameterTitel": "Created On",
       "isIDField": false,
       "indexNumber": 21
     },
@@ -98,13 +176,27 @@
       "parameterTitel": "displayFile",
       "isIDField": false,
       "indexNumber": 21
+    },
+    {
+      "dashboardFormSchemaParameterID": "3ea25aa9-7e3d-4933-9015-afb86278524c",
+      "dashboardFormSchemaID": "854454a8-119b-4def-abdc-4b337d643813",
+      "isEnable": true,
+      "parameterType": "detailsCell",
+      "parameterField": "date",
+      "parameterTitel": "Date",
+      "parameterLookupTitel": null,
+      "isIDField": false,
+      "lookupID": "5a2a24f7-354c-418f-a582-d1ca8f3a86dc",
+      "lookupReturnField": null,
+      "lookupDisplayField": null,
+      "indexNumber": 15,
+      "isFilterOperation": false,
+      "dashboardFormSchemaParameterDependencies": []
     }
-  
   ],
-
-  "isMainSchema": true,
-  "dataSourceName": null,
   "projectProxyRoute": "BrandingMartAssets",
+  "isMainSchema": true,
+  "dataSourceName": "nodeMenuItemID",
   "propertyName": null,
   "indexNumber": 0
 }

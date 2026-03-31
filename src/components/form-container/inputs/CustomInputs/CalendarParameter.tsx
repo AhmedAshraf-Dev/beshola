@@ -22,7 +22,6 @@ import LoadData from "../../../../../components/hooks/APIsFunctions/LoadData";
 import { updateRows } from "../../../Pagination/updateRows";
 import { Controller } from "react-hook-form";
 import { Input, InputField } from "../../../../../components/ui";
-import RequestSchemaActions from "../../../../Schemas/MenuSchema/RequsetTimeSchemaActions.json";
 import RequsetTimeSchema from "../../../../Schemas/MenuSchema/RequsetTimeSchema.json";
 import { drawTimeLine } from "../../../../utils/operation/drawTimeLine";
 import { handleSubmitWithCallback } from "../../../../utils/operation/handleSubmitWithCallback";
@@ -78,43 +77,34 @@ const testSchema = {
   propertyName: "string",
   indexNumber: 0,
 };
-// ---------------- Schema Loader ----------------
-const CalendarParameterSchemaLoader = ({ lookupID, children }) => {
-  const { data: schema, isLoading } = useFetch(
-    `/Dashboard/GetDashboardFormSchemaBySchemaID?DashboardFormSchemaID=${lookupID}`,
-    defaultProjectProxyRouteWithoutBaseURL,
-  );
-
-  const { data: schemaActions } = useFetch(
-    GetSchemaActionsUrl(lookupID),
-    defaultProjectProxyRouteWithoutBaseURL,
-  );
-
-  if (isLoading) return <LoadingScreen />;
-
-  return children({ schema, schemaActions });
-};
 
 // ---------------- State Manager ----------------
 const CalendarParameterState = ({
-  schema,
-  schemaActions = RequestSchemaActions,
-  value = [],
+  value = {},
+  childSchema: schema,
   fieldName,
-  enable = true,
-  parentRow = {
-    assetID: "433C8163-28B8-43BE-BCAF-83931C5F9F90",
-  },
   control,
-  lookupDisplayField,
-  lookupReturnField,
+  parentRow,
+  schemaActions,
+  setValue,
 }) => {
   const timeBounder = {
     startTime: "12:00",
     endTime: "18:00",
     duration: "15", //that time duration between each time
   };
-  const [selectedDate, setSelectedDate] = useState(null);
+  const parameters = schema?.dashboardFormSchemaParameters ?? [];
+
+  const fieldsType = {
+    availableSlots: getField(parameters, "hiddenAvailableSlots"),
+    previewTime: getField(parameters, "hiddenCalenderDateTime"),
+    booked: getField(parameters, "hiddenBooked"),
+    calendar: getField(parameters, "calendar"),
+  };
+  const today = new Date().toISOString().split("T")[0]; // format: yyyy-mm-dd
+
+  const [selectedValues, setSelectedValues] = useState(value[fieldName] || []);
+  const [selectedDate, setSelectedDate] = useState(value[fieldName] || today);
   const [reqError, setReqError] = useState(null);
   const [disable, setDisable] = useState(false);
   const getAction =
@@ -132,7 +122,6 @@ const CalendarParameterState = ({
   const cache = createRowCache(VIRTUAL_PAGE_SIZE);
 
   const [values, setValues] = useState([]);
-  const [selectedValues, setSelectedValues] = useState(value[fieldName] || []);
 
   const dataSourceAPI = (query, skip, take) =>
     buildApiUrl(query, {
@@ -158,12 +147,6 @@ const CalendarParameterState = ({
     );
   }, [getAction, currentSkip]);
 
-  useEffect(() => {
-    if (state.rows?.length) {
-      setValues(state.rows);
-    }
-  }, [state.rows]);
-
   const handleChange = (selectedKeys, formOnChange) => {
     setSelectedValues(selectedKeys);
 
@@ -176,41 +159,26 @@ const CalendarParameterState = ({
   const [selectedTime, setSelectedTime] = useState(null);
 
   // 🎯 Mark available + selected days
-  const markedDates = useMemo(() => {
-    const marks = {};
+  // const markedDates = useMemo(() => {
+  //   const marks = {};
 
-    Object.keys(availability).forEach((date) => {
-      marks[date] = {
-        marked: true,
-        dotColor: "green",
-      };
-    });
+  //   Object.keys(availability).forEach((date) => {
+  //     marks[date] = {
+  //       marked: true,
+  //       dotColor: "green",
+  //     };
+  //   });
 
-    if (selectedDate) {
-      marks[selectedDate] = {
-        ...marks[selectedDate],
-        selected: true,
-        selectedColor: "#3b82f6",
-      };
-    }
+  //   if (selectedDate) {
+  //     marks[selectedDate] = {
+  //       ...marks[selectedDate],
+  //       selected: true,
+  //       selectedColor: "#3b82f6",
+  //     };
+  //   }
 
-    return marks;
-  }, [selectedDate]);
-  useEffect(() => {
-    dispatch({
-      type: "RESET_SERVICE_LIST",
-      payload: { lastQuery: "" },
-    });
-
-    setCurrentSkip((prev) => prev + 1);
-  }, [selectedDate]);
-  const parameters = RequsetTimeSchema?.dashboardFormSchemaParameters ?? [];
-
-  const fieldsType = {
-    availableSlots: getField(parameters, "availableSlotsHidden"),
-    previewTime: getField(parameters, "calenderDateTime"),
-    booked: getField(parameters, "bookedHidden"),
-  };
+  //   return marks;
+  // }, [selectedDate]);
   const timeline = drawTimeLine(
     selectedTime, // focusTime
     timeBounder,
@@ -219,41 +187,64 @@ const CalendarParameterState = ({
     fieldsType.previewTime,
     state.rows,
   );
-  console.log("====================================");
-  console.log(selectedTime, selectedDate, "timeline");
-  console.log("====================================");
   const isBooked = timeline.find((item) => item.isBooked) ? true : false;
-  const onSubmit = async () => {
-    await handleSubmitWithCallback({
-      data: {
-        [fieldsType.previewTime]: combineDateTime(selectedDate, selectedTime),
-        ...parentRow,
-      },
-      setDisable,
-      action: postAction,
-      proxyRoute: postAction.projectProxyRoute,
-      setReq: setReqError,
-      onSuccess: (resultData) => {
-        console.log("====================================");
-        console.log(resultData, "resultData");
-        console.log("====================================");
-        // AddAddressLocation(resultData);
-        // setIsModalVisible(false);
+  // const onSubmit = async () => {
+  //   await handleSubmitWithCallback({
+  //     data: {
+  //       [fieldsType.previewTime]: combineDateTime(selectedDate, selectedTime),
+  //       ...parentRow,
+  //     },
+  //     setDisable,
+  //     action: postAction,
+  //     proxyRoute: postAction.projectProxyRoute,
+  //     setReq: setReqError,
+  //     onSuccess: (resultData) => {
+  //       console.log("====================================");
+  //       console.log(resultData, "resultData");
+  //       console.log("====================================");
+  //       // AddAddressLocation(resultData);
+  //       // setIsModalVisible(false);
 
-        // dispatch(updateSelectedLocation(resultData));
-        // setSelectedLocation(resultData);
-      },
+  //       // dispatch(updateSelectedLocation(resultData));
+  //       // setSelectedLocation(resultData);
+  //     },
+  //   });
+  // };
+
+  // Set today as default when component mounts
+  // useEffect(() => {
+  //   // if (control) {
+  //   // Update the form's field value
+  //   setValue(fieldName, selectedDate);
+  //   // setValue(
+  //   //   fieldsType.previewTime,
+  //   //   combineDateTime(selectedDate, selectedTime),
+  //   // );
+  //   // }
+  // }, [selectedDate]);
+  useEffect(() => {
+    dispatch({
+      type: "RESET_SERVICE_LIST",
+      payload: { lastQuery: "" },
     });
-  };
+
+    setCurrentSkip((prev) => prev + 1);
+  }, [selectedDate]);
   return (
     <Controller
       control={control}
-      name={fieldName}
+      name={fieldsType.previewTime}
       render={({ field: { onChange: formOnChange, value } }) => (
         <View>
           {/* 📅 Calendar */}
           <Calendar
-            // markedDates={markedDates}
+            markedDates={{
+              [selectedDate]: {
+                selected: true,
+                selectedColor: "#3b82f6", // 🔵 background color
+                selectedTextColor: "#ffffff", // ⚪ text color
+              },
+            }}
             onDayPress={(day) => {
               // if (!availability[day.dateString]) return; // disable unavailable
               setSelectedDate(day.dateString);
@@ -276,7 +267,7 @@ const CalendarParameterState = ({
                 <FlatList
                   data={timeline}
                   numColumns={3}
-                  keyExtractor={(item, index) => index}
+                  keyExtractor={(item, index) => item}
                   renderItem={({ item, index }) => {
                     const isSelected = item.time === selectedTime;
 
@@ -286,6 +277,9 @@ const CalendarParameterState = ({
                         disabled={isBooked || item.availableSlots === 0}
                         onPress={() => {
                           setSelectedTime(item.time);
+                          formOnChange(
+                            combineDateTime(selectedDate, item.time),
+                          );
                         }}
                         className={`m-2 px-4 py-3 rounded-xl flex-1 items-center ${
                           item.isBooked || isSelected
@@ -305,42 +299,20 @@ const CalendarParameterState = ({
               )}
             </View>
           )}
-
-          {/* Hidden field to submit values */}
-          <Input
-            variant="outline"
-            className={"w-0 h-0 opacity-0"}
-            size="md"
-            isDisabled={false}
-            isReadOnly={true}
-          >
-            <InputField
-              value={JSON.stringify(selectedValues)}
-              editable={false}
-              onChangeText={() => {}}
-              defaultValue={JSON.stringify(selectedValues)}
-            />
-          </Input>
         </View>
       )}
     />
+    // <></>
   );
 };
 
 // ---------------- Main Export ----------------
 const CalendarParameter = (props) => {
-  const { lookupID } = props;
-
   return (
-    <CalendarParameterSchemaLoader lookupID={lookupID}>
-      {({ schema, schemaActions }) => (
-        <CalendarParameterState
-          {...props}
-          schema={schema}
-          // schemaActions={schemaActions}
-        />
-      )}
-    </CalendarParameterSchemaLoader>
+    <CalendarParameterState
+      {...props}
+      // schemaActions={schemaActions}
+    />
   );
 };
 

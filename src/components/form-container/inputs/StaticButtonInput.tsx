@@ -13,7 +13,7 @@ import { buildApiUrl } from "../../../../components/hooks/APIsFunctions/BuildApi
 import LoadData from "../../../../components/hooks/APIsFunctions/LoadData";
 import { updateRows } from "../../Pagination/updateRows";
 import PopupModal from "../../../utils/component/PopupModal";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { handleSubmitWithCallback } from "../../../utils/operation/handleSubmitWithCallback";
 import { addAlpha } from "../../../utils/operation/addAlpha";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -21,33 +21,26 @@ import { theme } from "../../../Theme";
 import { iconMap } from "../../../utils/operation/getIconWithID";
 import FileContainer from "./CustomInputs/FileContainer";
 import DisplayFilesServerSchema from "./../../../Schemas/MenuSchema/DisplayFilesServerSchema.json";
-const ButtonInput = (props) => {
+import { cleanObject } from "../../../utils/operation/cleanObject";
+const StaticButtonInput = (props) => {
   const {
     title = "Open",
     fieldName,
     enable,
     withLabel = true,
-    staticSchema,
+    schema,
+    _schemaActions,
   } = props;
-  const { control, handleSubmit, formState } = useForm();
+  const { control, handleSubmit, formState, watch, setValue } = useForm();
   const { errors } = formState;
   // ✅ Modal State
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [rootRow, setRootRow] = useState(props?.rowDetails || {});
+  const [dependenceRow, setDependenceRow] = useState({});
   const [disable, setDisable] = useState(false);
   const [reqError, setReqError] = useState(false);
-
-  // ✅ Fetch schema
-  const { data: schema } = useFetch(
-    GetSchemaUrl(props.lookupID),
-    defaultProjectProxyRouteWithoutBaseURL,
-  );
-
-  // ✅ Fetch actions
-  const { data: _schemaActions } = useFetch(
-    GetSchemaActionsUrl(props.lookupID),
-    defaultProjectProxyRouteWithoutBaseURL,
-  );
+  const [currentSkip, setCurrentSkip] = useState(0);
 
   const getAction =
     _schemaActions?.find(
@@ -71,7 +64,8 @@ const ButtonInput = (props) => {
     buildApiUrl(query, {
       pageIndex: skip + 1,
       pageSize: take,
-      ...props?.rowDetails,
+      ...rootRow,
+      ...dependenceRow,
     });
 
   // ✅ Load data
@@ -86,16 +80,44 @@ const ButtonInput = (props) => {
       updateRows(dispatch, cache, state),
       dispatch,
     );
-  }, [getAction]);
+  }, [getAction, currentSkip]);
+  useEffect(() => {
+    // if (rootRow[fieldName]) {
+    dispatch({
+      type: "RESET_SERVICE_LIST",
+      payload: { lastQuery: "" },
+    });
+
+    setCurrentSkip((prev) => prev + 1);
+    // }
+  }, [dependenceRow]);
+  function setValueCallback(name, value) {
+    setDependenceRow({ ...{ [name]: value } });
+  }
+  // useEffect(() => {
+  //   const subscription = watch((formValues) => {
+  //     // Clean object is optional if you want to remove empty/undefined values
+  //     const cleanedValues = cleanObject(formValues);
+  // console.log("====================================");
+  // console.log(cleanedValues, state.rows, "rootRow from buttonInput1");
+  // console.log("====================================");
+  //     setRootRow({ ...rootRow, ...cleanedValues });
+  //   });
+
+  //   return () => subscription.unsubscribe();
+  // }, [watch]);
   const onSubmit = async (data) => {
+    console.log(data, "data");
+
     try {
       await handleSubmitWithCallback({
-        data,
+        data: { ...data, ...props?.rowDetails },
         setDisable,
         action: postAction,
         proxyRoute: postAction?.projectProxyRoute,
         setReq: setReqError,
         onSuccess: (resultData) => {
+          setIsModalVisible(false);
           // AddAddressLocation(resultData);
           // setIsModalVisible(false);
           // dispatch(updateSelectedLocation(resultData));
@@ -106,7 +128,6 @@ const ButtonInput = (props) => {
       console.error(e);
     } finally {
       setLoading(false);
-      setIsModalVisible(false);
     }
   };
   const iconName = iconMap[props?.dashboardFormSchemaParameterID] || "circle";
@@ -123,7 +144,7 @@ const ButtonInput = (props) => {
         onPress={() => {
           setIsModalVisible(true);
         }}
-        className="p-2 rounded-xl mb-2 flex-row gap-1"
+        className="p-2 rounded-xl mb-2 flex-row gap-1 flex-1"
         style={{ backgroundColor: theme.accent }}
       >
         {/* Icon */}
@@ -139,28 +160,31 @@ const ButtonInput = (props) => {
           isOpen={isModalVisible}
           onClose={() => setIsModalVisible(false)}
           headerTitle={title}
-          row={state.rows || {}}
+          row={{}}
           control={control}
+          schemaActions={_schemaActions}
+          parentRow={props?.rowDetails}
           schema={schema}
           onSubmit={handleSubmit(onSubmit)}
-          errors={errors}
+          errors={reqError || errors}
           disable={loading}
+          setValue={setValueCallback}
           // parentSchema={parentSchema}
           childSchema={schema}
           isFormModal={schema.schemaType !== "FilesContainer"}
         >
-          {schema.schemaType === "FilesContainer" && (
+          {/* {schema.schemaType === "FilesContainer" && (
             <FileContainer
               row={{}}
               schema={schema}
               serverSchema={DisplayFilesServerSchema}
               title={title}
             />
-          )}
+          )} */}
         </PopupModal>
       )}
     </View>
   );
 };
 
-export default ButtonInput;
+export default StaticButtonInput;

@@ -15,6 +15,7 @@ function DisplayError({ dataError, parameterField, setTitle, title }) {
     return acc;
   }, {});
 
+  console.log(dataError, "dataError");
   if (dataError?.success === false) {
     const errorMessages = lowercaseError[fieldLowercase];
 

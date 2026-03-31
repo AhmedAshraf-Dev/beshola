@@ -67,7 +67,7 @@ import TabsSchemaActions from "../Schemas/Profile/TabsSchemaActions.json";
 import TapsSchema from "../Schemas/Profile/TapsSchema.json";
 
 //orders
-import OrdersSchema from "../Schemas/MenuSchema/RequestSchema.json";
+import RequestSchema from "../Schemas/MenuSchema/RequestSchema.json";
 import OrderItemsSchemaActions from "../Schemas/OrdersSchema/OrderItemsSchemaActions.json";
 import OrdersSchemaActions from "../Schemas/MenuSchema/RequestSchemaActions.json";
 import { store } from "../store/reduxStore";
@@ -152,7 +152,7 @@ export const schemasSlice = createSlice({
     },
     //orders
     order: {
-      schema: OrdersSchema,
+      schema: RequestSchema,
       actions: OrdersSchemaActions,
     },
     purchases: {

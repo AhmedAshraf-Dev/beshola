@@ -97,14 +97,14 @@ async function doFastVerify(phone) {
 
 (async () => {
   console.log(
-    `Generating ${TOTAL_USERS} phones and calling FastVerifyUser (concurrency ${CONCURRENCY})...`
+    `Generating ${TOTAL_USERS} phones and calling FastVerifyUser (concurrency ${CONCURRENCY})...`,
   );
 
   if (fs.existsSync(OUTPUT_FILE)) fs.unlinkSync(OUTPUT_FILE);
   fs.writeFileSync(
     OUTPUT_FILE,
     "phone,verificationID,status,message\n",
-    "utf8"
+    "utf8",
   );
 
   const phones = new Set();

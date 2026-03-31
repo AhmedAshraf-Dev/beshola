@@ -30,6 +30,7 @@ import { GetMediaUrl } from "../../utils/operation/GetMediaUrl";
 import AddressComponent from "./AddressComponent";
 import { addAlpha } from "../../utils/operation/addAlpha";
 import { onApply } from "../form-container/OnApply";
+import AccountInfo from "./AccountInfo";
 
 interface CompanyCardProps {
   itemPackage: any;
@@ -118,41 +119,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
             >
               <VStack className="space-y-2 w-full">
                 {/* Row 1: Account Info */}
-                <View className="flex-row w-full items-center">
-                  {/* Verified Icon with fixed width */}
-                  <View style={{ width: 20, alignItems: "center" }}>
-                    {true && (
-                      <MaterialCommunityIcons
-                        name="check-decagram"
-                        size={18}
-                        color={theme.accentHover}
-                      />
-                    )}
-                  </View>
-
-                  {/* Company Info: takes the rest of the space */}
-                  <View className="flex-1 items-start ml-2">
-                    {fieldsType.companyName && item[fieldsType.companyName] && (
-                      <Text
-                        numberOfLines={2}
-                        key={`${item[fieldsType.idField]}-${fieldsType.companyName}-${item[fieldsType.companyName]}`}
-                        className="text-lg font-bold"
-                        style={{ color: theme.secondary }}
-                      >
-                        {item.companyName}
-                      </Text>
-                    )}
-
-                    {/* Stars */}
-                    <View className="flex-row items-center mt-1">
-                      <StarsIcons
-                        value={parseFloat(item[fieldsType.rate] || 5)}
-                        size={14}
-                      />
-                    </View>
-                  </View>
-                </View>
-
+                <AccountInfo fieldsType={fieldsType} item={item} />
                 {/* Row 2: Attributes (full width) */}
                 {fieldsType.attributes && item[fieldsType.attributes] && (
                   <View className="w-full">
@@ -194,7 +161,8 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
                   color={theme.accent}
                 />
                 <Text className="text-text text-xs ml-1">
-                  {item[fieldsType.onlineAssetViews]||0} {localization.menu.viewing || "Viewing"}
+                  {item[fieldsType.onlineAssetViews] || 0}{" "}
+                  {localization.menu.viewing || "Viewing"}
                 </Text>
               </View>
             </View>
@@ -208,32 +176,29 @@ const CompanyCard: React.FC<CompanyCardProps> = ({
                 className="p-2 rounded-full items-center justify-center"
                 style={{ backgroundColor: theme.accent }}
                 onPress={async () => {
-                  if(item?.[fieldsType.isRequested])
-                    return
-                  const postAction =
-                   {
-    "projectProxyRoute": "BrandingMartAssets",
-    "dashboardFormSchemaActionID": "46ac8869-4745-41c8-8839-d02dfe9999f0",
-    "dashboardFormActionMethodType": "Post",
-    "routeAdderss": "Asset/CustomerNewOnlineAssetRequest",
-    "body": "",
-    "returnPropertyName": "",
-    "dashboardFormSchemaActionQueryParams": [
-      
-    ]
-  };
-                   const apply = await onApply(
-                        item,
-                        "",
-                        true,
-                        postAction,
-                        postAction.projectProxyRoute,
-                      );
-                      console.log("apply",apply)
+                  if (item?.[fieldsType.isRequested]) return;
+                  const postAction = {
+                    projectProxyRoute: "BrandingMartAssets",
+                    dashboardFormSchemaActionID:
+                      "46ac8869-4745-41c8-8839-d02dfe9999f0",
+                    dashboardFormActionMethodType: "Post",
+                    routeAdderss: "Asset/CustomerNewOnlineAssetRequest",
+                    body: "",
+                    returnPropertyName: "",
+                    dashboardFormSchemaActionQueryParams: [],
+                  };
+                  const apply = await onApply(
+                    item,
+                    "",
+                    true,
+                    postAction,
+                    postAction.projectProxyRoute,
+                  );
+                  console.log("apply", apply);
                 }}
               >
                 <AntDesign
-                  name={item?.[fieldsType.isRequested] ? "checkcircle": "form" }
+                  name={item?.[fieldsType.isRequested] ? "checkcircle" : "form"}
                   size={22}
                   color={theme.body}
                 />
