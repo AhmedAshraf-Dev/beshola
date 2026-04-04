@@ -1,278 +1,159 @@
-// Pro3DViewerModal.tsx
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useMemo, useEffect } from "react";
 import {
   View,
-  Dimensions,
-  Text,
   Modal,
   StyleSheet,
   PanResponder,
+  Text,
+  Platform,
+  useWindowDimensions,
 } from "react-native";
 import { GLView } from "expo-gl";
 import { Renderer } from "expo-three";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-const { width, height } = Dimensions.get("window");
-
-// Test object URL (Duck GLB from Khronos sample)
-const MODEL_URL =
-  "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF-Binary/Duck.glb";
+const MODEL_URL = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF-Binary/Duck.glb";
 
 export default function Pro3DViewerModal() {
   const [visible, setVisible] = useState(false);
-  const [cameraMode, setCameraMode] = useState<"FPS" | "Orbit">("FPS");
+  // NEW: State to track if the mouse is pressing down
+  const [isPressing, setIsPressing] = useState(false);
+  
+  const { width: screenWidth } = useWindowDimensions();
 
   const cameraRef = useRef<THREE.PerspectiveCamera>();
-  const orbitTarget = useRef(new THREE.Vector3(0, 0, 0));
-  const velocity = useRef({ forward: 0, right: 0 });
-  const rotation = useRef({ yaw: 0, pitch: 0 });
-  const loaded = useRef<THREE.Object3D>();
+  const rotation = useRef({ yaw: 0, pitch: 0.2 });
+  const zoom = useRef(10);
+  const velocity = useRef({ yaw: 0, pitch: 0, zoom: 0 });
+  
+  const lastTouch = useRef({ x: 0, y: 0 });
+  const lastPinchDist = useRef<number | null>(null);
 
-  // Move Joystick State
-  const [moveJoystickPos, setMoveJoystickPos] = useState({ x: 0, y: 0 });
-  const moveJoystickRef = useRef({ active: false, startX: 0, startY: 0 });
+  useEffect(() => {
+    if (Platform.OS === 'web' && visible) {
+      const handleWheel = (e: WheelEvent) => {
+        e.preventDefault();
+        velocity.current.zoom += e.deltaY * -0.005;
+      };
+      window.addEventListener("wheel", handleWheel, { passive: false });
+      return () => window.removeEventListener("wheel", handleWheel);
+    }
+  }, [visible]);
 
-  // Look Joystick State
-  const [lookJoystickPos, setLookJoystickPos] = useState({ x: 0, y: 0 });
-  const lookJoystickRef = useRef({ active: false, startX: 0, startY: 0 });
+  const panResponder = useMemo(() => PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => true,
+    
+    // Triggered when user clicks/touches
+    onPanResponderGrant: (evt) => {
+      setIsPressing(true); // Change cursor to 'grabbing'
+      const { pageX, pageY } = evt.nativeEvent;
+      lastTouch.current = { x: pageX, y: pageY };
+    },
 
-  // MOVE JOYSTICK HANDLERS
-  const handleMoveStart = (e: any) => {
-    const touch = e.nativeEvent.touches[0];
-    moveJoystickRef.current = {
-      active: true,
-      startX: touch.pageX,
-      startY: touch.pageY,
-    };
-  };
-  const handleMove = (e: any) => {
-    if (!moveJoystickRef.current.active) return;
-    const touch = e.nativeEvent.touches[0];
-    const dx = touch.pageX - moveJoystickRef.current.startX;
-    const dy = touch.pageY - moveJoystickRef.current.startY;
+    onPanResponderMove: (evt, gestureState) => {
+      if (Platform.OS === 'web' && evt.nativeEvent.preventDefault) evt.nativeEvent.preventDefault();
 
-    velocity.current.forward = -dy * 0.02;
-    velocity.current.right = dx * 0.02;
+      const touches = evt.nativeEvent.touches;
 
-    setMoveJoystickPos({ x: dx, y: dy });
-  };
-  const handleMoveEnd = () => {
-    moveJoystickRef.current.active = false;
-    velocity.current = { forward: 0, right: 0 };
-    setMoveJoystickPos({ x: 0, y: 0 });
-  };
+      if (!touches || touches.length <= 1) {
+        const { pageX, pageY } = evt.nativeEvent;
+        const deltaX = pageX - lastTouch.current.x;
+        const deltaY = pageY - lastTouch.current.y;
 
-  // LOOK JOYSTICK HANDLERS
-  const handleLookStart = (e: any) => {
-    const touch = e.nativeEvent.touches[0];
-    lookJoystickRef.current = {
-      active: true,
-      startX: touch.pageX,
-      startY: touch.pageY,
-    };
-  };
-  const handleLook = (e: any) => {
-    if (!lookJoystickRef.current.active || !cameraRef.current) return;
-    const touch = e.nativeEvent.touches[0];
-    const dx = touch.pageX - lookJoystickRef.current.startX;
-    const dy = touch.pageY - lookJoystickRef.current.startY;
+        // High sensitivity for fast mobile response
+        const sensitivity = Platform.OS === 'web' ? 0.006 : 0.01;
 
-    rotation.current.yaw -= dx * 0.003;
-    rotation.current.pitch -= dy * 0.003;
-    rotation.current.pitch = Math.max(
-      -Math.PI / 2,
-      Math.min(Math.PI / 2, rotation.current.pitch),
-    );
+        rotation.current.yaw += deltaX * sensitivity;
+        rotation.current.pitch += deltaY * sensitivity;
 
-    setLookJoystickPos({ x: dx, y: dy });
-  };
-  const handleLookEnd = () => {
-    lookJoystickRef.current.active = false;
-    setLookJoystickPos({ x: 0, y: 0 });
-  };
+        velocity.current.yaw = deltaX * sensitivity;
+        velocity.current.pitch = deltaY * sensitivity;
 
-  // THREE/GL Setup
+        lastTouch.current = { x: pageX, y: pageY };
+      }
+
+      if (touches && touches.length === 2) {
+        const dx = touches[0].pageX - touches[1].pageX;
+        const dy = touches[0].pageY - touches[1].pageY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (lastPinchDist.current !== null) {
+          velocity.current.zoom = ((distance - lastPinchDist.current) / screenWidth) * 20;
+        }
+        lastPinchDist.current = distance;
+      }
+    },
+
+    // Triggered when user lets go
+    onPanResponderRelease: () => {
+      setIsPressing(false); // Change cursor back to 'grab'
+      lastPinchDist.current = null;
+    },
+    onPanResponderTerminate: () => {
+      setIsPressing(false);
+    }
+  }), [screenWidth]);
+
   const onContextCreate = async (gl: any) => {
-    console.log("🚀 GL Context Created");
     const renderer = new Renderer({ gl });
     renderer.setSize(gl.drawingBufferWidth, gl.drawingBufferHeight);
-
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x222222);
-
-    // Camera
-    const camera = new THREE.PerspectiveCamera(
-      75,
-      gl.drawingBufferWidth / gl.drawingBufferHeight,
-      0.1,
-      1000,
-    );
-    camera.position.set(0, 1.7, 6);
+    scene.background = new THREE.Color(0x050505);
+    const camera = new THREE.PerspectiveCamera(60, gl.drawingBufferWidth / gl.drawingBufferHeight, 0.1, 1000);
     cameraRef.current = camera;
 
-    // Light
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
-    scene.add(hemiLight);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 2));
+    
+    new GLTFLoader().load(MODEL_URL, (gltf) => {
+      const box = new THREE.Box3().setFromObject(gltf.scene);
+      gltf.scene.position.sub(box.getCenter(new THREE.Vector3()));
+      zoom.current = box.getSize(new THREE.Vector3()).length() * 1.6;
+      scene.add(gltf.scene);
+    });
 
-    // Ground plane
-    const plane = new THREE.Mesh(
-      new THREE.PlaneGeometry(50, 50),
-      new THREE.MeshStandardMaterial({
-        color: 0x555555,
-        side: THREE.DoubleSide,
-      }),
-    );
-    plane.rotation.x = -Math.PI / 2;
-    scene.add(plane);
-
-    // Load GLB model
-    const loader = new GLTFLoader();
-    loader.load(
-      MODEL_URL,
-      (gltf) => {
-        loaded.current = gltf.scene;
-        gltf.scene.position.set(0, 0, 0);
-        scene.add(gltf.scene);
-        console.log("✅ Model loaded");
-      },
-      (xhr) => {
-        console.log(
-          `⏳ Loading: ${((xhr.loaded / xhr.total) * 100).toFixed(2)}%`,
-        );
-      },
-      (error) => {
-        console.error("❌ Error loading model:", error);
-      },
-    );
-
-    const clock = new THREE.Clock();
-
-    // Animation loop
     const animate = () => {
       requestAnimationFrame(animate);
       if (!cameraRef.current) return;
-      const delta = clock.getDelta();
 
-      // FPS Camera Mode
-      if (cameraMode === "FPS") {
-        const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(
-          camera.quaternion,
-        );
-        const right = new THREE.Vector3(1, 0, 0).applyQuaternion(
-          camera.quaternion,
-        );
-        camera.position.add(forward.multiplyScalar(velocity.current.forward));
-        camera.position.add(right.multiplyScalar(velocity.current.right));
+      rotation.current.yaw += velocity.current.yaw;
+      rotation.current.pitch += velocity.current.pitch;
+      zoom.current -= velocity.current.zoom;
 
-        camera.rotation.order = "YXZ";
-        camera.rotation.y = rotation.current.yaw;
-        camera.rotation.x = rotation.current.pitch;
-      }
+      velocity.current.yaw *= 0.95; 
+      velocity.current.pitch *= 0.95;
+      velocity.current.zoom *= 0.85; 
 
-      // Orbit Camera Mode
-      if (cameraMode === "Orbit" && loaded.current) {
-        const radius = 6;
-        camera.position.x =
-          orbitTarget.current.x +
-          radius *
-            Math.sin(rotation.current.yaw) *
-            Math.cos(rotation.current.pitch);
-        camera.position.y =
-          orbitTarget.current.y + radius * Math.sin(rotation.current.pitch);
-        camera.position.z =
-          orbitTarget.current.z +
-          radius *
-            Math.cos(rotation.current.yaw) *
-            Math.cos(rotation.current.pitch);
-        camera.lookAt(orbitTarget.current);
-      }
+      rotation.current.pitch = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, rotation.current.pitch));
 
+      const r = zoom.current;
+      camera.position.x = r * Math.sin(rotation.current.yaw) * Math.cos(rotation.current.pitch);
+      camera.position.y = r * Math.sin(rotation.current.pitch);
+      camera.position.z = r * Math.cos(rotation.current.yaw) * Math.cos(rotation.current.pitch);
+      
+      camera.lookAt(0, 0, 0);
       renderer.render(scene, camera);
       gl.endFrameEXP();
     };
-
     animate();
   };
 
+  // Logic for the cursor style
+  const cursorStyle = Platform.OS === 'web' ? { 
+    cursor: isPressing ? 'grabbing' : 'grab' 
+  } : {};
+
   return (
-    <View style={{ flex: 1 }}>
-      <Text
-        style={{ margin: 20, fontWeight: "bold" }}
-        onPress={() => setVisible(true)}
-      >
-        Open 3D Viewer
-      </Text>
+    <View style={styles.screen}>
+      <Text style={styles.openBtn} onPress={() => setVisible(true)}>Open Pro Viewer</Text>
 
-      <Modal visible={visible} animationType="slide" transparent={false}>
-        <View style={{ flex: 1 }}>
-          <GLView
-            style={{ flex: 1, backgroundColor: "#222" }}
-            onContextCreate={onContextCreate}
-          />
-
-          {/* Move Joystick */}
-          <View
-            style={styles.joystickBaseLeft}
-            onStartShouldSetResponder={() => true}
-            onResponderGrant={handleMoveStart}
-            onResponderMove={handleMove}
-            onResponderRelease={handleMoveEnd}
-          >
-            <View
-              style={[
-                styles.joystickThumb,
-                {
-                  transform: [
-                    { translateX: moveJoystickPos.x / 2 },
-                    { translateY: moveJoystickPos.y / 2 },
-                  ],
-                },
-              ]}
-            />
-          </View>
-
-          {/* Look Joystick */}
-          <View
-            style={styles.joystickBaseRight}
-            onStartShouldSetResponder={() => true}
-            onResponderGrant={handleLookStart}
-            onResponderMove={handleLook}
-            onResponderRelease={handleLookEnd}
-          >
-            <View
-              style={[
-                styles.joystickThumb,
-                {
-                  transform: [
-                    { translateX: lookJoystickPos.x / 2 },
-                    { translateY: lookJoystickPos.y / 2 },
-                  ],
-                },
-              ]}
-            />
-          </View>
-
-          {/* Buttons */}
-          <View style={{ position: "absolute", top: 40, left: 20 }}>
-            <Text
-              style={styles.buttonText}
-              onPress={() =>
-                setCameraMode(cameraMode === "FPS" ? "Orbit" : "FPS")
-              }
-            >
-              Switch Camera ({cameraMode})
-            </Text>
-          </View>
-
-          <View style={{ position: "absolute", top: 40, right: 20 }}>
-            <Text
-              style={styles.closeButtonText}
-              onPress={() => setVisible(false)}
-            >
-              Close
-            </Text>
-          </View>
+      <Modal visible={visible} transparent={false}>
+        <View 
+          style={[styles.modal, cursorStyle as any]} 
+          {...panResponder.panHandlers}
+        >
+          <GLView style={{ flex: 1 }} onContextCreate={onContextCreate} />
+          <Text style={styles.close} onPress={() => setVisible(false)}>✕</Text>
         </View>
       </Modal>
     </View>
@@ -280,46 +161,18 @@ export default function Pro3DViewerModal() {
 }
 
 const styles = StyleSheet.create({
-  joystickBaseLeft: {
-    position: "absolute",
-    bottom: 50,
-    left: 50,
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    justifyContent: "center",
-    alignItems: "center",
+  screen: { flex: 1, justifyContent: "center", alignItems: "center" },
+  modal: { 
+    flex: 1, 
+    backgroundColor: "#000", 
+    // Prevent browser touch issues
+    // @ts-ignore
+    touchAction: 'none' 
   },
-  joystickBaseRight: {
-    position: "absolute",
-    bottom: 50,
-    right: 50,
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "rgba(255,255,255,0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  joystickThumb: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(255,255,255,0.5)",
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    padding: 10,
-    backgroundColor: "#4a90e2",
-    borderRadius: 8,
-  },
-  closeButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    padding: 10,
-    backgroundColor: "#f00",
-    borderRadius: 8,
-  },
+  openBtn: { padding: 16, backgroundColor: '#000', color: '#fff', borderRadius: 8, fontWeight: 'bold' },
+  close: { 
+    position: 'absolute', top: 40, right: 20, color: "#fff", fontSize: 24, 
+    backgroundColor: 'rgba(255,255,255,0.1)', width: 44, height: 44, 
+    borderRadius: 22, textAlign: 'center', lineHeight: 44, overflow: 'hidden' 
+  }
 });

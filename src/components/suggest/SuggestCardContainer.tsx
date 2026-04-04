@@ -29,11 +29,12 @@ import { getItemsLoadingCount } from "../../utils/operation/getItemsLoadingCount
 import FavoriteMenuItemsSchema from "../../Schemas/MenuSchema/FavoriteMenuItemsSchema.json";
 import { Heading } from "../../../components/ui";
 import { isRTL } from "../../utils/operation/isRTL";
+import { scale } from "react-native-size-matters";
 export default function SuggestCardContainer({
   row = {},
   schemaActions,
   suggestContainerType = 1,
-  shownNodeMenuItemIDs = [],
+imageScale=scale(90),
   header = "",
 }) {
 
@@ -109,8 +110,7 @@ export default function SuggestCardContainer({
       pageIndex: skip + 1,
       pageSize: take,
       projectRout: suggestCardState.schema.projectProxyRoute,
-      ...row,
-      shownNodeMenuItemIDs: shownNodeMenuItemIDs.join(","),
+      ...row
     });
   };
 
@@ -162,27 +162,25 @@ export default function SuggestCardContainer({
     //setWSMessageMenuItem(_wsMessageMenuItem);
   }, [_wsMessageSuggest]);
 
-  const selectedNodeRef = useRef(selectedNode);
+  const rowRef = useRef({});
   useEffect(() => {
     console.log("suggestReducerDispatch");
-    if (selectedNodeRef.current !== selectedNode) {
-      selectedNodeRef.current = selectedNode;
+    if (rowRef.current !== row) {
+      rowRef.current = row;
       suggestReducerDispatch({
         type: "RESET_SERVICE_LIST",
         payload: { lastQuery: "" },
       });
-      setNewItems(newItems + 1);
+      setNewItems((prev) => prev + 1);
     }
   }, [
-    selectedNode,
-    shownNodeMenuItemIDs,
-    suggestDataSourceAPI,
-    getSuggestAction,
-    suggestReducerDispatch,
-    suggestState,
+
+  row
   ]);
 
   useEffect(() => {
+    console.log("row",row)
+    if(!getSuggestAction) return;
     prepareLoad({
       state: suggestState,
       dataSourceAPI: suggestDataSourceAPI,
@@ -192,7 +190,8 @@ export default function SuggestCardContainer({
       abortController: false,
       reRequest: true,
     });
-  }, [newItems]);
+  }, [row]);
+ 
   return suggestTotalCount > 0 ? (
     <View className="flex-col">
       <Heading className="text-text font-bold text-xl">{header}</Heading>
@@ -212,6 +211,7 @@ export default function SuggestCardContainer({
           schemaActions={schemaActions}
           suggestContainerType={suggestContainerType}
           suggestFieldsType={suggestFieldsType}
+          imageScale={imageScale}
         />
         {suggestLoading && (
           <>

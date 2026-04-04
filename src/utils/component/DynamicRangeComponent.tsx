@@ -125,9 +125,7 @@ const DynamicRangeSchema = ({
     defaultProjectProxyRouteWithoutBaseURL,
   );
 
-  console.log("====================================");
-  console.log(schema, "schema");
-  console.log("====================================");
+
   return (
     <View>
       {schema && (

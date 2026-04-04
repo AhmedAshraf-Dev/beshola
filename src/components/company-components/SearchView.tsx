@@ -7,12 +7,21 @@ import MenuCardsView from "./CompanyCardsView";
 import { MenuTabs } from "./SearchTabs";
 import SearchBarFilter from "../filters/SearchBarFilter";
 import CompanyCardsView from "./CompanyCardsView";
+import { TouchableOpacity } from "react-native";
+import { Entypo, FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
+import { Text } from "react-native";
+import { theme } from "../../Theme";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import PolygonMapEmbed from "../maps/DrawSmoothPolygon";
 
 const SearchView = ({}: any) => {
   const { width, height, os, modelName } = useDeviceInfo();
-
+  const navigation = useNavigation();
   const [refreshing, setRefreshing] = useState(false);
   const [key, setKey] = useState(0);
+  const route = useRoute();
+
+  const view = route.params?.view;
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     setKey((r) => r + 1);
@@ -26,10 +35,27 @@ const SearchView = ({}: any) => {
   const Content = (
     <>
       <HStack space="2xl" className="items-center md:my-2 !bg-body py-3 z-50">
+        {/* Optional filters */}
+        <View style={{ minWidth: 50 }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Search", {
+                view: view === "map" ? "list" : "map",
+              });
+            }}
+            className="p-2 w-full rounded-xl flex-row gap-1 items-center justify-center"
+            style={{
+              backgroundColor: view === "map" ? theme.accent : theme.text,
+            }}
+          >
+            {/* Icon */}
+            <FontAwesome6 name="earth-africa" size={24} color={theme.body} />
+          </TouchableOpacity>
+        </View>
         <View style={{ flex: 1 }}>
           <Searchbar />
         </View>
-        {/* Optional filters */}
+
         <View style={{ flex: 0, minWidth: 50 }}>
           <SearchBarFilter />
         </View>

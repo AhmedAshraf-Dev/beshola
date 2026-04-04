@@ -31,49 +31,10 @@ export default function MenuFilter({
   const filterRow = useSelector((state) => state.filter.filterRow); // Read filterRow from Redux
   const dispatch = useDispatch();
   // Filtering Logic
-  const filterData = (filters) => {
-    const { checkbox, gender, howMany, price = {}, rating = {} } = filters;
-
-    return tabsData.filter((item) => {
-      // Checkbox filtering
-      if (checkbox !== undefined && item.checkbox !== checkbox) {
-        return false;
-      }
-
-      // Gender filtering
-      if (gender && item.gender !== gender) {
-        return false;
-      }
-
-      // How many filtering
-      if (howMany && item.howMany !== howMany) {
-        return false;
-      }
-
-      // Price range filtering
-      if (
-        (price.min !== undefined && item.price < price.min) ||
-        (price.max !== undefined && item.price > price.max)
-      ) {
-        return false;
-      }
-
-      // Rating range filtering
-      if (
-        (rating.min !== undefined && item.rating < rating.min) ||
-        (rating.max !== undefined && item.rating > rating.max)
-      ) {
-        return false;
-      }
-
-      return true;
-    });
-  };
+ 
   // Handle form submission
   const onSubmit = (data) => {
-    console.log("====================================");
-    console.log(data, "data");
-    console.log("====================================");
+
     const formattedFilters = buildFilterRow(data);
 
     onFilterDone({ ...filterRow, ...formattedFilters });

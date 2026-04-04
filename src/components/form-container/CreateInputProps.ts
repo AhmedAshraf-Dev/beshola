@@ -19,6 +19,7 @@ export function CreateInputProps(param, value) {
       lookupID: param.lookupID,
       lookupReturnField: param.lookupReturnField,
       dashboardFormSchemaParameterID: param.dashboardFormSchemaParameterID,
+      
     };
     props = { ...props, ...additionProps };
   }

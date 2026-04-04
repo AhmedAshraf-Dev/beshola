@@ -38,6 +38,7 @@ const BaseTree = ({
   filtersMap,
   fieldName,
   setValue,
+  parentRow,
 }) => {
   const { data: _schemaActions } = useFetch(
     GetSchemaActionsUrl(schema.dashboardFormSchemaID),
@@ -133,6 +134,7 @@ const BaseTree = ({
           filtersMap={filtersMap}
           fieldName={fieldName}
           setValue={setValue}
+          parentRow={parentRow}
         />
       </View>
     ));
@@ -213,6 +215,7 @@ const BaseTree = ({
           parentID={parentID}
           filtersMap={filtersMap}
           fieldName={fieldName}
+          parentRow={parentRow}
         />
       </View>
     );

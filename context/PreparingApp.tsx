@@ -388,7 +388,7 @@ export const PreparingApp: React.FC<{ children: ReactNode }> = ({
     if (isEndFinishing && !isAdditionalInfoCompleted) {
       const timer = setTimeout(() => {
         setOpenAdditionalPopup(true);
-      }, 30000); // 30 seconds
+      }, 2000); // 30 seconds
       return () => clearTimeout(timer);
     }
   }, [isEndFinishing, isAdditionalInfoCompleted]);

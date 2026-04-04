@@ -64,7 +64,6 @@ const StartEndTimeParameter = ({
 
   const [pickerMode, setPickerMode] = useState("start");
   const [isPickerVisible, setPickerVisible] = useState(false);
-
   const showPicker = (mode) => {
     setPickerMode(mode);
     setPickerVisible(true);

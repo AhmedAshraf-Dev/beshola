@@ -53,8 +53,8 @@ const BaseRange = ({ schema }) => {
 
     const run = async () => {
       const query = buildApiUrl(getAction, {
-        // pageIndex: 1,
-        // pageSize: 100,
+         pageIndex: 1,
+         pageSize: 100,
         ...rowDetails,
       });
 

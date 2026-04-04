@@ -109,6 +109,7 @@ function FormContainer({
       param.lookupID ||
       param.parameterType === "areaMapLongitudePoint" ||
       param.parameterType === "mapLongitudePoint" ||
+      param.parameterType === "startTime" ||
       param.parameterType === "rate"
     ) {
       return row;

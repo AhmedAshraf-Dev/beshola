@@ -53,25 +53,26 @@ const PolygonMapEmbed = ({
   );
   const locationRef = useRef(JSON.stringify(coords));
   const [polygonObj, setPolygonObj] = useState({});
-  const [openDrawer, setOpenDrawer] = useState(false);
+  const [minimizeDrawer, setMinimizeDrawer] = useState(true);
   // New Loading State
   const [isLoading, setIsLoading] = useState(true);
-
-  const drawerComponent = openDrawer && (
-    <DrawerComponent
-      polygonObj={polygonObj}
-      openDrawer={openDrawer}
-      setOpenDrawer={setOpenDrawer}
-    />
-  );
+  const drawerComponent = (_polygonObj) => {
+    return (
+      <DrawerComponent
+        polygonObj={_polygonObj}
+        minimizeDrawer={minimizeDrawer}
+        setMinimizeDrawer={setMinimizeDrawer}
+      />
+    );
+  };
 
   useEffect(() => {
     if (Object.keys(polygonObj).length > 0 && !clickable) {
-      setOpenDrawer(true);
+      setMinimizeDrawer(false); // Auto-open drawer when polygon is clicked and clickable is false
+      console.log("polygonObj", polygonObj);
     }
   }, [polygonObj]);
   useEffect(() => {
-    console.log("coords,location", coords);
     const interval = setInterval(() => {
       const newCoords = selectCurrentLocation(store.getState()); // get latest coords
       const newCoordsStr = JSON.stringify(newCoords);
@@ -108,7 +109,7 @@ const PolygonMapEmbed = ({
     polygonClickable,
     coords,
   ]);
-  console.log("locationRef.current", locationRef.current);
+
   const params = new URLSearchParams({
     location: locationRef.current,
     clickable,
@@ -136,7 +137,7 @@ const PolygonMapEmbed = ({
   // ✅ React Native (Mobile)
   if (Platform.OS !== "web") {
     return (
-      <View style={{ width: "100%", height: 400, position: "relative" }}>
+      <View style={{ width: "100%", height: "100%", position: "relative" }}>
         {isLoading && <LoadingOverlay />}
         <WebView
           ref={webRef}
@@ -153,7 +154,7 @@ const PolygonMapEmbed = ({
             }
           }}
         />
-        {drawerComponent}
+        {drawerComponent(polygonObj)}
       </View>
     );
   }
@@ -175,7 +176,7 @@ const PolygonMapEmbed = ({
     <div
       style={{
         width: "100%",
-        height: "400px",
+        height: "100%",
         position: "relative",
         overflow: "hidden",
         backgroundColor: "#000",
@@ -200,7 +201,7 @@ const PolygonMapEmbed = ({
         }}
       />
 
-      {drawerComponent}
+      {drawerComponent(polygonObj)}
     </div>
   );
 };

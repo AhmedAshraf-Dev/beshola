@@ -12,16 +12,16 @@ export function RenderSuggestCards({
   items,
   schemaActions,
   suggestFieldsType,
+  imageScale = scale(90),
 }) {
   const chunkArray = (arr, size) => {
     return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
       arr.slice(i * size, i * size + size),
     );
   };
-  const { cartState, cartReducerDispatch, cartFieldsType } = useCart();
-  const chunkedItems = chunkArray(items, 4); // Creates groups of 4 items each
-  const BOX_high = scale(200);
-  const BOX_width = scale(300);
+
+  const chunkedItems = chunkArray(items, 4);
+
   switch (suggestContainerType) {
     case 0:
       return (
@@ -31,12 +31,8 @@ export function RenderSuggestCards({
               key={item[suggestFieldsType.idField]}
               schemaActions={schemaActions}
               fieldsType={suggestFieldsType}
-              item={getItemPackage(
-                item,
-                cartState.rows,
-                SuggestCardSchema,
-                suggestFieldsType,
-              )}
+              item={item}
+              imageScale={imageScale} // ✅ Add this
             />
           ))}
         </>
@@ -49,14 +45,12 @@ export function RenderSuggestCards({
             <View
               key={`group-${groupIndex}`}
               style={{
-                width: BOX_width,
+                width: scale(200),
                 height: "auto",
                 backgroundColor: theme.body,
                 borderRadius: scale(8),
                 padding: scale(8),
-                // gap: scale(8),
-                marginRight:
-                  groupIndex < chunkedItems.length - 1 ? scale(8) : 0,
+                marginRight: groupIndex < chunkedItems.length - 1 ? scale(8) : 0,
                 flexDirection: "row",
                 flexWrap: "wrap",
                 justifyContent: "space-between",
@@ -69,17 +63,15 @@ export function RenderSuggestCards({
                   key={index}
                   style={{
                     width: "48%",
-                    height: "50%", // two columns per row with small gap
+                    height: "50%",
                     marginBottom: scale(80),
                   }}
                 >
                   <SuggestCard
                     item={item}
                     fieldsType={suggestFieldsType}
-                    boxScale={BOX_high}
-                    imageClassName="!size-28 sm:!size-40"
                     schemaActions={schemaActions}
-                    showPrice={false}
+                    imageScale={imageScale} // ✅ Make sure it is here too
                   />
                 </View>
               ))}

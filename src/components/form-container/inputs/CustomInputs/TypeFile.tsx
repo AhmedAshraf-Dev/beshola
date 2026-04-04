@@ -25,8 +25,6 @@ function TypeFile({ file, title, type = false }) {
 
   // 🔥 Render content
   const renderFileContent = (full = false) => {
-    const height = full ? 300 : 150;
-
     // ✅ IMAGE
     if (typeFile?.startsWith("image") || typeFile === "publicImage") {
       return (
@@ -34,21 +32,21 @@ function TypeFile({ file, title, type = false }) {
           source={{ uri: fileSrc }}
           style={{
             width: "100%",
-            height,
+            height: full ? "80%" : 150,
             borderRadius: 12,
           }}
-          resizeMode="cover"
+          resizeMode={full ? "contain" : "cover"} // 🔥 مهم جداً
         />
       );
     }
 
-    // ✅ VIDEO (fixed)
+    // ✅ VIDEO
     if (typeFile?.startsWith("video") && player) {
       return (
         <VideoView
           style={{
             width: "100%",
-            height,
+            height: full ? "60%" : 150,
             borderRadius: 12,
           }}
           player={player}
@@ -75,9 +73,10 @@ function TypeFile({ file, title, type = false }) {
       <Pressable onPress={toggleModal}>{renderFileContent(false)}</Pressable>
 
       {/* Modal */}
-      <Modal visible={modalOpen} animationType="slide" transparent>
-        <View className="flex-1 bg-black/90 justify-center p-4">
-          <View className="bg-white rounded-2xl p-3">
+      <Modal visible={modalOpen} animationType="fade" transparent>
+        <View className="flex-1 bg-black/90 justify-center items-center p-4">
+          {/* Full Content */}
+          <View className="w-full h-full justify-center items-center">
             {renderFileContent(true)}
 
             <Button className="mt-4" onPress={toggleModal}>

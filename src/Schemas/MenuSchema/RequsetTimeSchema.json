@@ -43,7 +43,7 @@
       "dashboardFormSchemaID": "854454a8-119b-4def-abdc-4b337d643813",
       "isEnable": true,
       "parameterType": "calender",
-      "parameterField": "previewAssetRequest",
+      "parameterField": "previewAssetRequestTime",
       "parameterTitel": "Preview Asset Request",
       "parameterLookupTitel": null,
       "isIDField": false,

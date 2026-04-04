@@ -36,6 +36,7 @@ function FilesWithScrollPaging({
   fileFieldName,
   handleUpload,
   setSelectedFiles,
+  fileStatuesFieldName,
 }) {
   const { control, handleSubmit, formState, watch } = useForm();
   const { errors } = formState;
@@ -71,7 +72,7 @@ function FilesWithScrollPaging({
     setSelectedServerFiles((prev) =>
       prev.some((f) => f.id === file.id)
         ? prev.filter((f) => f.id !== file.id)
-        : [...prev, { ...file, ...row }],
+        : [...prev, { ...row, ...file }],
     );
   };
   const renderItem = ({ item }) => {
@@ -86,13 +87,23 @@ function FilesWithScrollPaging({
     };
 
     const isSelected = selectedServerFiles.some((f) => f.id === photo.id);
-
+    console.log(
+      "rendering file",
+      fileStatuesFieldName,
+      "isSelected:",
+      item[fileStatuesFieldName],
+    );
     return (
-      <View className="mr-4">
+      <View className="me-4">
         {/* Card */}
         <View className="w-40 bg-body rounded-2xl shadow overflow-hidden">
           {/* Image */}
-          <View className="h-40 w-full">
+          <View
+            className={
+              "h-40 w-full !border-3" +
+              `${!fileStatuesFieldName ? "!border-success" : item[fileStatuesFieldName] ? "!border-success" : "!border-error"}`
+            }
+          >
             <TypeFile file={photo.file} title={title} type={photo.type} />
           </View>
 
@@ -141,7 +152,13 @@ function FilesWithScrollPaging({
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      className="flex-1 flex-row "
+      className="flex-1 flex-row items-center"
+      contentContainerStyle={{
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        justifyContent: "flex-start",
+        alignItems: "center",
+      }}
     >
       <View>
         <ImageParameterWithPanelActions

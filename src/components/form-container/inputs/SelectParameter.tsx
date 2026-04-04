@@ -24,11 +24,12 @@ function SelectParameter({
   lookupReturnField,
   selectTheFirst = false,
   onValueChange,
+  customKey,
   ...props
 }) {
-  const localization = useSelector((state) => state.localization.localization);
-  console.log(values, "selectedRow in lookup parameter");
 
+  const localization = useSelector((state) => state.localization.localization);
+  console.log(values,defaultValue, "lookup 10");
   // Local state for selected item
   const [selectedValue, setSelectedValue] = useState(
     defaultValue ? defaultValue[lookupReturnField] : "",
@@ -38,7 +39,7 @@ function SelectParameter({
   useEffect(() => {
     if (selectTheFirst && !selectedValue && values?.length > 0) {
       setSelectedValue(values[0][lookupReturnField]);
-      console.log("selectTheFirst applied:", values[0]);
+      
       onValueChange?.(values[0]); // optional callback to parent
     }
   }, [selectTheFirst, selectedValue, values, onValueChange]);
@@ -57,7 +58,7 @@ function SelectParameter({
             (item) => item?.[lookupDisplayField] === displayValue,
           );
           setSelectedValue(selected?.[lookupReturnField] || "");
-          console.log("Selected item:", selected);
+        
           onValueChange?.(selected);
         }}
       >

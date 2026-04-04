@@ -18,6 +18,7 @@ import StaticFilesModel from "./StaticFilesModel";
 import DisplayFilesServerSchemaActions from "../../../../Schemas/MenuSchema/DisplayFilesServerSchemaActions.json";
 import DuringTransactionContainer from "./DuringTransactionContainer";
 import FilesWithButtonPaging from "./FilesWithButtonPaging";
+import { isRTL } from "../../../../utils/operation/isRTL";
 
 function FileContainer({ schema, row, title, serverSchema }) {
   const localization = useSelector((state) => state.localization.localization);
@@ -44,6 +45,9 @@ function FileContainer({ schema, row, title, serverSchema }) {
     serverSchema.dashboardFormSchemaParameters.find(
       (field) => field.parameterType === "image",
     )?.parameterField;
+  const fileStatuesFieldName = serverSchema.dashboardFormSchemaParameters.find(
+    (field) => field.parameterType === "imageStatus",
+  )?.parameterField;
 
   const schemaWithoutID = schema.dashboardFormSchemaParameters.filter(
     (schema) => !schema.isIDField,
@@ -85,8 +89,8 @@ function FileContainer({ schema, row, title, serverSchema }) {
     setSelectedSchema(schema);
     if (files.length > 0) {
       const mapped = files.map((file) => ({
-        ...file,
         ...row,
+        ...file,
       }));
 
       setSelectedFilesContext(mapped);
@@ -159,13 +163,12 @@ function FileContainer({ schema, row, title, serverSchema }) {
       /> */}
 
       {/* Buttons */}
-      <View className="flex-row gap-2 my-2">
-        {postActionServerSchema && (
-          <Button onPress={() => setModalFileIsOpen(true)}>
-            <MaterialCommunityIcons name="file-plus" size={24} color="black" />
-          </Button>
-        )}
-
+      <View
+        className={
+          "flex-row gap-2 my-2 " +
+          `${!isRTL() ? "justify-end" : "justify-start"}`
+        }
+      >
         {postActionSchema && (
           <Button
             onPress={() =>
@@ -201,6 +204,7 @@ function FileContainer({ schema, row, title, serverSchema }) {
               schemaWithoutID,
             )
           }
+          fileStatuesFieldName={fileStatuesFieldName}
           setSelectedFiles={setSelectedFiles}
           getAction={getActionServerSchema}
           selectedServerFiles={selectedServerFiles}
@@ -214,6 +218,7 @@ function FileContainer({ schema, row, title, serverSchema }) {
           title={title}
           idField={idField}
           row={row}
+          fileStatuesFieldName={fileStatuesFieldName}
           getAction={getActionSchema}
           deleteAction={deleteActionSchema}
           handleToDelete={() => console.log("delete")}

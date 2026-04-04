@@ -226,7 +226,7 @@ export const MemoizedImageCard = React.memo(
           fieldsType={fieldsType}
           item={item}
           showFaovertIcon={fieldsType.isFav}
-          style={{ width: imageSize, height: imageSize }}
+          style={{ width: imageSize, height: imageSize, borderRadius: 0 }}
           //className={isWeb ? "!w-[100%] !h-40 sm:!h-52 lg:!h-56" : "!size-40"}
         >
           <></>

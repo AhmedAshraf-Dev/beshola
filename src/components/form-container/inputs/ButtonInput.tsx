@@ -25,6 +25,7 @@ import PricePlanSchema from "./../../../Schemas/MenuSchema/PricePlanSchema.json"
 import PricePlan from "../../cards/PricePlan";
 import { getField } from "../../../utils/operation/getField";
 import TableCard from "../../cards/TableCard";
+import DynamicTreeSchema from "../../../utils/component/DynamicTreeSchema";
 const attributeSchema = {
   dashboardFormSchemaID: "6cb949c3-71fc-4a0f-b841-2fcc9534f395",
   idField: "attributeValueID",
@@ -76,7 +77,7 @@ const ButtonInput = (props) => {
     staticSchema,
     rowDetails = {},
   } = props;
-
+  const filtersMap = new Map([]);
   // ✅ Modal State
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -130,9 +131,6 @@ const ButtonInput = (props) => {
   // ✅ Load data
   useEffect(() => {
     if (!getAction || !isModalVisible) return;
-    console.log("====================================");
-    console.log(rowDetails, "rowDetails state");
-    console.log("====================================");
     LoadData(
       state,
       dataSourceAPI,
@@ -166,26 +164,6 @@ const ButtonInput = (props) => {
   };
   const iconName = iconMap[props?.dashboardFormSchemaParameterID] || "circle";
   const parameters = PricePlanSchema.dashboardFormSchemaParameters;
-
-  const pricePlanFieldsType = {
-    idField: PricePlanSchema.idField,
-    name: getField(parameters, "onlineAssetPricePlanName", false),
-    currencyShortName: getField(parameters, "currencyTypeShortName", false),
-
-    startDate: getField(parameters, "startTime", false),
-    endDate: getField(parameters, "endTime", false),
-
-    totalPrice: getField(parameters, "totalPrice", false),
-    downPayment: getField(parameters, "downPayment", false),
-    discount: getField(parameters, "discountPercentage", false),
-    cashback: getField(parameters, "cashbackAmount", false),
-
-    maintenanceFees: getField(parameters, "maintenanceFees", false),
-    insuranceFees: getField(parameters, "insuranceFees", false),
-    tax: getField(parameters, "taxPercentage", false),
-
-    remarks: getField(parameters, "remarks", false),
-  };
   return (
     <View>
       {/* ✅ Button */}
@@ -215,9 +193,13 @@ const ButtonInput = (props) => {
           isOpen={isModalVisible}
           onClose={() => setIsModalVisible(false)}
           headerTitle={title}
-          row={row}
+          row={{
+            ...row,
+            // startDate: "2025-04-09T00:00:00",
+            // endDate: "2025-04-10T00:00:00",
+          }}
           control={control}
-          schema={schema}
+          schema={schema?.schemaType === "Tree" ? {} : schema}
           onSubmit={handleSubmit(onSubmit)}
           errors={reqError || errors}
           disable={loading}
@@ -226,42 +208,18 @@ const ButtonInput = (props) => {
           // parentSchema={parentSchema}
           childSchema={schema}
           isFormModal={schema?.schemaType !== "FilesContainer"}
+          haveFooter={schema?.schemaType !== "FilesContainer"}
         >
           <SelectForm
+            filtersMap={filtersMap}
             schemaType={schema?.schemaType}
             row={rowDetails}
             schema={schema}
             serverSchema={DisplayFilesServerSchema}
             title={title}
             setRow={setRow}
-            rows={
-              state.rows.length > 0
-                ? state.rows
-                : [
-                    {
-                      onlineAssetPricePlanID:
-                        "a8a76a1d-709e-4b66-88cc-610f394758c0",
-                      createdOn: "2026-03-11T04:53:15",
-                      isActive: false,
-                      currencyTypeShortName: null,
-                      installmentsTotal: 0,
-                      onlineAssetID: "6102f88f-7be3-41d0-bac5-91a50305f51c",
-                      totalPrice: 5000000,
-                      downPayment: 500000,
-                      discountPercentage: 10,
-                      cashbackAmount: 500000,
-                      currencyTypeID: "927c3630-f9d2-49e7-b570-a8db50ff5b69",
-                      startDate: "0001-01-01T00:00:00",
-                      endDate: "0001-01-01T00:00:00",
-                      showOnline: true,
-                      maintenanceFees: 10000,
-                      insuranceFees: 100000,
-                      taxPercentage: 14,
-                      remarks: "dsdas",
-                      onlineAssetPricePlanName: "test12",
-                    },
-                  ]
-            }
+            setValue={setValue}
+            fieldName={fieldName}
           />
         </PopupModal>
       )}
@@ -270,8 +228,13 @@ const ButtonInput = (props) => {
 };
 function SelectForm({ schemaType, ...props }) {
   switch (schemaType) {
-    // case "PricePlan":
-    //   return <FlatList data={props.rows} renderItem={TableCard} {...props} />;
+    case "Tree":
+      return (
+        <DynamicTreeSchema
+          fieldName={props.fieldName}
+          setValue={props.setValue}
+        />
+      );
     case "FilesContainer":
       return <FileContainer {...props} />;
     default:

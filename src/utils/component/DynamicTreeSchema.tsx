@@ -74,41 +74,45 @@ type DynamicTreeSchemaProps = {
   filtersMap?: Record<string, any>;
   value?: any;
   setValue?: any;
+  lookupID?: any;
 };
 
 const DynamicTreeSchema = ({
   schema = testSchema,
   selectedRow = {},
-  fieldName,
-  control,
-  filtersMap,
+  fieldName = "",
+  control = null,
+  filtersMap = new Map([]),
   value = [],
-  setValue,
+  lookupID = "",
+  setValue = () => console.log("done tree"),
 }: DynamicTreeSchemaProps) => {
-  type SchemaType = typeof testSchema;
-  const [subSchemas, setSubSchemas] = useState<SchemaType[]>([]);
-  const [parentRow, setParentRow] = useState(value);
-  // const { setValue } = useFormContext();
+  const [subSchemas, setSubSchemas] = useState([]);
+  const [parentRow, setParentRow] = useState([]);
 
-  // prevent duplicate fetch
   const visitedLookups = useRef(new Set());
+  const isLoadingRef = useRef(false);
+  const lastValueRef = useRef(null);
 
-  const GetSubSchemas = async (currentSchema: typeof testSchema | null) => {
+  // 🔥 Recursive fetch
+  const GetSubSchemas = async (currentSchema) => {
     if (!currentSchema) return;
 
     const columns = currentSchema.dashboardFormSchemaParameters || [];
 
-    const firstLookupColumn = columns.find((col) => {
-      console.log("col.lookupID ", col.lookupID, col.parameterType);
-      return col.lookupID;
-    });
+    const firstLookupColumn = columns.find((col) => col.lookupID);
 
     if (!firstLookupColumn) return;
 
     const lookupID = firstLookupColumn.lookupID;
 
+    console.log("🔍 Fetch Lookup:", lookupID);
+
     // prevent duplicate calls
-    if (visitedLookups.current.has(lookupID)) return;
+    if (visitedLookups.current.has(lookupID)) {
+      console.log("⛔ Skipped (already visited):", lookupID);
+      return;
+    }
 
     visitedLookups.current.add(lookupID);
 
@@ -118,58 +122,90 @@ const DynamicTreeSchema = ({
         defaultProjectProxyRouteWithoutBaseURL,
       );
 
-      if (error || !data) return;
+      if (error || !data) {
+        console.log("❌ Fetch Error:", error);
+        return;
+      }
 
       const schemas = Array.isArray(data) ? data : [data];
 
+      console.log("✅ Fetched Schemas:", schemas);
+
       for (const schemaItem of schemas) {
+        console.log("📦 Adding SubSchema:", schemaItem);
+
         setSubSchemas((prev) => [...prev, schemaItem]);
 
-        // recursive load
+        // recursive call
         await GetSubSchemas(schemaItem);
       }
     } catch (err) {
-      console.error("Schema fetch error:", err);
+      console.error("❌ Schema fetch error:", err);
     }
   };
 
+  // 🔥 Load schemas (protected from duplicate runs)
   useEffect(() => {
     const loadSchemas = async () => {
+      if (isLoadingRef.current) {
+        console.log("⛔ Already loading, skip...");
+        return;
+      }
+
+      isLoadingRef.current = true;
+
+      console.log("🚀 Start Loading Schemas");
+
       setSubSchemas([]);
       visitedLookups.current.clear();
 
       await GetSubSchemas(schema);
+
+      console.log("🏁 Finished Loading Schemas");
+
+      isLoadingRef.current = false;
     };
 
-    loadSchemas();
+    if (schema) {
+      console.log("📦 Schema Changed:", schema?.dashboardFormSchemaID);
+      loadSchemas();
+    }
   }, [schema]);
-  console.log("====================================");
-  console.log(parentRow, "parentRow");
-  console.log("====================================");
+
+  // 🔥 Prevent repeated setValue
   useEffect(() => {
-    setValue(fieldName, parentRow);
-  }, [parentRow, fieldName, setValue]);
+    const structured = parentRow;
+
+    if (JSON.stringify(lastValueRef.current) === JSON.stringify(structured)) {
+      return;
+    }
+
+    lastValueRef.current = structured;
+
+    console.log("🌳 Final Tree Value:", structured);
+
+    setValue(fieldName, structured);
+  }, [parentRow]);
+
   return (
     <View>
       {schema && (
         <BaseTree
-          // key={schema?.idField}
           schema={schema}
-          onLeafCheckChange={() => {
-            console.log("====================================");
-            console.log("onLeafCheckChange", "");
-            console.log("====================================");
-          }}
-          onRowClick={() => {
-            console.log("====================================");
-            console.log("onRowClick", "");
-            console.log("====================================");
-          }}
-          // selectedRow={selectedRow}
           subSchemas={subSchemas}
-          setParentRow={setParentRow}
           filtersMap={filtersMap}
           fieldName={fieldName}
+          parentRow={parentRow}
+          setParentRow={(rows) => {
+            console.log("🌲 setParentRow:", { tree: rows });
+            setParentRow(rows);
+          }}
+          onLeafCheckChange={(data) => {
+            console.log("🌿 onLeafCheckChange:", { tree: data });
+          }}
+          onRowClick={(row) => {
+            console.log("🖱️ onRowClick:", { tree: row });
+          }}
         />
       )}
     </View>

@@ -34,7 +34,8 @@ function InputDisplay({ props, BaseInput, errorResult }) {
     }
   }, [inputErrorResult, errorResult, changed]);
   const invalidInput = () => {
-    if (inputErrorResult !== null || errorResult[props.fieldName]) {
+    console.log("errorResult",errorResult)
+    if (inputErrorResult !== null || errorResult[props?.fieldName]) {
       return true;
     }
     return false;
@@ -76,7 +77,7 @@ function InputDisplay({ props, BaseInput, errorResult }) {
 
           <DisplayError
             dataError={errorResult}
-            parameterField={props.fieldName}
+            parameterField={props?.fieldName}
             setTitle={setInputErrorResult}
             title={props.title}
           />

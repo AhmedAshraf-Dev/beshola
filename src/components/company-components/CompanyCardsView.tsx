@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 
 // import { createRowCache } from "@devexpress/dx-react-grid";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import ActionBar from "../cards/ActionBar";
 import HeaderParent from "../header/HeaderParent";
 // import { createRowCache } from "../Pagination/createRowCache";
@@ -18,6 +18,7 @@ import { SearchTabs } from "./SearchTabs";
 import CompanyCard from "../cards/CompanyCard";
 import CompanyCardView from "./CompanyCardView";
 import { initCompanyRows } from "./tabsData";
+import PolygonMapEmbed from "../maps/DrawSmoothPolygon";
 const CompanyCardsView = ({}: any) => {
   const { cartState, cartFieldsType } = useCart();
   const { menuItemsState } = useSchemas();
@@ -28,6 +29,9 @@ const CompanyCardsView = ({}: any) => {
   const fieldsType = useSelector((state: any) => state.menuItem.fieldsType);
   const navigation = useNavigation();
   const localization = useSelector((state) => state.localization.localization);
+  const route = useRoute();
+
+  const view = route.params?.view;
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: () =>
@@ -64,23 +68,35 @@ const CompanyCardsView = ({}: any) => {
         </View>
       )} */}
       {/*!for web*/}
-      <CompanyCardsFlatList
-        rows={state.rows}
-        fieldsType={fieldsType}
-        cartState={{ rows: [] }}
-        menuItemsState={menuItemsState}
-        selectedItems={selectedItems}
-        setSelectedItems={setSelectedItems}
-        CardComponent={CompanyCardView}
-      />
-      <RenderLoadingItems
-        SkeletonComponent={SkeletonMenuCardWeb}
-        loading={loading}
-        classNameContainer={
-          "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 p-3"
-        }
-        rows={rows}
-      />
+      {view === "map" ? (
+        <View className=" w-full" style={{ height: 500, overflow: "hidden" }}>
+          <PolygonMapEmbed
+            clickable={false}
+            onLocationChange={(loc) => console.log(loc)}
+            setNewPolygon={(poly) => console.log(poly)}
+          />
+        </View>
+      ) : (
+        <View>
+          <CompanyCardsFlatList
+            rows={state.rows}
+            fieldsType={fieldsType}
+            cartState={{ rows: [] }}
+            menuItemsState={menuItemsState}
+            selectedItems={selectedItems}
+            setSelectedItems={setSelectedItems}
+            CardComponent={CompanyCardView}
+          />
+          <RenderLoadingItems
+            SkeletonComponent={SkeletonMenuCardWeb}
+            loading={loading}
+            classNameContainer={
+              "grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 p-3"
+            }
+            rows={rows}
+          />
+        </View>
+      )}
     </ScrollView>
   );
 };

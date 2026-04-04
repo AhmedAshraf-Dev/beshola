@@ -21,6 +21,9 @@ export default function DateParameter({
   placeholder,
   ...props
 }) {
+  console.log("====================================");
+  console.log(defaultValue, "props");
+  console.log("====================================");
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const localization = useSelector((state) => state.localization.localization);
   const languageRow = useSelector((state) => state.localization.languageRow);
